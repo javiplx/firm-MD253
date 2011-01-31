@@ -31,18 +31,18 @@ case ${func} in
   [ -n "${DAAP_STATUS}" ] && echo "ON" || echo "OFF"
   ;;
  MusicFolder)
-  path=`/bin/cat $DAAP_CONF|/bin/grep "^mp3_dir"|/bin/cut -c9-|\
-        /bin/sed 's/\/tmp//'|/bin/sed 's/\/home//'`
+  path=`/bin/cat $DAAP_CONF|/usr/bin/grep "^mp3_dir"|/usr/bin/cut -c9-|\
+        /usr/bin/sed 's/\/tmp//'|/usr/bin/sed 's/\/home//'`
   echo "$path"|grep "^/$" >/dev/null 2>&1
   [ $? -eq 0 ] && path="None Selected"
   echo "$path"
-  entry_path=`echo $path|/bin/sed 's/\/$//'`
+  entry_path=`echo $path|/usr/bin/sed 's/\/$//'`
   entry_path=${entry_path%/*}
   echo "$entry_path"
   ;;
  ChgiTuneStatus)
-  status=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
-  old_status=`/bin/awk -F= /daapd/'{print $2}' $SERVICE_CONF|/bin/sed 's/\ //g'`
+  status=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
+  old_status=`/usr/bin/awk -F= /daapd/'{print $2}' $SERVICE_CONF|/usr/bin/sed 's/\ //g'`
   $replaceFile "$SERVICE_CONF" "daapd=${old_status}" "daapd=${status}"
   dlna_mDNSR_modify_conf
 
@@ -53,7 +53,7 @@ case ${func} in
      }
     ;;
    Disable)
-    #old_dir=`/bin/cat $DAAP_CONF|/bin/grep "^mp3_dir"|/bin/cut -c9-`
+    #old_dir=`/bin/cat $DAAP_CONF|/usr/bin/grep "^mp3_dir"|/usr/bin/cut -c9-`
     #$replaceFile "${DAAP_CONF}" "mp3_dir $old_dir" "mp3_dir /tmp/" >/dev/null 2>&1
     /bin/killall daapd >/dev/null 2>&1
     PID=`/bin/pidof daapd`
@@ -64,13 +64,13 @@ case ${func} in
   esac
   ;;
  mp3_dir)
-  path=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
+  path=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
   path=`echo ${path}|sed 's/\%20/\ /g'|sed 's/\%7B/\{/g'|sed 's/\%7D/\}/g'|sed 's/\%7E/\~/g'|\
         sed 's/\%60/\`/g'|sed 's/\%5B/\[/g'|sed 's/\%5D/\]/g'|sed 's/\%25/\%/g'|\
         sed 's/\%24/\$/g'|sed 's/\%21/\!/g'|sed 's/\%27/'\''/g'`
 
-  old_path=`/bin/cat $DAAP_CONF|/bin/grep "^mp3_dir"|/bin/cut -c9-`
-  old_status=`/bin/awk -F= /daapd/'{print $2}' $SERVICE_CONF|/bin/sed 's/\ //g'`
+  old_path=`/bin/cat $DAAP_CONF|/usr/bin/grep "^mp3_dir"|/usr/bin/cut -c9-`
+  old_status=`/usr/bin/awk -F= /daapd/'{print $2}' $SERVICE_CONF|/usr/bin/sed 's/\ //g'`
   [ "$path/" == "$old_path" ] && {
    $replaceFile "$DAAP_CONF" "mp3_dir $old_path" "mp3_dir /tmp/"
    $replaceFile "$SERVICE_CONF" "daapd=${old_status}" "daapd=Disable"
@@ -100,8 +100,8 @@ case ${func} in
    }
   ;;
  stop_scan)
-  old_dir=`/bin/cat $DAAP_CONF|/bin/grep "^mp3_dir"|/bin/cut -c9-`
-  old_status=`/bin/awk -F= /daapd/'{print $2}' $SERVICE_CONF|/bin/sed 's/\ //g'`
+  old_dir=`/bin/cat $DAAP_CONF|/usr/bin/grep "^mp3_dir"|/usr/bin/cut -c9-`
+  old_status=`/usr/bin/awk -F= /daapd/'{print $2}' $SERVICE_CONF|/usr/bin/sed 's/\ //g'`
   $replaceFile "${DAAP_CONF}" "mp3_dir $old_dir" "mp3_dir /tmp/" >/dev/null 2>&1
   $replaceFile "${SERVICE_CONF}" "daapd=$old_status" "daapd=Disable"
 
@@ -116,7 +116,7 @@ case ${func} in
   ;;
  Detected_UnderScan_First)
   for i in 1 2; do
-   SIZE=`/bin/ls /tmp/ -al|/bin/awk /data/'{print $5}'`
+   SIZE=`/bin/ls /tmp/ -al|/usr/bin/awk /data/'{print $5}'`
    str="SIZE_$i=$SIZE"
    export $str
    sleep 2
@@ -124,30 +124,30 @@ case ${func} in
   [ "$SIZE_1" != "$SIZE_2" ] && echo "Scaning" || echo "Stop"
   ;;
  Detected_Value)
-  /bin/ls /tmp/ -al|/bin/awk /data/'{print $5}'
+  /bin/ls /tmp/ -al|/usr/bin/awk /data/'{print $5}'
   ;;
  UsersData)
   UsersData=$(echo $(service_smb_modify_share_access))
-  echo "${UsersData}"|/bin/sed 's/\ //g'|/bin/sed 's/,$//'|/bin/tr "," "^"
+  echo "${UsersData}"|/usr/bin/sed 's/\ //g'|/bin/sed 's/,$//'|/usr/bin/tr "," "^"
   ;;
  SecurityData)
-  FOLDER=`/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/bin/tr " " "^"`
+  FOLDER=`/usr/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/usr/bin/tr " " "^"`
   for i in ${FOLDER}; do
-   i=`echo ${i}|/bin/tr "^" " "`
+   i=`echo ${i}|/usr/bin/tr "^" " "`
    [ "${i}" == "${SHARE_PATH}" ] && continue
    [ "${i}" == "/home/.lpd" ] && continue
-   AllowUser=`/bin/awk /AllowUser/'{print $2}' ${i}/.ftpaccess|/bin/sed 's/\ //g'`
-   DenyUser=`/bin/awk /DenyUser/'{print $2}' ${i}/.ftpaccess|/bin/sed 's/\ //g'`
+   AllowUser=`/usr/bin/awk /AllowUser/'{print $2}' ${i}/.ftpaccess|/usr/bin/sed 's/\ //g'`
+   DenyUser=`/usr/bin/awk /DenyUser/'{print $2}' ${i}/.ftpaccess|/usr/bin/sed 's/\ //g'`
    [ "$DenyUser" == "" ] && DenyUser=none
    name=${i##*/}
    echo "$name^$AllowUser#$DenyUser"
   done
   ;;
  USBData)
-  SHARE_PATH_TREE=`/bin/df|/bin/grep "/home/"|/bin/awk '{print $1}'`
+  SHARE_PATH_TREE=`/bin/df|/usr/bin/grep "/home/"|/usr/bin/awk '{print $1}'`
   for disk in $SHARE_PATH_TREE; do
    disk=${disk##*/}
-   FOLDER=`/bin/df|/bin/awk /${disk}/'{print $NF}'`
+   FOLDER=`/bin/df|/usr/bin/awk /${disk}/'{print $NF}'`
    FOLDER=${FOLDER##*/}
    str="${FOLDER}^"
   done
@@ -155,21 +155,21 @@ case ${func} in
   ;;
  ftp_state)
   [ -n "`/bin/pidof proftpd`" ] && echo "ON" || echo "OFF"
-  /bin/awk /PassivePorts/'{print $2,$3}' ${FTP_CONF}|/bin/sed 's/\ $//'|/bin/tr " " "^"
-  /bin/awk /anonymous.conf/'{print $1}' ${FTP_CONF}|/bin/grep "^#" >/dev/null 2>&1
+  /usr/bin/awk /PassivePorts/'{print $2,$3}' ${FTP_CONF}|/usr/bin/sed 's/\ $//'|/usr/bin/tr " " "^"
+  /usr/bin/awk /anonymous.conf/'{print $1}' ${FTP_CONF}|/usr/bin/grep "^#" >/dev/null 2>&1
   [ $? -eq 0 ] && echo "NO" || echo "YES"
-  /bin/cat ${ANONYMOUS_CONF}|/bin/grep "AllowAll" >/dev/null 2>&1
+  /bin/cat ${ANONYMOUS_CONF}|/usr/bin/grep "AllowAll" >/dev/null 2>&1
   [ $? -eq 0 ] && echo "YES" || echo "NO"
-  /bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home$" >/dev/null 2>&1
+  /bin/df|/usr/bin/awk '{print $NF}'|/usr/bin/grep "^/home$" >/dev/null 2>&1
   [ $? -eq 0 ] && echo "ENABLE" || echo "DISABLE"
   ;;
  FolderList)
-  FOLDER=`/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/bin/tr " " "^"`
+  FOLDER=`/usr/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/usr/bin/tr " " "^"`
   for folder in $FOLDER; do
    [ "${folder}" == "${SHARE_PATH}" ] && continue
    [ "${folder}" == "/home/.lpd" ] && continue
    folder=${folder##*/}
-   folder=`echo ${folder}|/bin/tr "^" " "`
+   folder=`echo ${folder}|/usr/bin/tr "^" " "`
    echo "$folder"
   done
   ;;
@@ -180,20 +180,20 @@ case ${func} in
   service_user_modify_ftp_action ${QUERY_STRING}
   ;;
  FolderCreate)
-  FolderName=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
+  FolderName=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
   /bin/mkdir -p ${SHARE_PATH}/${FolderName}
   /bin/chmod 777 ${SHARE_PATH}/${FolderName}
   service_smb_modify_conf
   ;;
  FolderModify)
-  OldFolderName=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
-  FolderName=`echo ${QUERY_STRING}|/bin/cut '-d&' -f3`
+  OldFolderName=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
+  FolderName=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f3`
   /bin/mv ${SHARE_PATH}/${OldFolderName} ${SHARE_PATH}/${FolderName}
   /bin/chmod 777 ${SHARE_PATH}/${FolderName}
   service_smb_modify_conf
  ;;
  FolderDelete)
-  FolderName=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
+  FolderName=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
   /bin/rm -rf ${SHARE_PATH}/${FolderName}
   service_smb_modify_conf
   ;;
@@ -202,10 +202,10 @@ case ${func} in
   ;;
  bt_state)
   [ -n "`/bin/pidof btpd`" ] && echo "ON" || echo "OFF"
-  /bin/awk -F= /port/'{print $2}' ${BTPD_CONF}|/bin/sed 's/\ //g'
-  /bin/awk -F= /outgoing/'{print $2}' ${BTPD_CONF}|/bin/sed 's/\ //g'
-  /bin/awk -F= /incoming/'{print $2}' ${BTPD_CONF}|/bin/sed 's/\ //g'
-  /bin/awk -F= /maxpeers/'{print $2}' ${BTPD_CONF}|/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /port/'{print $2}' ${BTPD_CONF}|/usr/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /outgoing/'{print $2}' ${BTPD_CONF}|/usr/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /incoming/'{print $2}' ${BTPD_CONF}|/usr/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /maxpeers/'{print $2}' ${BTPD_CONF}|/usr/bin/sed 's/\ //g'
   ;;
  modify_torrent_conf)
   service_btpd_modify_conf ${QUERY_STRING}
@@ -215,41 +215,41 @@ case ${func} in
   export BTPD_HOME=${BTPD_BASE_DIR}/.btpd
 
 # Old detect rule
-#  file=`/bin/find "${BTPD_TORRENTS}/" -maxdepth 1 -type f|/bin/tr " " "^"`
+#  file=`/usr/bin/find "${BTPD_TORRENTS}/" -maxdepth 1 -type f|/usr/bin/tr " " "^"`
 #  for i in ${file}; do
-#   name=`echo "${i##*/}"|/bin/sed 's/'.torrent'//g'|/bin/tr "^" " "`
-#   num=`/bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/bin/grep "${name}.torrent$"|/bin/awk '{print $1}'`
+#   name=`echo "${i##*/}"|/usr/bin/sed 's/'.torrent'//g'|/usr/bin/tr "^" " "`
+#   num=`/bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/usr/bin/grep "${name}.torrent$"|/usr/bin/awk '{print $1}'`
 #   [ "$num" == "" ] && continue
 
 # New detect rule
-  Val=`/bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/bin/awk '{print $1}'`
+  Val=`/bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/usr/bin/awk '{print $1}'`
   for i in ${Val}; do
-   name=`/bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/bin/grep "^$i "|/bin/sed 's/^'$i'\ //'|/bin/sed 's/\.torrent$//'`
+   name=`/bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/usr/bin/grep "^$i "|/usr/bin/sed 's/^'$i'\ //'|/bin/sed 's/\.torrent$//'`
    num=$i
 
-   str=`/bin/btcli list ${num}|/bin/grep -v "NAME"|/bin/cut -c43-`
+   str=`/usr/bin/btcli list ${num}|/usr/bin/grep -v "NAME"|/usr/bin/cut -c43-`
    [ "$str" == "" ] && continue
-   str=`echo "$str"|/bin/awk 'BEGIN{OFS="^"}{print $2,$3,$4}'`
+   str=`echo "$str"|/usr/bin/awk 'BEGIN{OFS="^"}{print $2,$3,$4}'`
    echo "check^$num%$name^$str"
   done
   ;;
  TorrentStatus)
   export BTPD_HOME=${BTPD_BASE_DIR}/.btpd
-  num=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
-  FileName=`/bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/bin/grep "^$num "|/bin/sed 's/^'$num'\ //'`
+  num=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
+  FileName=`/bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/usr/bin/grep "^$num "|/usr/bin/sed 's/^'$num'\ //'`
 
-  Source=`/bin/btinfo ${BTPD_TORRENTS}/"$FileName"|/bin/grep -v "^Tracker URLs:"|\
-  /bin/tr -s ' ' ' '|/bin/tr '\n' '#'|/bin/sed 's/'Files:#'/\n/'|/bin/sed 's/\#$//'`
+  Source=`/usr/bin/btinfo ${BTPD_TORRENTS}/"$FileName"|/usr/bin/grep -v "^Tracker URLs:"|\
+  /usr/bin/tr -s ' ' ' '|/usr/bin/tr '\n' '#'|/usr/bin/sed 's/'Files:#'/\n/'|/bin/sed 's/\#$//'`
 
   echo "${Source}"|${ICONV} -f CP936 -t UTF-8 >/dev/null 2>&1
   [ $? -eq 0 ] && Target=`echo "${Source}"|${ICONV} -f CP936 -t UTF-8` ||\
    Target=`echo "${Source}"|${ICONV} -f CP950 -t UTF-8`
 
-  SourceNum=`echo "${Source}"|/bin/wc -c`
-  TargetNum=`echo "${Target}"|/bin/wc -c`
+  SourceNum=`echo "${Source}"|/usr/bin/wc -c`
+  TargetNum=`echo "${Target}"|/usr/bin/wc -c`
   [ $SourceNum -gt $TargetNum ] && echo "${Source}" || echo "${Target}"
 
-  status=`/bin/btcli stat ${BTPD_TORRENTS}/"$FileName"|/bin/grep -v "HAVE"|/bin/awk 'BEGIN{OFS="^"}{print $1,$2,$3,$4,$5,$7,$8}'`
+  status=`/usr/bin/btcli stat ${BTPD_TORRENTS}/"$FileName"|/usr/bin/grep -v "HAVE"|/usr/bin/awk 'BEGIN{OFS="^"}{print $1,$2,$3,$4,$5,$7,$8}'`
   echo "TorrentStatus=$status"
   ;;
  TorrentAction)
@@ -257,7 +257,7 @@ case ${func} in
   service_btpd_torrent_manager ${QUERY_STRING} ${action}
   ;;
  DiskStatus)
-  Status=`/bin/df|/bin/grep "/home$"`
+  Status=`/bin/df|/usr/bin/grep "/home$"`
   [ "$Status" == "" ] && echo "NoDisk" || echo "Enable"
   ;;
  *)

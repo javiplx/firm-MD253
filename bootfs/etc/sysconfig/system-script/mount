@@ -3,19 +3,19 @@
 SHARE_PATH=/home
 dev=$1
 
-TYPE=`/bin/blkid -c /dev/null -s TYPE /dev/${dev}|\
-      /bin/awk -F= '{print $2}'|/bin/sed 's/\"//g'|/bin/sed 's/\ //g'`
+TYPE=`/usr/bin/blkid -c /dev/null -s TYPE /dev/${dev}|\
+      /usr/bin/awk -F= '{print $2}'|/usr/bin/sed 's/\"//g'|/usr/bin/sed 's/\ //g'`
 
-string=`/bin/blkid -c /dev/null -s LABEL /dev/${dev}|\
-      /bin/awk -F= '{print $2}'|/bin/sed 's/\"//g'|\
-      /bin/sed 's/\ $//'|/bin/tr " " "_"`
+string=`/usr/bin/blkid -c /dev/null -s LABEL /dev/${dev}|\
+      /usr/bin/awk -F= '{print $2}'|/usr/bin/sed 's/\"//g'|\
+      /usr/bin/sed 's/\ $//'|/usr/bin/tr " " "_"`
 
-temp=`echo "$string"|/bin/tr -s '[A-Z]' '-'|/bin/tr -s '[a-z]' '-'|\
-     /bin/tr -s '[0-9]' '-'|/bin/tr -s '_' '-'|/bin/sed 's/-//g'`
+temp=`echo "$string"|/usr/bin/tr -s '[A-Z]' '-'|/usr/bin/tr -s '[a-z]' '-'|\
+     /usr/bin/tr -s '[0-9]' '-'|/usr/bin/tr -s '_' '-'|/usr/bin/sed 's/-//g'`
 [ "$temp" != "" ] && string=""
 
 [ "$string" == "" ] && {
- name=`/bin/echo $dev|/bin/sed 's/sd//'|/bin/tr "[:lower:]" "[:upper:]"`
+ name=`/bin/echo $dev|/usr/bin/sed 's/sd//'|/usr/bin/tr "[:lower:]" "[:upper:]"`
  string=UNTITLED-${name}
  }
 
@@ -26,19 +26,19 @@ case ${TYPE} in
   /bin/mount /dev/${dev} ${SHARE_PATH}/${string} && /bin/chmod 777 ${SHARE_PATH}/${string}
   ;;
  vfat)
-  /bin/blkid -c /dev/null -s TYPE|/bin/grep "hfsplus" >/dev/null 2>&1
+  /usr/bin/blkid -c /dev/null -s TYPE|/usr/bin/grep "hfsplus" >/dev/null 2>&1
   [ $? -ne 0 ] &&\
    /bin/mount -o utf8,umask=0000 /dev/${dev} ${SHARE_PATH}/${string}
   ;;
  hpfs|ntfs)
-  /bin/ntfs-3g /dev/${dev} ${SHARE_PATH}/${string} -o force,umask=0000,locale=zh_TW.UTF-8
+  /usr/bin/ntfs-3g /dev/${dev} ${SHARE_PATH}/${string} -o force,umask=0000,locale=zh_TW.UTF-8
   ;;
  hfsplus)
   case ${string} in
    Boot_OSX)
     ;;
    *)
-    /bin/fsck.hfsplus -fy /dev/${dev}
+    /usr/bin/fsck.hfsplus -fy /dev/${dev}
     /bin/mount -t hfsplus /dev/${dev} ${SHARE_PATH}/${string} -o rw,force,umask=0000
     ;;
   esac
@@ -48,8 +48,8 @@ esac
 df|grep ${dev}
 [ $? -eq 0 ] && {
  /bin/echo "${string}=${dev}" >> /etc/sysconfig/config/USBData
- /bin/logger "$0 - Mount new device : \"/dev/${dev}\", New folder : \"${SHARE_PATH}/${string}\""
+ /usr/bin/logger "$0 - Mount new device : \"/dev/${dev}\", New folder : \"${SHARE_PATH}/${string}\""
  } || {
  rm -rf ${SHARE_PATH}/${string}
- /bin/logger "$0 - Mount new device : \"/dev/${dev}\" failed"
+ /usr/bin/logger "$0 - Mount new device : \"/dev/${dev}\" failed"
  }

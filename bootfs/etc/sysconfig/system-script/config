@@ -21,4 +21,4 @@ for file in $FILE; do
 done
 
 rm -f ${TOUCH}
-/bin/logger "$0 - Modify Samba Config \"shares.conf\""
+/usr/bin/logger "$0 - Modify Samba Config \"shares.conf\""

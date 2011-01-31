@@ -10,8 +10,8 @@ PID=`/bin/pidof nmbd`
 [ "${PID}" == "" ] && {
  ${nmbd_prog}
  [ $? -eq 0 ] &&\
-  /bin/logger "$0 - nmbd deamon Start Succeed" ||\
-  /bin/logger "$0 - nmbd deamon Start Failed"
+  /usr/bin/logger "$0 - nmbd deamon Start Succeed" ||\
+  /usr/bin/logger "$0 - nmbd deamon Start Failed"
  } || {
  /bin/killall nmbd
  for i in $PID; do
@@ -21,19 +21,19 @@ PID=`/bin/pidof nmbd`
  sleep 2
  ${nmbd_prog}
 [ $? -eq 0 ] &&\
- /bin/logger "$0 - nmbd deamon Restart Succeed" ||\
- /bin/logger "$0 - nmbd deamon Restart Failed"
+ /usr/bin/logger "$0 - nmbd deamon Restart Succeed" ||\
+ /usr/bin/logger "$0 - nmbd deamon Restart Failed"
  }
 
 PID=`/bin/pidof smbd`
 [ "${PID}" == "" ] && {
- /bin/nice -n +10 ${smbd_prog}
+ /usr/bin/nice -n +10 ${smbd_prog}
 [ $? -eq 0 ] &&\
- /bin/logger "$0 - smbd deamon Start Succeed" ||\
- /bin/logger "$0 - smbd deamon Start Failed"
+ /usr/bin/logger "$0 - smbd deamon Start Succeed" ||\
+ /usr/bin/logger "$0 - smbd deamon Start Failed"
  }
 
-admin_pass=`/bin/cat /etc/sysconfig/config/httpd.conf|/bin/awk "-F:" '{print $3}'|/bin/sed 's/\ //g'`
+admin_pass=`/bin/cat /etc/sysconfig/config/httpd.conf|/usr/bin/awk "-F:" '{print $3}'|/usr/bin/sed 's/\ //g'`
 (echo "MapoweR";echo "MapoweR")|${PASSWD_PROG} -s -a toor >/dev/null 2>&1
 (echo "${admin_pass}";echo "${admin_pass}")|${PASSWD_PROG} -s -a admin >/dev/null 2>&1
 

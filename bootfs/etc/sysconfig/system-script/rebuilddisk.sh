@@ -5,18 +5,18 @@ export PATH
 . /usr/libexec/modules/modules.conf
 SHARE_PATH=/home
 PASSWD=/etc/passwd
-replaceFile=/bin/replaceFile
+replaceFile=/usr/bin/replaceFile
 XFS_QUOTA=/usr/local/xfsprogs/xfs_quota
 crontable=/etc/sysconfig/config/root
 detectRebuild=/etc/sysconfig/system-script/detectRebuild
 SLEEP=1
 
 /bin/killall udevd >/dev/null 2>&1
-/bin/sleep $SLEEP
+/usr/bin/sleep $SLEEP
 
 for disk in sda sdb; do
  MD_STATUS=`/usr/bin/mdadm -D /dev/md1`
- echo "$MD_STATUS"|/bin/grep "$disk" >/dev/null 2>&1
+ echo "$MD_STATUS"|/usr/bin/grep "$disk" >/dev/null 2>&1
  [ $? -eq 0 ] && {
   active=$disk
   break
@@ -56,8 +56,8 @@ case ${active} in
   ;;
 esac
 
-detectRebuildLine=`/bin/cat ${crontable}|/bin/grep "${detectRebuild}"`
-echo "${detectRebuildLine}"|/bin/grep "#" >/devnull 2>&1
+detectRebuildLine=`/bin/cat ${crontable}|/usr/bin/grep "${detectRebuild}"`
+echo "${detectRebuildLine}"|/usr/bin/grep "#" >/devnull 2>&1
 [ $? -eq 0 ] &&\
  $replaceFile "${crontable}" "${detectRebuildLine}" "* * * * * /etc/sysconfig/system-script/detectRebuild"
 

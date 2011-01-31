@@ -13,18 +13,18 @@ func=`echo ${QUERY_STRING} | cut '-d&' -f1`
 
 case ${func} in
  GetStatusInfo)
-  /bin/hostname|/bin/sed 's/\ //g'
-  /bin/awk "-F = " '/workgroup/{print $2}' ${SMB_HOST_CONF}|/bin/sed 's/\ //g'
+  /bin/hostname|/usr/bin/sed 's/\ //g'
+  /usr/bin/awk "-F = " '/workgroup/{print $2}' ${SMB_HOST_CONF}|/usr/bin/sed 's/\ //g'
   /bin/cat $VERSION
-  /bin/awk -F= /IPADDR/'{print $2}' $IFCFG|/bin/sed 's/\ //g'
-  /bin/awk -F= /HWADDR/'{print $2}' $IFCFG|/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /IPADDR/'{print $2}' $IFCFG|/usr/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /HWADDR/'{print $2}' $IFCFG|/usr/bin/sed 's/\ //g'
   [ -n "`/bin/pidof smbd`" ] && echo "ON" || echo "OFF"
   [ -n "`/bin/pidof proftpd`" ] && echo "ON" || echo "OFF"
   [ -n "`/bin/pidof twonkymedia`" ] && echo "ON" || echo "OFF"
   [ -n "`/bin/pidof daapd`" ] && echo "ON" || echo "OFF"
   ;;
  GetDateTime)
-  /bin/date '+%Y %m %d %H %M'|/bin/tr -d '\n'
+  /usr/bin/date '+%Y %m %d %H %M'|/usr/bin/tr -d '\n'
   ;;
  setDateTime)
   now=`echo ${QUERY_STRING} | cut '-d&' -f2`

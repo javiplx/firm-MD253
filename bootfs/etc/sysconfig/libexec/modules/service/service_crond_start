@@ -1,5 +1,5 @@
 service_crond_start(){
-crond_prog=/bin/crond
+crond_prog=/usr/bin/crond
 cat /dev/null > /var/log/crond.log
 PID=`/bin/pidof crond`
 [ "$PID" == "" ] || {
@@ -9,6 +9,6 @@ PID=`/bin/pidof crond`
  }
 ${crond_prog} -L /var/log/crond.log >/dev/null 2>&1
 [ $? -eq 0 ] &&\
- /bin/logger "$0 - crond deamon Start Succeed" ||\
- /bin/logger "$0 - crond deamon Start Failed"
+ /usr/bin/logger "$0 - crond deamon Start Succeed" ||\
+ /usr/bin/logger "$0 - crond deamon Start Failed"
 }

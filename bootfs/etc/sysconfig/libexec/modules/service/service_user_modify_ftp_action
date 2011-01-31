@@ -20,11 +20,11 @@ esac
 
 case ${Action} in
  Access)
-  OLD_DenyUser=`/bin/awk /DenyUser/'{print $2}' ${ConfigFile}|/bin/sed 's/\ //g'`
-  OLD_DenyUser_Line=`/bin/cat ${ConfigFile}|/bin/grep "DenyUser"`
+  OLD_DenyUser=`/usr/bin/awk /DenyUser/'{print $2}' ${ConfigFile}|/usr/bin/sed 's/\ //g'`
+  OLD_DenyUser_Line=`/bin/cat ${ConfigFile}|/usr/bin/grep "DenyUser"`
   case ${value} in
    YES)
-    NEW_DenyUser=`echo ${OLD_DenyUser}|/bin/sed 's/',${UserName},'/,/g'|/bin/sed 's/'^${UserName},'//g'`
+    NEW_DenyUser=`echo ${OLD_DenyUser}|/usr/bin/sed 's/',${UserName},'/,/g'|/bin/sed 's/'^${UserName},'//g'`
     $replaceFile "${ConfigFile}" "${OLD_DenyUser_Line}" "DenyUser ${NEW_DenyUser}"
     ;;
    NO)
@@ -33,14 +33,14 @@ case ${Action} in
   esac
   ;;
  Login)
-  OLD_AllowUser=`/bin/awk /AllowUser/'{print $2}' ${ConfigFile}|/bin/sed 's/\ //g'`
-  OLD_AllowUser_Line=`/bin/cat ${ConfigFile}|/bin/grep "AllowUser"`
+  OLD_AllowUser=`/usr/bin/awk /AllowUser/'{print $2}' ${ConfigFile}|/usr/bin/sed 's/\ //g'`
+  OLD_AllowUser_Line=`/bin/cat ${ConfigFile}|/usr/bin/grep "AllowUser"`
   case ${value} in
    YES)
     $replaceFile "${ConfigFile}" "${OLD_AllowUser_Line}" "${OLD_AllowUser_Line}${UserName},"
     ;;
    NO)
-    NEW_AllowUser=`echo ${OLD_AllowUser}|/bin/sed 's/',${UserName},'/,/g'|/bin/sed 's/'^${UserName},'//g'`
+    NEW_AllowUser=`echo ${OLD_AllowUser}|/usr/bin/sed 's/',${UserName},'/,/g'|/bin/sed 's/'^${UserName},'//g'`
     $replaceFile "${ConfigFile}" "${OLD_AllowUser_Line}" "AllowUser ${NEW_AllowUser}"
     ;;
   esac

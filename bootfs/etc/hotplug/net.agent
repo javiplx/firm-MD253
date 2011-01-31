@@ -64,9 +64,9 @@ add|register)
 
 	    # RedHat and similar
 	    export IN_HOTPLUG=1
-	    if [ -x /sbin/ifup ]; then
+	    if [ -x /usr/sbin/ifup ]; then
 		debug_mesg invoke ifup $INTERFACE
-		exec /sbin/ifup $INTERFACE
+		exec /usr/sbin/ifup $INTERFACE
 	    else
 		mesg "how do I bring interfaces up on this distro?"
 	    fi

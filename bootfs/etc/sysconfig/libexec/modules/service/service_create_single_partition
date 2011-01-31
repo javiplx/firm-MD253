@@ -33,5 +33,5 @@ p
 w
 EOF
 sleep $SLEEP
-/bin/logger "$0 - Create \"/dev/${dev}\" new partition"
+/usr/bin/logger "$0 - Create \"/dev/${dev}\" new partition"
 }

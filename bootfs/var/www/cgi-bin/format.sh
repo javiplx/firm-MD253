@@ -10,7 +10,7 @@ SMB_CONF=${CONFIG_PATH}/smb/smb.conf
 scsi_list=${CONFIG_PATH}/scsi.list
 
 XFS_QUOTA=/usr/local/xfsprogs/xfs_quota
-replaceFile=/bin/replaceFile
+replaceFile=/usr/bin/replaceFile
 crontable=/etc/sysconfig/config/root
 detectRebuild=/etc/sysconfig/system-script/detectRebuild
 TwonkyMedia=/usr/local/TwonkyVision/twonkymedia.sh
@@ -19,8 +19,8 @@ PASSWD=/etc/passwd
 SLEEP=1
 SHARE_PATH=/home
 
-detectRebuildLine=`/bin/cat ${crontable}|/bin/grep "${detectRebuild}"`
-echo "${detectRebuildLine}"|/bin/grep "#" >/devnull 2>&1
+detectRebuildLine=`/bin/cat ${crontable}|/usr/bin/grep "${detectRebuild}"`
+echo "${detectRebuildLine}"|/usr/bin/grep "#" >/devnull 2>&1
 [ $? -eq 0 ] || {
  $replaceFile "${crontable}" "${detectRebuildLine}" "#* * * * * /etc/sysconfig/system-script/detectRebuild"
  service_crond_start
@@ -40,12 +40,12 @@ done
 dlna_stop_daemon >/dev/null 2>&1 &
 $TwonkyMedia stop
 
-/bin/sleep $SLEEP
+/usr/bin/sleep $SLEEP
 /bin/killall djmount >/dev/null 2>&1
 /bin/killall udevd >/dev/null 2>&1
-/bin/sleep $SLEEP
+/usr/bin/sleep $SLEEP
 
-SHARE_PATH_TREE=`/bin/df|/bin/grep "/home/"|/bin/awk '{print $1}'`
+SHARE_PATH_TREE=`/bin/df|/usr/bin/grep "/home/"|/usr/bin/awk '{print $1}'`
 for disk in $SHARE_PATH_TREE; do
  disk=${disk##*/}
  /etc/sysconfig/system-script/umount $disk
@@ -65,9 +65,9 @@ done
 
 service_create_partition ${mode} >/dev/null 2>&1
 
-/bin/sleep $SLEEP
+/usr/bin/sleep $SLEEP
 /bin/killall djmount >/dev/null 2>&1
-/bin/sleep $SLEEP
+/usr/bin/sleep $SLEEP
 
 cat /dev/null > /etc/mdadm.conf
 /usr/bin/mdadm --zero-superblock /dev/sda1
@@ -84,26 +84,26 @@ echo "hdd2 red clear" > /proc/mp_leds
 #mount -t xfs -o prjquota /dev/md1 ${SHARE_PATH} >/dev/null 2>&1
 /bin/mount -t xfs -o uquota /dev/md1 ${SHARE_PATH}
 [ $? -eq 0 ] && {
- /bin/logger "$0 - Drive Mount Succeed"
+ /usr/bin/logger "$0 - Drive Mount Succeed"
  echo "hdd1 blue set" > /proc/mp_leds
  echo "hdd2 blue set" > /proc/mp_leds
  } || {
- /bin/logger "$0 - Drive Mount Failed"
+ /usr/bin/logger "$0 - Drive Mount Failed"
  echo "hdd1 red set" > /proc/mp_leds
  echo "hdd2 red set" > /proc/mp_leds
  }
 
-USER=`/bin/awk -F: /:500:/'{print $1}' ${PASSWD}`
-NOBODY=`/bin/awk -F: /^nobody:/'{print $5}' ${PASSWD}|/bin/sed 's/\ //g'`
+USER=`/usr/bin/awk -F: /:500:/'{print $1}' ${PASSWD}`
+NOBODY=`/usr/bin/awk -F: /^nobody:/'{print $5}' ${PASSWD}|/usr/bin/sed 's/\ //g'`
 [ "$NOBODY" == "nobody" ] || {
- bhard=`echo ${NOBODY}|/bin/awk -F, '{print $2}'|/bin/sed 's/\ //g'`
+ bhard=`echo ${NOBODY}|/usr/bin/awk -F, '{print $2}'|/usr/bin/sed 's/\ //g'`
  ${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g 99" /home
  }
 
 for user in ${USER}; do
- USER_UID=`/bin/awk -F: /^${user}:/'{print $3}' ${PASSWD}`
- bhard=`/bin/awk -F: /^${user}:/'{print $5}' ${PASSWD}|\
-        /bin/awk -F, '{print $2}'|/bin/sed 's/\ //g'`
+ USER_UID=`/usr/bin/awk -F: /^${user}:/'{print $3}' ${PASSWD}`
+ bhard=`/usr/bin/awk -F: /^${user}:/'{print $5}' ${PASSWD}|\
+        /usr/bin/awk -F, '{print $2}'|/usr/bin/sed 's/\ //g'`
  [ "$bhard" == "0" ] && bhard=999999999
 
  ${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g ${USER_UID}" ${SHARE_PATH}
@@ -132,5 +132,5 @@ $TwonkyMedia start
 /bin/chown nobody.nogroup /home/PUBLIC/Media
 /bin/chmod 777 /home/PUBLIC/Media
 
-/bin/udevd --daemon
-/bin/logger "$0 - Drive Format Succeed"
+/usr/bin/udevd --daemon
+/usr/bin/logger "$0 - Drive Format Succeed"

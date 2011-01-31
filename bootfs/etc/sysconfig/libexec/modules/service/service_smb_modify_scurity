@@ -7,7 +7,7 @@ SMB_SHARES_CONF=${CONFIG_PATH}/smb/shares.inc
 NEW_MODE=$1
 [ "$NEW_MODE" == "" ] && NEW_MODE=share
 
-OLD_MODE=`/bin/awk -F= /security/'{print $2}' ${SMB_CONF}|/bin/sed 's/\ //g'`
+OLD_MODE=`/usr/bin/awk -F= /security/'{print $2}' ${SMB_CONF}|/usr/bin/sed 's/\ //g'`
 $replaceFile "$SMB_CONF" "security = $OLD_MODE" "security = $NEW_MODE"
 
 SLEEP=1
@@ -20,15 +20,15 @@ for path in $Directory; do
   }
 done
 
-FOLDER=`/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/bin/tr " " "^"`
+FOLDER=`/usr/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/usr/bin/tr " " "^"`
 
 new_write_list=$(echo $(service_smb_modify_share_access))
-new_write_list=`echo "${new_write_list}"|/bin/sed 's/\ //g'`
+new_write_list=`echo "${new_write_list}"|/usr/bin/sed 's/\ //g'`
 new_login_list="${new_write_list}"
 
 /bin/cat /dev/null > ${SMB_SHARES_CONF}
 for i in ${FOLDER}; do
- i=`echo ${i}|/bin/tr "^" " "`
+ i=`echo ${i}|/usr/bin/tr "^" " "`
  [ "${i}" == "${SHARE_PATH}" ] && continue
  [ "${i}" == "/home/.lpd" ] && continue
  string=${i##*/}
@@ -58,7 +58,7 @@ for i in ${FOLDER}; do
   }
 
 done
-/bin/logger "$0 - Modify Samba Config \"shares.inc\""
+/usr/bin/logger "$0 - Modify Samba Config \"shares.inc\""
 
 service_smb_stop
 }

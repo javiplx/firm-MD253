@@ -5,7 +5,7 @@ SERVICE_CONF=$SERVICE_PATH/service
 dlna_daapd_modify_conf
 
 . $SERVICE_CONF
-/bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home$" >/dev/null 2>&1
+/bin/df|/usr/bin/awk '{print $NF}'|/usr/bin/grep "^/home$" >/dev/null 2>&1
 [ $? -ne 0 ] && return;
 
 service="daapd"
@@ -18,8 +18,8 @@ for i in $service; do
     daapd)
      /usr/bin/daapd -m -c $SERVICE_PATH/daapd.conf -d 9 -D scan -f > /tmp/data 2>&1 &
      [ $? -eq 0 ] &&\
-      /bin/logger "$0 - daapd deamon Start Succeed" ||\
-      /bin/logger "$0 - daapd deamon Start Failed"
+      /usr/bin/logger "$0 - daapd deamon Start Succeed" ||\
+      /usr/bin/logger "$0 - daapd deamon Start Failed"
      ;;
    esac
    }

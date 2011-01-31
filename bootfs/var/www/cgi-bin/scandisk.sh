@@ -17,15 +17,15 @@ done
 dlna_stop_daemon >/dev/null 2>&1 &
 $TwonkyMedia stop
 
-/bin/sleep $SLEEP
+/usr/bin/sleep $SLEEP
 
 DiskNum=0
 for scsi in SCSI0 SCSI1; do
- MODEL=`/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
+ MODEL=`/usr/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
  [ "$MODEL" == "" ] && continue || DiskNum=`expr $DiskNum + 1`
 done
 
-SHARE_PATH_TREE=`/bin/df|/bin/grep "/home/"|/bin/awk '{print $1}'`
+SHARE_PATH_TREE=`/bin/df|/usr/bin/grep "/home/"|/usr/bin/awk '{print $1}'`
 for disk in $SHARE_PATH_TREE; do
  disk=${disk##*/}
  /etc/sysconfig/system-script/umount $disk
@@ -68,13 +68,13 @@ echo "hdd2 red set" > /proc/mp_leds
  /bin/mount -t xfs -o uquota /dev/md1 /home
  }
 [ $? -eq 0 ] && {
- /bin/logger "$0 - Drive Mount Succeed"
+ /usr/bin/logger "$0 - Drive Mount Succeed"
  echo "hdd1 red clear" > /proc/mp_leds
  echo "hdd2 red clear" > /proc/mp_leds
  echo "hdd1 blue set" > /proc/mp_leds
  echo "hdd2 blue set" > /proc/mp_leds
  } || {
- /bin/logger "$0 - Drive Mount Failed"
+ /usr/bin/logger "$0 - Drive Mount Failed"
  echo "hdd1 blue clear" > /proc/mp_leds
  echo "hdd2 blue clear" > /proc/mp_leds
  echo "hdd1 red set" > /proc/mp_leds

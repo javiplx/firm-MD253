@@ -14,11 +14,11 @@ maxpeers=`echo ${QUERY_STRING} | cut '-d&' -f6`
 service_btpd_stop
 
 new_status=`echo ${QUERY_STRING} | cut '-d&' -f2`
-old_status=`/bin/awk -F= /btpd/'{print $2}' ${SERVICE_CONF}|/bin/sed 's/\ //g'`
+old_status=`/usr/bin/awk -F= /btpd/'{print $2}' ${SERVICE_CONF}|/usr/bin/sed 's/\ //g'`
 [ "$old_status" == "$new_status" ] ||\
  $replaceFile "${SERVICE_CONF}" "btpd=$old_status" "btpd=$new_status"
 
 service_btpd_modify_conf_data > ${BTPD_CONF}
-/bin/logger "$0 - Modify btpd Config \"btpd.conf\""
+/usr/bin/logger "$0 - Modify btpd Config \"btpd.conf\""
 service_btpd_start
 }

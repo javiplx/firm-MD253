@@ -11,7 +11,7 @@ service_mount_tmpfs
 service_mount_system
 service_syslogd_start
 
-/bin/buttons_daemon
+/usr/bin/buttons_daemon
 # mount HDD
 SMB_HDD_CONF=/etc/sysconfig/config/smb/hdd.inc
 SMB_SHARE_CONF=/etc/sysconfig/config/smb/shares.inc
@@ -26,21 +26,21 @@ EXEC=/etc/sysconfig/system-script/media_service
 
 service_setcolor
 
-/bin/udevd --daemon
+/usr/bin/udevd --daemon
 [ $? -eq 0 ] &&\
- /bin/logger "$0 - udevd deamon Start Succeed" ||\
- /bin/logger "$0 - udevd deamon Start Failed"
+ /usr/bin/logger "$0 - udevd deamon Start Succeed" ||\
+ /usr/bin/logger "$0 - udevd deamon Start Failed"
 
 network_start >/dev/null 2>&1
 service_ntp_start >/dev/null 2>&1 &
 /usr/local/samba/sbin/nmbd >/dev/null 2>&1
 [ $? -eq 0 ] &&\
- /bin/logger "$0 - nmbd deamon Start Succeed" ||\
- /bin/logger "$0 - nmbd deamon Start Failed"
+ /usr/bin/logger "$0 - nmbd deamon Start Succeed" ||\
+ /usr/bin/logger "$0 - nmbd deamon Start Failed"
 
 SERVICE="crond smb ftp http btpd"
 for i in $SERVICE; do
- status=`/bin/awk -F= /$i/'{print $2}' ${SERVICE_CONF}`
+ status=`/usr/bin/awk -F= /$i/'{print $2}' ${SERVICE_CONF}`
  [ "$status" == "Enable" ] && service_${i}_start &
 done
 
@@ -49,8 +49,8 @@ service_ssh_start &
 # Load USB kernel modules
 /sbin/insmod ${KERNEL_PATH}/usb-storage.ko >/dev/null 2>&1 &
 [ $? -eq 0 ] &&\
- /bin/logger "$0 - Insert USB Kernel Module Succeed" ||\
- /bin/logger "$0 - Insert USB Kernel Module Failed"
+ /usr/bin/logger "$0 - Insert USB Kernel Module Succeed" ||\
+ /usr/bin/logger "$0 - Insert USB Kernel Module Failed"
 /sbin/insmod ${KERNEL_PATH}/usblp.ko >/dev/null 2>&1 &
 
 ${cron_ntp} >/dev/null 2>&1 &

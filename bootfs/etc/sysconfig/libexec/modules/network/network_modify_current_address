@@ -1,5 +1,5 @@
 network_modify_current_address(){
-replaceFile=/bin/replaceFile
+replaceFile=/usr/bin/replaceFile
 
 ConfigPath=/etc/sysconfig/config
 SmbPath=${ConfigPath}/smb
@@ -11,11 +11,11 @@ RESOLV=/etc/resolv.conf
 IFCFG=/etc/sysconfig/config/ifcfg-eth0
 . $IFCFG
 
-NEW_IPADDR=`/bin/ifconfig eth0|/bin/awk '/inet\ addr/{print $2}'|/bin/cut -d ":" -f2`
-NEW_NETMASK=`/bin/ifconfig eth0|/bin/awk '/inet\ addr/{print $4}'|/bin/cut -d ":" -f2`
-NEW_NETWORK=`/bin/ipcalc -n $NEW_IPADDR $NEW_NETMASK|/bin/cut -d "=" -f2`
-NEW_BROADCAST=`/bin/ipcalc -b $NEW_IPADDR $NEW_NETMASK|/bin/cut -d "=" -f2`
-NEW_GATEWAY=`/bin/ip route|/bin/awk '/default/{print $3}'`
+NEW_IPADDR=`/bin/ifconfig eth0|/usr/bin/awk '/inet\ addr/{print $2}'|/usr/bin/cut -d ":" -f2`
+NEW_NETMASK=`/bin/ifconfig eth0|/usr/bin/awk '/inet\ addr/{print $4}'|/usr/bin/cut -d ":" -f2`
+NEW_NETWORK=`/usr/bin/ipcalc -n $NEW_IPADDR $NEW_NETMASK|/usr/bin/cut -d "=" -f2`
+NEW_BROADCAST=`/usr/bin/ipcalc -b $NEW_IPADDR $NEW_NETMASK|/usr/bin/cut -d "=" -f2`
+NEW_GATEWAY=`/bin/ip route|/usr/bin/awk '/default/{print $3}'`
 
 STATUS="IPADDR NETWORK BROADCAST NETMASK GATEWAY"
 for i in $STATUS; do
@@ -25,14 +25,14 @@ for i in $STATUS; do
 done
 
 num=1
-for dns in `/bin/cat ${RESOLV}|/bin/awk '{print $2}'`; do
+for dns in `/bin/cat ${RESOLV}|/usr/bin/awk '{print $2}'`; do
  [ $num -eq 1 ] && {
-  str=`/bin/awk /PDNS/'{print $1}' $IFCFG`
+  str=`/usr/bin/awk /PDNS/'{print $1}' $IFCFG`
   $replaceFile "$IFCFG" "$str" "PDNS=$dns"
   }
 
  [ $num -eq 2 ] && {
-  str=`/bin/awk /SDNS/'{print $1}' $IFCFG`
+  str=`/usr/bin/awk /SDNS/'{print $1}' $IFCFG`
   $replaceFile "$IFCFG" "$str" "SDNS=$dns"
   }
 
@@ -41,13 +41,13 @@ for dns in `/bin/cat ${RESOLV}|/bin/awk '{print $2}'`; do
  num=`expr $num + 1`
 done
 
-SMB_IPADDR=`/bin/awk "-F = " '/interfaces/{print $2}' $SMB_CONF`
+SMB_IPADDR=`/usr/bin/awk "-F = " '/interfaces/{print $2}' $SMB_CONF`
 $replaceFile "${SMB_CONF}" "interfaces = ${SMB_IPADDR}" "interfaces = ${NEW_IPADDR}/${NEW_NETMASK}"
 
 echo "hosts allow = ${NEW_NETWORK}/${NEW_NETMASK}" > ${SMB_NET_CONF}
-/bin/logger "$0 - Modify NIC config : \"ifcfg-eth0\" IPADDR : \"${NEW_IPADDR}\""
+/usr/bin/logger "$0 - Modify NIC config : \"ifcfg-eth0\" IPADDR : \"${NEW_IPADDR}\""
 
-HostName=`/bin/hostname|/bin/sed 's/\ //g'`
+HostName=`/bin/hostname|/usr/bin/sed 's/\ //g'`
 echo "127.0.0.1	localhost" > ${LMHost}
 echo "${NEW_IPADDR}	${HostName}" >> ${LMHost}
 

@@ -25,9 +25,9 @@ case ${func} in
  Reset_2_Def)
   /bin/rm -f /etc/sysconfig/config/finish
   SHARE_PATH=/home
-  FOLDER=`/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/bin/tr " " "^"`
+  FOLDER=`/usr/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/usr/bin/tr " " "^"`
   for i in ${FOLDER}; do
-   i=`echo ${i}|/bin/tr "^" " "`
+   i=`echo ${i}|/usr/bin/tr "^" " "`
    [ "${i}" == "${SHARE_PATH}" ] && continue
    [ "${i}" == "/home/.lpd" ] && continue
    /bin/rm -rf ${i}/.ftpaccess
@@ -36,13 +36,13 @@ case ${func} in
  CheckNEW)
   cd /tmp
    /bin/rm -f /tmp/version.xml
-  /bin/wget http://portal.sitecom.com/MD-253/v1001/upgrade/version.xml > /tmp/.msg 2>&1
+  /usr/bin/wget http://portal.sitecom.com/MD-253/v1001/upgrade/version.xml > /tmp/.msg 2>&1
   [ $? -eq 0 ] && {
-   VerNum=`/bin/awk -F\" /version/'{print $2}' /tmp/version.xml|/bin/sed 's/\ //g'`
+   VerNum=`/usr/bin/awk -F\" /version/'{print $2}' /tmp/version.xml|/usr/bin/sed 's/\ //g'`
 
-   new=`echo "$VerNum"|/bin/awk -F. '{print "new_a="$1,"new_b="$2,"new_c="$3}'`
-   old=`/bin/awk -F_ '{print $2}' ${VERSION}|/bin/sed 's/v//'|/bin/sed 's/[a-z]$//'|\
-      /bin/awk -F. '{print "old_a="$1,"old_b="$2,"old_c="$3}'`
+   new=`echo "$VerNum"|/usr/bin/awk -F. '{print "new_a="$1,"new_b="$2,"new_c="$3}'`
+   old=`/usr/bin/awk -F_ '{print $2}' ${VERSION}|/usr/bin/sed 's/v//'|/bin/sed 's/[a-z]$//'|\
+      /usr/bin/awk -F. '{print "old_a="$1,"old_b="$2,"old_c="$3}'`
 
    versionset "$new"
    versionset "$old"
@@ -59,7 +59,7 @@ case ${func} in
    /bin/rm -f /tmp/.msg
    } || {
    echo "NoConnect"
-   /bin/cat /tmp/.msg|/bin/grep "wget:"|/bin/sed 's/wget:\ //'
+   /bin/cat /tmp/.msg|/usr/bin/grep "wget:"|/usr/bin/sed 's/wget:\ //'
    /bin/rm -f /tmp/.msg
    }
   ;;
@@ -71,11 +71,11 @@ case ${func} in
 
   cd /tmp
   /bin/rm -f /tmp/*.bin
-  /bin/wget ${firmware} > /tmp/.msg 2>&1 &
+  /usr/bin/wget ${firmware} > /tmp/.msg 2>&1 &
 
   # detect timeout
   while true; do
-   val=`/bin/cat /tmp/.msg|/bin/grep -v 'Connecting'|/bin/tr '\cM' '\n'|/bin/awk '{print $2}'`
+   val=`/bin/cat /tmp/.msg|/usr/bin/grep -v 'Connecting'|/usr/bin/tr '\cM' '\n'|/usr/bin/awk '{print $2}'`
    for i in $val; do
     value_2=$i
    done
@@ -88,18 +88,18 @@ case ${func} in
 
    [ "${value_1}" == "${value_2}" ] && {
     [ $num -ge $TimeOut ] && break || {
-     /bin/sleep $DELAY_TIME
+     /usr/bin/sleep $DELAY_TIME
      num=`expr $num + 1`
      continue
      }
     } || {
-    /bin/sleep $DELAY_TIME
+    /usr/bin/sleep $DELAY_TIME
     value_1="${value_2}"
     continue
     }
   done
 
-  /bin/cat /tmp/.msg|/bin/grep "100%"|/bin/grep "00:00:00" >/dev/null 2>&1
+  /bin/cat /tmp/.msg|/usr/bin/grep "100%"|/bin/grep "00:00:00" >/dev/null 2>&1
   [ $? -eq 0 ] && echo "OK" || {
    /bin/killall wget
    echo "NOT"
@@ -114,7 +114,7 @@ case ${func} in
 
   # decompression
   cd ${tempFolder}
-  /bin/tar xvf $firmware
+  /usr/bin/tar xvf $firmware
   ;;
  "Kernel_upgrade")
   # upgrade kernel
@@ -123,7 +123,7 @@ case ${func} in
    new=`md5sum uImage.bin | awk '{print $1}'`
    old=`cat uImage.md5sum | awk '{print $1}'`
    if [ "$new" == "$old" ]; then
-    /bin/flashcp uImage.bin /dev/mtd1
+    /usr/bin/flashcp uImage.bin /dev/mtd1
     echo "-finish-"
    else
     echo "error"
@@ -139,7 +139,7 @@ case ${func} in
    new=`md5sum bootfs.bin | awk '{print $1}'`
    old=`cat bootfs.bin.md5sum | awk '{print $1}'`
    if [ "$new" == "$old" ]; then
-    /bin/flashcp bootfs.bin /dev/mtd2
+    /usr/bin/flashcp bootfs.bin /dev/mtd2
     echo "-finish-"
    else
     echo "error"
@@ -155,7 +155,7 @@ case ${func} in
    new=`md5sum filesystem.bin | awk '{print $1}'`
    old=`cat filesystem.bin.md5sum | awk '{print $1}'`
    if [ "$new" == "$old" ]; then
-    /bin/flashcp filesystem.bin /dev/mtd3
+    /usr/bin/flashcp filesystem.bin /dev/mtd3
     echo "-finish-"
    else
     echo "error"

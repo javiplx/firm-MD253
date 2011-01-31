@@ -10,7 +10,7 @@ SMB_SHARES_CONF=${CONF_PATH}/smb/shares.inc
 SMB_HOST_CONF=${CONF_PATH}/smb/host.inc
 IFCFG=${CONF_PATH}/ifcfg-eth0
 IFCFG_DEFAULT=${CONF_PATH}/ifcfg-eth0.default
-replaceFile=/bin/replaceFile
+replaceFile=/usr/bin/replaceFile
 
 scsi_list=/etc/sysconfig/config/scsi.list
 
@@ -22,7 +22,7 @@ func=`echo ${QUERY_STRING} | cut '-d&' -f1`
 case ${func} in
  "RAIDSTATUS")
   RAID_MODE=`/usr/bin/mdadm -D /dev/md1|\
-  /bin/awk -F: /Level/'{print $2}'|/bin/sed 's/\ //g'`
+  /usr/bin/awk -F: /Level/'{print $2}'|/usr/bin/sed 's/\ //g'`
 
   [ "$RAID_MODE" == "" ] && RAID_MODE=SingleDisk
   echo -e "$RAID_MODE"\\r
@@ -30,13 +30,13 @@ case ${func} in
  "Logical_Volumes")
   STATUS=`/usr/bin/mdadm -D /dev/md1`
   [ "${STATUS}" == "" ] || {
-   MODE=`echo "${STATUS}"|/bin/awk -F: /Level/'{print $2}'|sed 's/\ //g'`
+   MODE=`echo "${STATUS}"|/usr/bin/awk -F: /Level/'{print $2}'|sed 's/\ //g'`
    [ "$MODE" == "linear" ] && MODE=JBOD ||\
     MODE=`echo $MODE| tr "[:lower:]" "[:upper:]"`
-   SIZE=`/bin/df -h /dev/md1|/bin/grep "^/dev"|/bin/awk '{print $2,$4}'|/bin/tr " " "^"`
-   echo "${STATUS}"|/bin/grep "rebuilding" >/dev/null 2>&1
+   SIZE=`/bin/df -h /dev/md1|/usr/bin/grep "^/dev"|/usr/bin/awk '{print $2,$4}'|/usr/bin/tr " " "^"`
+   echo "${STATUS}"|/usr/bin/grep "rebuilding" >/dev/null 2>&1
    [ $? -eq 0 ] && {
-    percent=`/bin/cat /proc/mdstat|/bin/awk /recovery/'{print $4}'|sed 's/\ //g'`
+    percent=`/bin/cat /proc/mdstat|/usr/bin/awk /recovery/'{print $4}'|sed 's/\ //g'`
     str="recovery=${percent}"
     } || str="Ready"
    DATA="$MODE^$SIZE^$str"
@@ -46,7 +46,7 @@ case ${func} in
  "SingleDisk_Volumes")
   DiskNum=0
   for scsi in SCSI0 SCSI1; do
-   MODEL=`/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
+   MODEL=`/usr/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
    [ "$MODEL" == "" ] && continue || DiskNum=`expr $DiskNum + 1`
     REAL=$scsi
   done
@@ -55,10 +55,10 @@ case ${func} in
    echo -e "Drive 1^--^--^No Disk^Drive 2^--^--^No Disk"\\r
    } || {
    [ $DiskNum -lt 2 ] && {
-    MountPoint=`/bin/df|/bin/grep "^/dev/sda1"|/bin/awk '{print $NF}'`
+    MountPoint=`/bin/df|/usr/bin/grep "^/dev/sda1"|/usr/bin/awk '{print $NF}'`
     [ "$MountPoint" == "/home" ] && {
-     TotalSize=`/bin/df|/bin/grep "^/dev/sda1"|/bin/awk '{print $2}'`
-     FreeSize=`/bin/df|/bin/grep "^/dev/sda1"|/bin/awk '{print $4}'`
+     TotalSize=`/bin/df|/usr/bin/grep "^/dev/sda1"|/usr/bin/awk '{print $2}'`
+     FreeSize=`/bin/df|/usr/bin/grep "^/dev/sda1"|/usr/bin/awk '{print $4}'`
      }
 
     [ "$MountPoint" == "" ] && {
@@ -75,10 +75,10 @@ case ${func} in
     DiskNum=0
     for disk in sda1 sdb1; do
      DiskNum=`expr $DiskNum + 1`
-     TotalSize=`/bin/df -h|/bin/grep "^/dev/${disk}"|/bin/awk '{print $2}'`
+     TotalSize=`/bin/df -h|/usr/bin/grep "^/dev/${disk}"|/usr/bin/awk '{print $2}'`
      [ "$TotalSize" == "" ] && TotalSize="--"
 
-     FreeSize=`/bin/df -h|/bin/grep "^/dev/${disk}"|/bin/awk '{print $4}'`
+     FreeSize=`/bin/df -h|/usr/bin/grep "^/dev/${disk}"|/usr/bin/awk '{print $4}'`
      [ "$FreeSize" == "" ] && FreeSize="--"
 
      DATA="$DATADrive ${DiskNum}^${TotalSize}^${FreeSize}^format^"
@@ -91,14 +91,14 @@ case ${func} in
   scsi_list=/etc/sysconfig/config/scsi.list
   i=0
   for scsi in SCSI0 SCSI1; do
-   MODEL=`/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
+   MODEL=`/usr/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
    [ "$MODEL" == "" ] && continue || i=`expr $i + 1`
     REAL=$scsi
   done
 
   [ $i -lt 2 ] && {
-   Capacity=`/bin/fdisk -l /dev/sda|/bin/awk /sda:/'{print $5}'|sed 's/\ //g'`
-   MODEL=`/bin/awk -F: /${REAL}/'{print $2}' ${scsi_list}`
+   Capacity=`/bin/fdisk -l /dev/sda|/usr/bin/awk /sda:/'{print $5}'|sed 's/\ //g'`
+   MODEL=`/usr/bin/awk -F: /${REAL}/'{print $2}' ${scsi_list}`
    /usr/bin/mdadm -D /dev/md1 >/dev/null 2>&1
    [ $? -eq 0 ] && ACT="active" || ACT="removed"
 
@@ -112,14 +112,14 @@ case ${func} in
    } || {
    SCSI0=sda ; SCSI1=sdb
    for scsi in SCSI0 SCSI1; do
-    MODEL=`/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
+    MODEL=`/usr/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
     eval str=\$${scsi}
-    Capacity=`/bin/fdisk -l /dev/${str}|/bin/awk /${str}:/'{print $5}'|sed 's/\ //g'`
+    Capacity=`/bin/fdisk -l /dev/${str}|/usr/bin/awk /${str}:/'{print $5}'|sed 's/\ //g'`
     MD_STATUS=`/usr/bin/mdadm -D /dev/md1`
     [ "$MD_STATUS" == "" ] && ACT="removed" || {
-     echo "$MD_STATUS"|/bin/grep "$str" >/dev/null 2>&1
+     echo "$MD_STATUS"|/usr/bin/grep "$str" >/dev/null 2>&1
      [ $? -eq 0 ] && {
-      echo "$MD_STATUS"|/bin/grep "$str"|/bin/grep "rebuilding" >/dev/null 2>&1
+      echo "$MD_STATUS"|/usr/bin/grep "$str"|/bin/grep "rebuilding" >/dev/null 2>&1
       [ $? -eq 0 ] && ACT="rebuilding" || ACT="active"
       } || ACT="removed"
      }
@@ -128,7 +128,7 @@ case ${func} in
    }
   ;;
  "SingleFormat")
-  Disk=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
+  Disk=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
   $SingleFormat $Disk
   ;;
  "format")
@@ -156,24 +156,24 @@ case ${func} in
   ;;
  "Status")
   HostName=`/bin/hostname`
-  GROUPNAME=`/bin/awk -F= /workgroup/'{print $2}' ${SMB_HOST_CONF}|/bin/sed 's/\ //g'`
-  Size=`/bin/df|/bin/awk /md1/'{print $2}'`
+  GROUPNAME=`/usr/bin/awk -F= /workgroup/'{print $2}' ${SMB_HOST_CONF}|/usr/bin/sed 's/\ //g'`
+  Size=`/bin/df|/usr/bin/awk /md1/'{print $2}'`
   echo -e "$HostName^$GROUPNAME^$Size"\\r
   ;;
  "getGuestQuota")
-  bhard=`/bin/awk -F: /^nobody:/'{print $5}' /etc/passwd|\
-         /bin/awk -F, '{print $2}'|/bin/sed 's/\ //g'`
+  bhard=`/usr/bin/awk -F: /^nobody:/'{print $5}' /etc/passwd|\
+         /usr/bin/awk -F, '{print $2}'|/usr/bin/sed 's/\ //g'`
 
   echo -e "${bhard}"\\r
   ;;
  "SetExecTable")
-  Value=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2|/bin/sed 's/\%20/\ /g'`
+  Value=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2|/usr/bin/sed 's/\%20/\ /g'`
   $Value
   ;;
  "Quota")
   bhard=`echo ${QUERY_STRING} | cut '-d&' -f2`
   ${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g 99" /home
-  old_str=`/bin/awk /^nobody:/'{print $1}' /etc/passwd|/bin/sed 's/\ //g'`
+  old_str=`/usr/bin/awk /^nobody:/'{print $1}' /etc/passwd|/usr/bin/sed 's/\ //g'`
   new_str="nobody:!!:99:98:${bhard},${bhard}:/home/PUBLIC:/sbin/nologin"
   $replaceFile "/etc/passwd" "${old_str}" "${new_str}"
   ;;
@@ -181,7 +181,7 @@ case ${func} in
   service_user_modify ${QUERY_STRING}
   ;;
  "CreateFolder")
-  FolderName=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
+  FolderName=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
   SHARE_PATH=/home
   /bin/mkdir -p ${SHARE_PATH}/${FolderName}
   /bin/chmod 777 ${SHARE_PATH}/${FolderName}
@@ -192,9 +192,9 @@ case ${func} in
   HOME=/home
   data="/"
   for i in $data; do
-   PATH=`/bin/find "${HOME}${i}" -maxdepth 1 -type d|/bin/tr " " "^"`
+   PATH=`/usr/bin/find "${HOME}${i}" -maxdepth 1 -type d|/usr/bin/tr " " "^"`
    for j in $PATH; do
-    tmpPATH=`echo ${j}|/bin/tr "^" " "`
+    tmpPATH=`echo ${j}|/usr/bin/tr "^" " "`
     [ "${tmpPATH}" == "${HOME}${i}" ] && continue
     tmpPATH=${tmpPATH##*/}
     [ "$str" == "" ] &&\
@@ -205,8 +205,8 @@ case ${func} in
   echo "$str"
   ;;
  "UserList")
-  for i in `/bin/awk -F: '{print $1}' ${PASSWD}`; do
-   i=`echo ${i}|/bin/sed 's/\ //g'`
+  for i in `/usr/bin/awk -F: '{print $1}' ${PASSWD}`; do
+   i=`echo ${i}|/usr/bin/sed 's/\ //g'`
    [ "$str" == "" ] &&\
     str="$i" ||\
     str="$str^$i"
@@ -216,15 +216,15 @@ case ${func} in
  "SpecialUserFolderList")
   user=`echo ${QUERY_STRING} | cut '-d&' -f2`
   HOME=/home
-  PATH=`/bin/find "${HOME}" -maxdepth 1 -type d|/bin/tr " " "^"`
+  PATH=`/usr/bin/find "${HOME}" -maxdepth 1 -type d|/usr/bin/tr " " "^"`
   for i in $PATH; do
-   tmpPATH=`echo ${i}|/bin/tr "^" " "`
+   tmpPATH=`echo ${i}|/usr/bin/tr "^" " "`
    [ "${tmpPATH}" == "${HOME}" ] && continue
    tmpPATH=${tmpPATH##*/}
-   WriteList=`/bin/cat ${SMB_SHARES_CONF}/${tmpPATH}.inc|/bin/grep "write"|\
-              /bin/grep ",${user},"`
+   WriteList=`/bin/cat ${SMB_SHARES_CONF}/${tmpPATH}.inc|/usr/bin/grep "write"|\
+              /usr/bin/grep ",${user},"`
    Invalid=`/bin/cat ${SMB_SHARES_CONF}/${tmpPATH}.inc|\
-            /bin/awk -F= /invalid/'{print $2}'|/bin/sed 's/\ //g'|/bin/tr "," " "`
+            /usr/bin/awk -F= /invalid/'{print $2}'|/usr/bin/sed 's/\ //g'|/usr/bin/tr "," " "`
    for j in $Invalid; do
     [ "$user" == "$j" ] && {
      InvalidUsers=$j
@@ -249,14 +249,14 @@ case ${func} in
   service_smb_start
   ;;
  "ModifyMAC")
-  NEW_MAC=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2|/bin/tr 'a-z' 'A-Z'`
-  OLD_MAC=`/bin/awk -F= /HWADDR/'{print $2}' $IFCFG|/bin/sed 's/\ //g'`
-  OLD_MAC_DEFAULT=`/bin/awk -F= /HWADDR/'{print $2}' $IFCFG_DEFAULT|/bin/sed 's/\ //g'`
+  NEW_MAC=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2|/usr/bin/tr 'a-z' 'A-Z'`
+  OLD_MAC=`/usr/bin/awk -F= /HWADDR/'{print $2}' $IFCFG|/usr/bin/sed 's/\ //g'`
+  OLD_MAC_DEFAULT=`/usr/bin/awk -F= /HWADDR/'{print $2}' $IFCFG_DEFAULT|/usr/bin/sed 's/\ //g'`
   $replaceFile "${IFCFG}" "HWADDR=${OLD_MAC}" "HWADDR=${NEW_MAC}"
   $replaceFile "${IFCFG_DEFAULT}" "HWADDR=${OLD_MAC_DEFAULT}" "HWADDR=${NEW_MAC}"
   ;;
  "MACValue")
-  /bin/awk -F= /HWADDR/'{print $2}' $IFCFG_DEFAULT|/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /HWADDR/'{print $2}' $IFCFG_DEFAULT|/usr/bin/sed 's/\ //g'
   ;;
  *)
   echo -e "${QUERY_STRING} ${REQUEST_METHOD}"\\r

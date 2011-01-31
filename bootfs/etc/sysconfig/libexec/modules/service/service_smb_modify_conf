@@ -4,7 +4,7 @@ SMB_CONF=${CONFIG_PATH}/smb/smb.conf
 SMB_SHARES_CONF=${CONFIG_PATH}/smb/shares.inc
 
 SLEEP=1
-DiskStatus=`/bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home$"`
+DiskStatus=`/bin/df|/usr/bin/awk '{print $NF}'|/usr/bin/grep "^/home$"`
 [ "$DiskStatus" == "" ] || {
  #Directory="PUBLIC Media BitTorrent"
  Directory="PUBLIC BitTorrent"
@@ -17,19 +17,19 @@ DiskStatus=`/bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home$"`
  done
  }
 
-FOLDER=`/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/bin/tr " " "^"`
+FOLDER=`/usr/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/usr/bin/tr " " "^"`
 
 new_write_list=$(echo $(service_smb_modify_share_access))
-new_write_list=`echo "${new_write_list}"|/bin/sed 's/\ //g'`
+new_write_list=`echo "${new_write_list}"|/usr/bin/sed 's/\ //g'`
 new_login_list="${new_write_list}"
 
 /bin/cat /dev/null > ${SMB_SHARES_CONF}
 for i in ${FOLDER}; do
- i=`echo ${i}|/bin/tr "^" " "`
+ i=`echo ${i}|/usr/bin/tr "^" " "`
  [ "${i}" == "${SHARE_PATH}" ] && continue
  [ "${i}" == "/home/.lpd" ] && continue
  string=${i##*/}
- USBMountPoint=`/bin/df|/bin/awk /"${string}"$/'{print $NF}'`
+ USBMountPoint=`/bin/df|/usr/bin/awk /"${string}"$/'{print $NF}'`
 
  [ "${string}" == "Disk_2" -o "${string}" == "Disk_3" ] && USBMountPoint=""
 
@@ -70,5 +70,5 @@ for i in ${FOLDER}; do
   }
 
 done
-/bin/logger "$0 - Modify Samba Config \"shares.inc\""
+/usr/bin/logger "$0 - Modify Samba Config \"shares.inc\""
 }

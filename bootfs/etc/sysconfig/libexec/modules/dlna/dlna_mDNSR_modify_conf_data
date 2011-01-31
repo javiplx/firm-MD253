@@ -14,5 +14,5 @@ echo "\"$HOSTNAME\" _http._tcp local. 80"
    ;;
  esac
  }
-/bin/logger "$0 - Modify mDNSResponder config : \"responder.conf\""
+/usr/bin/logger "$0 - Modify mDNSResponder config : \"responder.conf\""
 }

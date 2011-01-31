@@ -5,7 +5,7 @@ KLOGD_OPTIONS="-x"
 [ -f /var/log/messages ] ||\
  /bin/touch /var/log/messages
 
-/bin/syslogd $SYSLOGD_OPTIONS
-/bin/klogd $KLOGD_OPTIONS
+/usr/bin/syslogd $SYSLOGD_OPTIONS
+/usr/bin/klogd $KLOGD_OPTIONS
 /bin/touch /var/lock/subsys/syslog
 }

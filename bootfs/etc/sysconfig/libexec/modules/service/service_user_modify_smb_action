@@ -18,22 +18,22 @@ esac
 
 case ${Action} in
  Access)
-  old_write_list=`/bin/awk -F= /write/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/bin/sed 's/\ //g'`
+  old_write_list=`/usr/bin/awk -F= /write/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/usr/bin/sed 's/\ //g'`
   case ${value} in
    YES)
     $replaceFile "${SMB_SHARES_CONF}/${FolderName}.inc" "write list = ${old_write_list}" "write list = ${old_write_list}${UserName},"
     ;;
    NO)
-    new_write_list=`echo ${old_write_list}|/bin/sed 's/',${UserName},'/,/g`
+    new_write_list=`echo ${old_write_list}|/usr/bin/sed 's/',${UserName},'/,/g`
     $replaceFile "${SMB_SHARES_CONF}/${FolderName}.inc" "write list = ${old_write_list}" "write list = ${new_write_list}"
     ;;
   esac
   ;;
  Login)
-  old_invalid_users=`/bin/awk -F= /invalid/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/bin/sed 's/\ //g'`
+  old_invalid_users=`/usr/bin/awk -F= /invalid/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/usr/bin/sed 's/\ //g'`
   case ${value} in
    YES)
-    new_invalid_users=`/bin/awk -F= /invalid/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/bin/sed 's/\ //g'|/bin/sed 's/',${UserName},'/,/g'|/bin/sed 's/'^${UserName},'//g'`
+    new_invalid_users=`/usr/bin/awk -F= /invalid/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/usr/bin/sed 's/\ //g'|/bin/sed 's/',${UserName},'/,/g'|/bin/sed 's/'^${UserName},'//g'`
     $replaceFile "${SMB_SHARES_CONF}/${FolderName}.inc" "invalid users = ${old_invalid_users}" "invalid users = ${new_invalid_users}"
     ;;
    NO)

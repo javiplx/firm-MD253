@@ -8,11 +8,11 @@ DAAP_CONF=/etc/sysconfig/config/daapd.conf
 WORKGROUP=`/bin/cat ${SMB_HOST_CONF}|grep "^workgroup"`
 echo "netbios name = ${name}" > ${SMB_HOST_CONF}
 echo "${WORKGROUP}" >> ${SMB_HOST_CONF}
-/bin/logger "$0 - Modify Samba config : \"host.inc\", netbios name : \"${name}\""
+/usr/bin/logger "$0 - Modify Samba config : \"host.inc\", netbios name : \"${name}\""
 
-old_daap_name=`/bin/awk /servername/'{print $2}' ${DAAP_CONF}|/bin/sed 's/\ //g'`
+old_daap_name=`/usr/bin/awk /servername/'{print $2}' ${DAAP_CONF}|/usr/bin/sed 's/\ //g'`
 $replaceFile "${DAAP_CONF}" "servername ${old_daap_name}" "servername ${name}"
-/bin/logger "$0 - Modify daapd config : \"daapd.conf\", servername : \"${name}\""
+/usr/bin/logger "$0 - Modify daapd config : \"daapd.conf\", servername : \"${name}\""
 
 dlna_mDNSR_modify_conf
 }

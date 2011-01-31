@@ -12,8 +12,8 @@ RESOLV_CONF="/etc/resolv.conf"
 
 case "$1" in
  deconfig)
-  /bin/logger "$0 - No DHCP Server, DHCP Start Failed"
-  /sbin/ifconfig $interface 169.254.0.253
+  /usr/bin/logger "$0 - No DHCP Server, DHCP Start Failed"
+  /usr/sbin/ifconfig $interface 169.254.0.253
   /bin/ip route replace default via 169.254.0.1 dev eth0
   /bin/ip route flush cache
   network_modify_current_address >/dev/null 2>&1 &
@@ -23,7 +23,7 @@ case "$1" in
   /usr/local/TwonkyVision/twonkymedia.sh restart
   ;;
  renew|bound)
-  /sbin/ifconfig $interface $ip $BROADCAST $NETMASK
+  /usr/sbin/ifconfig $interface $ip $BROADCAST $NETMASK
   if [ -n "$router" ] ; then
    echo "deleting routers"
    while route del default gw 0.0.0.0 dev $interface ; do
@@ -48,7 +48,7 @@ case "$1" in
   /bin/killall nmbd
   /usr/local/samba/sbin/nmbd >/dev/null 2>&1
   /usr/local/TwonkyVision/twonkymedia.sh restart
-  /bin/logger "$0 - IPADDR:\"${ip}\" DHCP Start Succeed"
+  /usr/bin/logger "$0 - IPADDR:\"${ip}\" DHCP Start Succeed"
   ;;
 esac
 exit 0

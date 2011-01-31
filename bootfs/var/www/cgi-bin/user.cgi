@@ -18,19 +18,19 @@ func=`echo ${QUERY_STRING} | cut '-d&' -f1`
 
 case ${func} in
  HDDSize)
-  HDDSize=`/bin/df|/bin/grep "/home$"|/bin/awk '{print $2}'`
+  HDDSize=`/bin/df|/usr/bin/grep "/home$"|/usr/bin/awk '{print $2}'`
   expr $HDDSize / 1024 / 1024
   ;;
  user_data_list)
-  USER=`/bin/awk -F: /:500:/'{print $1}' ${PASSWD}`
+  USER=`/usr/bin/awk -F: /:500:/'{print $1}' ${PASSWD}`
   for user in ${USER}; do
    size=`$XFS_QUOTA -x -c 'report -N -h' /home|\
-         /bin/awk /^${user}\ /'{print $2}'|/bin/sed 's/\ //g'`
+         /usr/bin/awk /^${user}\ /'{print $2}'|/usr/bin/sed 's/\ //g'`
    bhard=`$XFS_QUOTA -x -c 'report -N -h' /home|\
-         /bin/awk /^${user}\ /'{print $4}'|/bin/sed 's/\ //g'`
+         /usr/bin/awk /^${user}\ /'{print $4}'|/usr/bin/sed 's/\ //g'`
 
-   str=`/bin/awk -F: /^${user}:/'{print $5}' ${PASSWD}|\
-        /bin/awk -F, '{print $2}'|/bin/sed 's/\ //g'`
+   str=`/usr/bin/awk -F: /^${user}:/'{print $5}' ${PASSWD}|\
+        /usr/bin/awk -F, '{print $2}'|/usr/bin/sed 's/\ //g'`
 
    [ "$str" == "0" ] && bhard=""
    [ "$size" == "" ] && size="none"
@@ -42,12 +42,12 @@ case ${func} in
   service_user_modify ${QUERY_STRING}
   ;;
  HDDUseFree)
-  /bin/df|/bin/grep "/home$"|/bin/awk 'BEGIN{OFS="\n"}{print $3,$4}'|/bin/sed 's/\ //g'
+  /bin/df|/usr/bin/grep "/home$"|/usr/bin/awk 'BEGIN{OFS="\n"}{print $3,$4}'|/usr/bin/sed 's/\ //g'
   ;;
  user_quota)
   user=`echo ${QUERY_STRING} | cut '-d&' -f2`
-  /bin/awk -F: /^${user}:/'{print $5}' ${PASSWD}|\
-  /bin/awk -F, '{print $2}'|/bin/sed 's/\ //g'
+  /usr/bin/awk -F: /^${user}:/'{print $5}' ${PASSWD}|\
+  /usr/bin/awk -F, '{print $2}'|/usr/bin/sed 's/\ //g'
   ;;
  ModifyUsers)
   service_user_modify ${QUERY_STRING}
@@ -57,7 +57,7 @@ case ${func} in
   ;;
  UsersData)
   UsersData=$(echo $(service_smb_modify_share_access))
-  echo "${UsersData}"|/bin/sed 's/\ //g'|/bin/sed 's/,$//'|/bin/tr "," "^"
+  echo "${UsersData}"|/usr/bin/sed 's/\ //g'|/bin/sed 's/,$//'|/usr/bin/tr "," "^"
   ;;
  SecurityData)
   MODE="shares"
@@ -71,8 +71,8 @@ case ${func} in
      write_list="$FolderStatus"
      invalid_users="$FolderStatus"
      } || {
-     write_list=`/bin/awk -F= /write/'{print $2}' ${SMB_PATH}/${dir}/${i}|/bin/sed 's/\ //g'`
-     invalid_users=`/bin/awk -F= /invalid/'{print $2}' ${SMB_PATH}/${dir}/${i}|/bin/sed 's/\ //g'`
+     write_list=`/usr/bin/awk -F= /write/'{print $2}' ${SMB_PATH}/${dir}/${i}|/usr/bin/sed 's/\ //g'`
+     invalid_users=`/usr/bin/awk -F= /invalid/'{print $2}' ${SMB_PATH}/${dir}/${i}|/usr/bin/sed 's/\ //g'`
      [ "$invalid_users" == "" ] && invalid_users=none
      }
 
@@ -81,10 +81,10 @@ case ${func} in
   done
   ;;
  USBData)
-  SHARE_PATH_TREE=`/bin/df|/bin/grep "/home/"|/bin/awk '{print $1}'`
+  SHARE_PATH_TREE=`/bin/df|/usr/bin/grep "/home/"|/usr/bin/awk '{print $1}'`
   for disk in $SHARE_PATH_TREE; do
    disk=${disk##*/}
-   FOLDER=`/bin/df|/bin/awk /${disk}/'{print $NF}'`
+   FOLDER=`/bin/df|/usr/bin/awk /${disk}/'{print $NF}'`
    FOLDER=${FOLDER##*/}
    str="${FOLDER}^"
   done
@@ -93,24 +93,24 @@ case ${func} in
  nas_state)
   [ -n "`/bin/pidof smbd`" ] && echo "ON" || echo "OFF"
 
-  /bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home$" >/dev/null 2>&1
+  /bin/df|/usr/bin/awk '{print $NF}'|/usr/bin/grep "^/home$" >/dev/null 2>&1
   [ $? -eq 0 ] && echo "ENABLE" || echo "DISABLE"
 
-  NobodyQuota=`/bin/awk -F: /nobody/'{print $5}' /etc/passwd|/bin/awk -F, '{print $1}'`
+  NobodyQuota=`/usr/bin/awk -F: /nobody/'{print $5}' /etc/passwd|/usr/bin/awk -F, '{print $1}'`
   echo "$NobodyQuota"
 
-  HDDSize=`/bin/df|/bin/grep "/home$"|/bin/awk '{print $2}'`
+  HDDSize=`/bin/df|/usr/bin/grep "/home$"|/usr/bin/awk '{print $2}'`
   [ "$HDDSize" == "" ] && echo "No disk" || expr $HDDSize / 1024 / 1024
 
   [ "$HDDSize" == "" ] && echo "No disk" || {
    [ "$NobodyQuota" == "0" ] && echo "Unlimited" || {
     $XFS_QUOTA -x -c 'report -N -h' /home|\
-    /bin/awk /^nobody\ /'{print $2}'|/bin/sed 's/\ //g'
+    /usr/bin/awk /^nobody\ /'{print $2}'|/usr/bin/sed 's/\ //g'
     }
    }
   ;;
  FolderList)
-  FOLDER=`/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/bin/tr " " "^"`
+  FOLDER=`/usr/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/usr/bin/tr " " "^"`
   for folder in $FOLDER; do
    [ "${folder}" == "${SHARE_PATH}" ] && continue
    [ "${folder}" == "/home/.lpd" ] && continue
@@ -122,27 +122,27 @@ case ${func} in
  ChgSMBStatus)
   STATUS=`echo ${QUERY_STRING} | cut '-d&' -f2`
   Quota=`echo ${QUERY_STRING} | cut '-d&' -f3`
-  PASSWD_LINE=`/bin/cat /etc/passwd|/bin/grep "^nobody:"`
+  PASSWD_LINE=`/bin/cat /etc/passwd|/usr/bin/grep "^nobody:"`
   $replaceFile "/etc/passwd" "${PASSWD_LINE}" "nobody:!!:99:98:${Quota},${Quota}:/home/PUBLIC:/sbin/nologin"
   ${XFS_QUOTA} -x -c "limit -u bsoft=${Quota}g bhard=${Quota}g 99" /home
   service_smb_${STATUS}
   ;;
  GetFolderStatus)
-  FolderName=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
+  FolderName=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
   /bin/cat ${SMB_PATH}/folders/"${FolderName}"
   ;;
  FolderCreate)
-  FolderName=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
-  FolderStatus=`echo ${QUERY_STRING}|/bin/cut '-d&' -f3`
+  FolderName=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
+  FolderStatus=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f3`
   /bin/mkdir -p ${SHARE_PATH}/"${FolderName}"
   /bin/chmod 777 ${SHARE_PATH}/"${FolderName}"
   echo "${FolderStatus}" > ${SMB_PATH}/folders/"${FolderName}"
   service_smb_modify_conf
   ;;
  FolderModify)
-  OldFolderName=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
-  FolderName=`echo ${QUERY_STRING}|/bin/cut '-d&' -f3`
-  FolderStatus=`echo ${QUERY_STRING}|/bin/cut '-d&' -f4`
+  OldFolderName=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
+  FolderName=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f3`
+  FolderStatus=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f4`
   /bin/mv ${SHARE_PATH}/"${OldFolderName}" ${SHARE_PATH}/"${FolderName}"
   /bin/chmod 777 ${SHARE_PATH}/"${FolderName}"
   /bin/rm -f ${SMP_SHARE_PATH}/"${OldFolderName}".inc
@@ -151,7 +151,7 @@ case ${func} in
   service_smb_modify_conf
   ;;
  FolderDelete)
-  FolderName=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
+  FolderName=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
   /bin/rm -rf ${SHARE_PATH}/"${FolderName}"
   /bin/rm -f ${SMP_SHARE_PATH}/"${FolderName}".inc
   /bin/rm -f ${SMB_PATH}/folders/"${FolderName}"
@@ -161,7 +161,7 @@ case ${func} in
   service_user_modify_smb_action ${QUERY_STRING}
   ;;
  DiskStatus)
-  Status=`/bin/df|/bin/grep "/home$"`
+  Status=`/bin/df|/usr/bin/grep "/home$"`
   [ "$Status" == "" ] && echo "NoDisk" || echo "Enable"
   ;;
  *)

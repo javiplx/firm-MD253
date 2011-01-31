@@ -18,7 +18,7 @@ w
 EOF
 sleep $SLEEP
 
-dataSize=`/bin/fdisk -l /dev/${active}|/bin/awk /sectors/'{print $5}'`
+dataSize=`/bin/fdisk -l /dev/${active}|/usr/bin/awk /sectors/'{print $5}'`
 
  # clear out old partition info and all "hidden" sectors with zeros
  dd if=/dev/zero of=/dev/${dev} bs=8225280 count=3
@@ -37,5 +37,5 @@ w
 EOF
 
 sleep $SLEEP
-/bin/logger "$0 - Rebuild \"/dev/${dev}\" partition"
+/usr/bin/logger "$0 - Rebuild \"/dev/${dev}\" partition"
 }

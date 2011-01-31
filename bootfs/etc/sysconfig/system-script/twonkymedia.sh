@@ -69,7 +69,7 @@ TWONKYSRV="${WORKDIR}/${DAEMON}"
 INIFILE="${WORKDIR}/twonkyvision-mediaserver.ini"
 
 TwonkyConfigPath=/etc/sysconfig/config/twonky
-/bin/df|/bin/grep "/home$" >/dev/null 2>&1
+/bin/df|/usr/bin/grep "/home$" >/dev/null 2>&1
 [ $? -eq 0 ] && {
  [ -d /home/PUBLIC/Media/.twonky ] || /bin/mkdir -p /home/PUBLIC/Media/.twonky
 
@@ -118,7 +118,7 @@ case "$1" in
 	  exit $?
       fi
       echo -n "Starting $TWONKYSRV ... "
-      /bin/nice -n +12 $TWONKYSRV -D -inifile "${INIFILE}"
+      /usr/bin/nice -n +12 $TWONKYSRV -D -inifile "${INIFILE}"
       rc_status -v
     fi
   ;;

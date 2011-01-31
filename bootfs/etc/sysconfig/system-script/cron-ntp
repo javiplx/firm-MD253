@@ -23,7 +23,7 @@ month=$1
 sun=$2
 
 for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20; do
- /bin/date "$month$i$HH$MM$yy" >/dev/null 2>&1
+ /usr/bin/date "$month$i$HH$MM$yy" >/dev/null 2>&1
  week=`date '+%A'`
  [ "$week" == "Sunday" ] && {
   tmp=`expr $tmp + 1`
@@ -40,7 +40,7 @@ done
 NTP_ACTION=`cat ${NTP_ACTION_CONF}`
 [ "${NTP_ACTION}" == "auto" ] || exit 0
 
-/bin/ntpdate ${NTP_CONF}
+/usr/bin/ntpdate ${NTP_CONF}
 [ $? -eq 0 ] || {
  for ser in ${NTP_SERVER}; do
   echo "${ser}" > /etc/sysconfig/config/ntp.conf
@@ -55,7 +55,7 @@ echo "$tmpmydate" > $tmpfile
 
 echo "$GMT"|grep "-" >/dev/null 2>&1
 [ $? -eq 0 ] || GMT="+${GMT}"
-/bin/date `/bin/date -d "${GMT} Hour" +"%m%d%H%M%Y"` >/dev/null 2>&1
+/usr/bin/date `/usr/bin/date -d "${GMT} Hour" +"%m%d%H%M%Y"` >/dev/null 2>&1
 
 mydate=`date '+%Y %m %d %H %M'`
 echo "$mydate" > $DATE_CONF
@@ -75,8 +75,8 @@ date "$mm$dd$HH$MM$yy" >/dev/null 2>&1
 /bin/rm -rf $tmpfile
 
 /bin/test -f ${DST_CONF} && {
- OLD_START_DST_DATE=`/bin/awk -F= /START/'{print $2}' ${DST_CONF}`
- OLD_END_DST_DATE=`/bin/awk -F= /END/'{print $2}' ${DST_CONF}`
+ OLD_START_DST_DATE=`/usr/bin/awk -F= /START/'{print $2}' ${DST_CONF}`
+ OLD_END_DST_DATE=`/usr/bin/awk -F= /END/'{print $2}' ${DST_CONF}`
  $replaceFile "${DST_CONF}" "START=$OLD_START_DST_DATE" "START=$START_DST_DATE"
  $replaceFile "${DST_CONF}" "END=$OLD_END_DST_DATE" "END=$OLD_END_DST_DATE"
  } || {
@@ -94,14 +94,14 @@ date "$mm$dd$HH$MM$yy" >/dev/null 2>&1
    GMT=`expr $GMT + 1`
    echo "$GMT"|grep "-" >/dev/null 2>&1
    [ $? -eq 0 ] || GMT="+${GMT}"
-   /bin/date `/bin/date -d "${GMT} Hour" +"%m%d%H%M%Y"` >/dev/null 2>&1
+   /usr/bin/date `/usr/bin/date -d "${GMT} Hour" +"%m%d%H%M%Y"` >/dev/null 2>&1
    } || {
    [ $mm -eq 11 ] && {
     [ $dd -le $END_DST_DATE -a $HH -le 2 ] && {
      GMT=`expr $GMT + 1`
      echo "$GMT"|grep "-" >/dev/null 2>&1
      [ $? -eq 0 ] || GMT="+${GMT}"
-     /bin/date `/bin/date -d "${GMT} Hour" +"%m%d%H%M%Y"` >/dev/null 2>&1
+     /usr/bin/date `/usr/bin/date -d "${GMT} Hour" +"%m%d%H%M%Y"` >/dev/null 2>&1
      }
     }
    }
@@ -111,7 +111,7 @@ date "$mm$dd$HH$MM$yy" >/dev/null 2>&1
     GMT=`expr $GMT + 1`
     echo "$GMT"|grep "-" >/dev/null 2>&1
     [ $? -eq 0 ] || GMT="+${GMT}"
-    /bin/date `/bin/date -d "${GMT} Hour" +"%m%d%H%M%Y"` >/dev/null 2>&1
+    /usr/bin/date `/usr/bin/date -d "${GMT} Hour" +"%m%d%H%M%Y"` >/dev/null 2>&1
     }
    }
   }

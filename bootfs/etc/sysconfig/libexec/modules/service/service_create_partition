@@ -57,5 +57,5 @@ EOF
 done
 
 sleep $SLEEP
-/bin/logger "$0 - Create \"/dev/sda & /dev/sdb\" new partition"
+/usr/bin/logger "$0 - Create \"/dev/sda & /dev/sdb\" new partition"
 }

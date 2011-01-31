@@ -12,7 +12,7 @@ RESOLV_CONF="/etc/resolv.conf"
 
 case "$1" in
  deconfig)
-  /bin/logger "$0 - No DHCP Server, DHCP Start Failed"
+  /usr/bin/logger "$0 - No DHCP Server, DHCP Start Failed"
   #/sbin/ifconfig $interface 192.168.100.253
   ;;
  renew|bound)
@@ -38,7 +38,7 @@ case "$1" in
   network_modify_current_address >/dev/null 2>&1 &
   dlna_mDNSR_modify_conf >/dev/null 2>&1 &
   kill `pidof udhcpc`
-  /bin/logger "$0 - IPADDR:\"${ip}\" DHCP Start Succeed"
+  /usr/bin/logger "$0 - IPADDR:\"${ip}\" DHCP Start Succeed"
   ;;
 esac
 exit 0

@@ -14,7 +14,7 @@ service_mount_system(){
  exit
  }
 
-replaceFile=/bin/replaceFile
+replaceFile=/usr/bin/replaceFile
 /bin/test -f /mnt/finish || {
  CONF_PATH=/etc/sysconfig/config
  IFCFG=${CONF_PATH}/ifcfg-eth0
@@ -34,44 +34,44 @@ replaceFile=/bin/replaceFile
   /bin/cp -af ${CONF_PATH}/"${i}" /mnt
  done
 
- NEW_MAC=`/bin/awk -F= /HWADDR/'{print $2}' /mnt/ifcfg-eth0.default|/bin/sed 's/\ //g'`
- OLD_MAC=`/bin/awk -F= /HWADDR/'{print $2}' /mnt/ifcfg-eth0|/bin/sed 's/\ //g'`
+ NEW_MAC=`/usr/bin/awk -F= /HWADDR/'{print $2}' /mnt/ifcfg-eth0.default|/usr/bin/sed 's/\ //g'`
+ OLD_MAC=`/usr/bin/awk -F= /HWADDR/'{print $2}' /mnt/ifcfg-eth0|/usr/bin/sed 's/\ //g'`
  $replaceFile "/mnt/ifcfg-eth0" "HWADDR=${OLD_MAC}" "HWADDR=${NEW_MAC}"
 
  /bin/touch /mnt/finish
  }
 /bin/cp -af /etc/sysconfig/config/version /mnt
 
-/bin/cat /mnt/smb/smb.conf|/bin/grep "wins support" >/dev/null 2>&1
+/bin/cat /mnt/smb/smb.conf|/usr/bin/grep "wins support" >/dev/null 2>&1
 [ $? -eq 0 ] && {
- /bin/cat /mnt/smb/smb.conf|/bin/grep -v "wins support" > /tmp/.smb.conf
+ /bin/cat /mnt/smb/smb.conf|/usr/bin/grep -v "wins support" > /tmp/.smb.conf
  /bin/mv /tmp/.smb.conf /mnt/smb/smb.conf
  }
 
-/bin/cat /mnt/smb/smb.conf|/bin/grep "sync always" >/dev/null 2>&1
+/bin/cat /mnt/smb/smb.conf|/usr/bin/grep "sync always" >/dev/null 2>&1
 [ $? -eq 0 ] && {
- /bin/cat /mnt/smb/smb.conf|/bin/grep -v "sync always" > /tmp/.smb.conf
+ /bin/cat /mnt/smb/smb.conf|/usr/bin/grep -v "sync always" > /tmp/.smb.conf
  /bin/mv /tmp/.smb.conf /mnt/smb/smb.conf
  }
 
-/bin/cat /mnt/smb/smb.conf|/bin/grep "strict sync" >/dev/null 2>&1
+/bin/cat /mnt/smb/smb.conf|/usr/bin/grep "strict sync" >/dev/null 2>&1
 [ $? -eq 0 ] && {
- /bin/cat /mnt/smb/smb.conf|/bin/grep -v "strict sync" > /tmp/.smb.conf
+ /bin/cat /mnt/smb/smb.conf|/usr/bin/grep -v "strict sync" > /tmp/.smb.conf
  /bin/mv /tmp/.smb.conf /mnt/smb/smb.conf
  }
 
-/bin/cat /mnt/smb/smb.conf|/bin/grep "server string" >/dev/null 2>&1
+/bin/cat /mnt/smb/smb.conf|/usr/bin/grep "server string" >/dev/null 2>&1
 [ $? -eq 0 ] && {
- /bin/cat /mnt/smb/smb.conf|/bin/grep -v "^server string"|/bin/grep -v "^comment" > /tmp/.smb.conf
+ /bin/cat /mnt/smb/smb.conf|/usr/bin/grep -v "^server string"|/usr/bin/grep -v "^comment" > /tmp/.smb.conf
  /bin/mv /tmp/.smb.conf /mnt/smb/smb.conf
- ServerName=`/bin/awk -F= /netbios/'{print $2}' /mnt/smb/host.inc|/bin/sed 's/\ //g'`
+ ServerName=`/usr/bin/awk -F= /netbios/'{print $2}' /mnt/smb/host.inc|/usr/bin/sed 's/\ //g'`
  echo "server string = ${ServerName}" >> /mnt/smb/host.inc
  echo "comment = ${ServerName}" >> /mnt/smb/host.inc
  }
 
-/bin/cat /mnt/smb/smb.conf|/bin/grep "^wins" >/dev/null 2>&1
+/bin/cat /mnt/smb/smb.conf|/usr/bin/grep "^wins" >/dev/null 2>&1
 [ $? -eq 0 ] && {
- /bin/cat /mnt/smb/smb.conf|/bin/grep -v "^wins" > /tmp/.smb.conf
+ /bin/cat /mnt/smb/smb.conf|/usr/bin/grep -v "^wins" > /tmp/.smb.conf
  /bin/mv /tmp/.smb.conf /mnt/smb/smb.conf
  }
 
@@ -82,24 +82,24 @@ replaceFile=/bin/replaceFile
 scsi_list=/etc/sysconfig/config/scsi.list
 /bin/cat /dev/null > ${scsi_list}
 for scsi in 0 1; do
- MODEL=`/bin/dmesg|/bin/grep "scsi ${scsi}"|\
-        /bin/awk '{print $5}'|/bin/sed 's/\ //g'`
+ MODEL=`/usr/bin/dmesg|/usr/bin/grep "scsi ${scsi}"|\
+        /usr/bin/awk '{print $5}'|/usr/bin/sed 's/\ //g'`
  [ "$MODEL" == "" ] && continue ||\
   echo "SCSI${scsi}:${MODEL}" >> ${scsi_list}
 done
 
 for dev in a b; do
- /bin/smartctl -i /dev/sd${dev} -d ata -s on >/dev/null 2>&1
+ /usr/bin/smartctl -i /dev/sd${dev} -d ata -s on >/dev/null 2>&1
 done
 
 crontable=/etc/sysconfig/config/root
-/bin/cat ${crontable}|/bin/grep "detectRebuild" >/dev/null 2>&1
+/bin/cat ${crontable}|/usr/bin/grep "detectRebuild" >/dev/null 2>&1
 [ $? -eq 0 ] || echo "#* * * * * /etc/sysconfig/system-script/detectRebuild" >> ${crontable}
 
 SambaConfig=/etc/sysconfig/config/smb/smb.conf
-/bin/cat ${SambaConfig}|/bin/grep ".twonky" >/dev/null 2>&1
+/bin/cat ${SambaConfig}|/usr/bin/grep ".twonky" >/dev/null 2>&1
 [ $? -eq 0 ] || {
- OldData=`/bin/cat ${SambaConfig}|/bin/grep "veto files"`
+ OldData=`/bin/cat ${SambaConfig}|/usr/bin/grep "veto files"`
  $replaceFile "${SambaConfig}" "${OldData}" "${OldData}.twonky/"
  }
 

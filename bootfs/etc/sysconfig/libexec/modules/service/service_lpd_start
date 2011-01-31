@@ -3,7 +3,7 @@ lpd_prog=/bin/lpd
 lpd_conf=/etc/sysconfig/config/smb/print.inc
 SHARE_PATH=/home
 
-/bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home$" >/dev/null 2>&1
+/bin/df|/usr/bin/awk '{print $NF}'|/usr/bin/grep "^/home$" >/dev/null 2>&1
 [ $? -eq 0 ] || return;
 
 cat /dev/null > ${lpd_conf}

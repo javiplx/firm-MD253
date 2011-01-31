@@ -5,7 +5,7 @@ scsi_list=${CONFIG_PATH}/scsi.list
 
 DiskNum=0
 for scsi in SCSI0 SCSI1; do
- MODEL=`/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
+ MODEL=`/usr/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
  [ "$MODEL" == "" ] && continue || DiskNum=`expr $DiskNum + 1`
  REAL=$scsi
 done
@@ -38,10 +38,10 @@ done
     hdd1=red; hdd2=blue
     }
    } || {
-   /usr/bin/mdadm -D /dev/md1|/bin/grep "removed" >/dev/null 2>&1
+   /usr/bin/mdadm -D /dev/md1|/usr/bin/grep "removed" >/dev/null 2>&1
    [ $? -eq 0 ] && {
     for i in sda1 sdb1; do
-     MDStatus=`/usr/bin/mdadm -D /dev/md1|/bin/grep "${i}"`
+     MDStatus=`/usr/bin/mdadm -D /dev/md1|/usr/bin/grep "${i}"`
      [ "$MDStatus" == "" ] && continue
      MDDEVICE=$i
     done
@@ -53,24 +53,24 @@ done
     }
    }
 
-  replaceFile=/bin/replaceFile
+  replaceFile=/usr/bin/replaceFile
   crontable=/etc/sysconfig/config/root
-  detectRebuildLine=`/bin/cat ${crontable}|/bin/grep "detectRebuild"`
-  /usr/bin/mdadm -D /dev/md1|/bin/grep "spare rebuilding" >/dev/null 2>&1
+  detectRebuildLine=`/bin/cat ${crontable}|/usr/bin/grep "detectRebuild"`
+  /usr/bin/mdadm -D /dev/md1|/usr/bin/grep "spare rebuilding" >/dev/null 2>&1
   [ $? -eq 0 ] && {
-   echo "${detectRebuildLine}"|/bin/grep "#" >/devnull 2>&1
+   echo "${detectRebuildLine}"|/usr/bin/grep "#" >/devnull 2>&1
    [ $? -eq 0 ] &&\
     $replaceFile "${crontable}" "${detectRebuildLine}" "* * * * * /etc/sysconfig/system-script/detectRebuild"
    } || {
-   echo "${detectRebuildLine}"|/bin/grep "#" >/devnull 2>&1
+   echo "${detectRebuildLine}"|/usr/bin/grep "#" >/devnull 2>&1
    [ $? -eq 0 ] ||\
     $replaceFile "${crontable}" "${detectRebuildLine}" "#* * * * * /etc/sysconfig/system-script/detectRebuild"
    }
 
   RAID_MODE=`/usr/bin/mdadm -D /dev/md1|\
-  /bin/awk -F: /Level/'{print $2}'|/bin/sed 's/\ //g'`
+  /usr/bin/awk -F: /Level/'{print $2}'|/usr/bin/sed 's/\ //g'`
   [ "$RAID_MODE" == "linear" ] && RAID_MODE=JBOD
-  /bin/logger "$0 - Raid mode \"${RAID_MODE}\" Mount Succeed"
+  /usr/bin/logger "$0 - Raid mode \"${RAID_MODE}\" Mount Succeed"
   } || {
   [ $DiskNum -lt 2 ] && {
    /bin/mount -t xfs -o uquota /dev/sda1 ${SHARE_PATH}
@@ -80,7 +80,7 @@ done
      } || {
      hdd1=red; hdd2=blue
      }
-    /bin/logger "$0 - \"${Drive}\" Mount Succeed"
+    /usr/bin/logger "$0 - \"${Drive}\" Mount Succeed"
     } || {
     hdd1=red; hdd2=red
     }
@@ -91,11 +91,11 @@ done
     /bin/mount -t xfs -o uquota /dev/sdb1 ${SHARE_PATH}/Disk_2
     [ $? -eq 0 ] && {
      hdd1=blue; hdd2=blue
-     /bin/logger "$0 - Drive 1 & Drive 2 Mount Succeed"
+     /usr/bin/logger "$0 - Drive 1 & Drive 2 Mount Succeed"
      } || {
      hdd1=blue; hdd2=red
      [ -d "${SHARE_PATH}/Disk_2" ] && /bin/rm -rf ${SHARE_PATH}/Disk_2
-     /bin/logger "$0 - Drive 1 Mount Succeed"
+     /usr/bin/logger "$0 - Drive 1 Mount Succeed"
      }
     } || {
     hdd1=red; hdd2=red
@@ -110,6 +110,6 @@ for disk in hdd1 hdd2; do
  echo "${disk} ${str} set" > /proc/mp_leds
 done
 
-/bin/hdparm -S241 /dev/sda >/dev/null 2>&1
-/bin/hdparm -S241 /dev/sdb >/dev/null 2>&1
+/usr/bin/hdparm -S241 /dev/sda >/dev/null 2>&1
+/usr/bin/hdparm -S241 /dev/sdb >/dev/null 2>&1
 }

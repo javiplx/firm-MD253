@@ -7,14 +7,14 @@ LMHost=${SmbPath}/lmhosts
 SMB_HOST_CONF=${SmbPath}/host.inc
 DAAP_CONF=${ConfigPath}/daapd.conf
 
-replaceFile=/bin/replaceFile
+replaceFile=/usr/bin/replaceFile
 SMB_PASSWD_PROG=/usr/local/samba/sbin/smbpasswd
 
 QUERY_STRING=$1
 
 hostname=`echo ${QUERY_STRING} | cut '-d&' -f2`
 new_groupname=`echo ${QUERY_STRING} | cut '-d&' -f3`
-IPADDR=`/bin/ifconfig eth0|/bin/awk '/inet\ addr/{print $2}'|/bin/cut -d ":" -f2`
+IPADDR=`/bin/ifconfig eth0|/usr/bin/awk '/inet\ addr/{print $2}'|/usr/bin/cut -d ":" -f2`
 
 # Modify New Device Name
 echo "${hostname}" > /etc/hostname
@@ -33,7 +33,7 @@ echo "workgroup = ${new_groupname}" >> ${SMB_HOST_CONF}
 echo "server string = ${hostname}" >> ${SMB_HOST_CONF}
 echo "comment = ${hostname}" >> ${SMB_HOST_CONF}
 
-old_daap_name=`/bin/awk /servername/'{print $2}' ${DAAP_CONF}|/bin/sed 's/\ //g'`
+old_daap_name=`/usr/bin/awk /servername/'{print $2}' ${DAAP_CONF}|/usr/bin/sed 's/\ //g'`
 $replaceFile "${DAAP_CONF}" "servername ${old_daap_name}" "servername ${hostname}"
 
 # Restart service
@@ -50,7 +50,7 @@ service_smb_start
 new_password=`echo ${QUERY_STRING} | cut '-d&' -f4`
 [ "$new_password" != "NaN" ] && {
  echo "admin:${new_password}" > /etc/sysconfig/config/webmaster.conf
- echo "admin:${new_password}" | /bin/chpasswd
+ echo "admin:${new_password}" | /usr/bin/chpasswd
  (echo "${new_password}";echo "${new_password}")|${SMB_PASSWD_PROG} -s -a admin >/dev/null 2>&1
  }
 }

@@ -5,8 +5,8 @@ SMB_PASSWD_PROG=/usr/local/samba/sbin/smbpasswd
 replaceFile=/var/www/cgi-bin/replaceFile
 XFS_QUOTA=/usr/local/xfsprogs/xfs_quota
 
-/bin/adduser "${user}" -h /home -H -G user -D
-USER_UID=`/bin/awk -F: /^${user}:/'{print $3}' /etc/passwd`
+/usr/bin/adduser "${user}" -h /home -H -G user -D
+USER_UID=`/usr/bin/awk -F: /^${user}:/'{print $3}' /etc/passwd`
 $replaceFile "/etc/passwd" "${user}:x:${USER_UID}:500:Linux User,,,:/home:/bin/sh" "${user}:x:${USER_UID}:500:${bhard},${bhard}:/home:/bin/sh"
 
 [ "$bhard" == "0" ] && bhard=999999999
@@ -24,11 +24,11 @@ for dir in $MODE; do
   string=${i%.*}
 
   FolderStatus=`/bin/cat ${SMB_PATH}/folders/${string}`
-  OLD_AllowUser=`/bin/cat /home/${string}/.ftpaccess|/bin/grep "AllowUser"|/bin/sed 's/\ $//'`
-  OLD_DenyUser=`/bin/awk /DenyUser/'{print $2}' /home/${string}/.ftpaccess|/bin/sed 's/\ //g'`
+  OLD_AllowUser=`/bin/cat /home/${string}/.ftpaccess|/usr/bin/grep "AllowUser"|/usr/bin/sed 's/\ $//'`
+  OLD_DenyUser=`/usr/bin/awk /DenyUser/'{print $2}' /home/${string}/.ftpaccess|/usr/bin/sed 's/\ //g'`
 
   [ "${string}" == "PUBLIC" -o "${FolderStatus}" == "anonymous" ] || {
-   old_invalid_users_line=`/bin/cat ${SMB_PATH}/${dir}/${i}|/bin/grep "invalid"`
+   old_invalid_users_line=`/bin/cat ${SMB_PATH}/${dir}/${i}|/usr/bin/grep "invalid"`
    $replaceFile "${SMB_PATH}/${dir}/${i}" "${old_invalid_users_line}" "${old_invalid_users_line}${user},"
    }
 

@@ -35,14 +35,14 @@ case ${func} in
   service_system_modify_conf ${QUERY_STRING}
   ;;
  GetDeviceIP)
-  /bin/awk -F= /BOOTPROTO/'{print $2}' $IFCFG|/bin/sed 's/\ //g'
-  /bin/awk -F= /IPADDR/'{print $2}' $IFCFG|/bin/sed 's/\ //g'
-  /bin/awk -F= /NETMASK/'{print $2}' $IFCFG|/bin/sed 's/\ //g'
-  /bin/awk -F= /GATEWAY/'{print $2}' $IFCFG|/bin/sed 's/\ //g'
-  /bin/awk -F= /PDNS/'{print $2}' $IFCFG|/bin/sed 's/\ //g'
-  /bin/awk -F= /SDNS/'{print $2}' $IFCFG|/bin/sed 's/\ //g'
-  /bin/awk -F= /MTU/'{print $2}' $IFCFG|/bin/sed 's/\ //g'
-  #/bin/awk -F= /HWADDR/'{print $2}' $IFCFG|/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /BOOTPROTO/'{print $2}' $IFCFG|/usr/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /IPADDR/'{print $2}' $IFCFG|/usr/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /NETMASK/'{print $2}' $IFCFG|/usr/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /GATEWAY/'{print $2}' $IFCFG|/usr/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /PDNS/'{print $2}' $IFCFG|/usr/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /SDNS/'{print $2}' $IFCFG|/usr/bin/sed 's/\ //g'
+  /usr/bin/awk -F= /MTU/'{print $2}' $IFCFG|/usr/bin/sed 's/\ //g'
+  #/usr/bin/awk -F= /HWADDR/'{print $2}' $IFCFG|/usr/bin/sed 's/\ //g'
   ;;
  modify_ip)
   network_modify_conf ${QUERY_STRING}
@@ -64,11 +64,11 @@ case ${func} in
   ;;
  RAIDSTATUS)
   RAID_MODE=`/usr/bin/mdadm -D /dev/md1|\
-  /bin/awk -F: /Level/'{print $2}'|/bin/sed 's/\ //g'`
+  /usr/bin/awk -F: /Level/'{print $2}'|/usr/bin/sed 's/\ //g'`
 
   DiskNum=0
   for scsi in SCSI0 SCSI1; do
-   MODEL=`/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
+   MODEL=`/usr/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
    [ "$MODEL" == "" ] && continue || DiskNum=`expr $DiskNum + 1`
   done
 
@@ -89,7 +89,7 @@ case ${func} in
   done
 
   [ "$status" == "fail" ] && echo "not" || {
-   /usr/bin/mdadm -D /dev/md1|/bin/grep "removed" >/dev/null 2>&1
+   /usr/bin/mdadm -D /dev/md1|/usr/bin/grep "removed" >/dev/null 2>&1
    [ $? -eq 0 ] && {
     [ $DiskNum -lt 2 ] && echo "not" || echo "rebuild"
     } || echo "not"
@@ -101,14 +101,14 @@ case ${func} in
  Logical_Volumes)
   STATUS=`/usr/bin/mdadm -D /dev/md1`
   [ "${STATUS}" == "" ] && echo "not appear" || {
-   MODE=`echo "${STATUS}"|/bin/awk -F: /Level/'{print $2}'|sed 's/\ //g'`
+   MODE=`echo "${STATUS}"|/usr/bin/awk -F: /Level/'{print $2}'|sed 's/\ //g'`
    [ "$MODE" == "linear" ] && MODE=JBOD ||\
     MODE=`echo $MODE| tr "[:lower:]" "[:upper:]"`
     echo "$MODE"
-   /bin/df -h /dev/md1|/bin/grep "^/dev"|/bin/awk 'BEGIN{OFS="\n"}{print $2,$4}'
-   echo "${STATUS}"|/bin/grep "rebuilding" >/dev/null 2>&1
+   /bin/df -h /dev/md1|/usr/bin/grep "^/dev"|/usr/bin/awk 'BEGIN{OFS="\n"}{print $2,$4}'
+   echo "${STATUS}"|/usr/bin/grep "rebuilding" >/dev/null 2>&1
    [ $? -eq 0 ] && {
-    percent=`/bin/cat /proc/mdstat|/bin/awk /recovery/'{print $4}'|sed 's/\ //g'`
+    percent=`/bin/cat /proc/mdstat|/usr/bin/awk /recovery/'{print $4}'|sed 's/\ //g'`
     echo "recovery=${percent}"
    } || echo "Ready"
    }
@@ -116,19 +116,19 @@ case ${func} in
  Physical_Disks_1)
   for disk in sdb sda; do
    [ "$disk" == "sda" ] && str="Drive (Right)" || str="Drive (Left)"
-   MODEL=`/bin/smartctl -i -d ata /dev/${disk}|/bin/awk /Device\ Model/'{print $NF}'|/bin/sed 's/\ //g'`
+   MODEL=`/usr/bin/smartctl -i -d ata /dev/${disk}|/usr/bin/awk /Device\ Model/'{print $NF}'|/usr/bin/sed 's/\ //g'`
    [ "$MODEL" == "" ] && {
     echo "${str}:--:--:No Disk:removed"
     } || {
-    Capacity=`/bin/fdisk -l /dev/${disk}|/bin/awk -F, /${disk}:/'{print $1}'|/bin/awk -F: '{print $2}'|/bin/sed 's/^\ //'`
-    Status=`/bin/smartctl -i /dev/${disk} -d ata|/bin/grep "SMART support is"|/bin/grep -v "Available"|/bin/awk -F: '{print $2}'|/bin/sed 's/\ //g'`
+    Capacity=`/bin/fdisk -l /dev/${disk}|/usr/bin/awk -F, /${disk}:/'{print $1}'|/usr/bin/awk -F: '{print $2}'|/usr/bin/sed 's/^\ //'`
+    Status=`/usr/bin/smartctl -i /dev/${disk} -d ata|/usr/bin/grep "SMART support is"|/bin/grep -v "Available"|/usr/bin/awk -F: '{print $2}'|/usr/bin/sed 's/\ //g'`
 
     case ${Status} in
      Disabled)
       ACT="${Status}"
       ;;
      Enabled)
-      ACT=`/bin/smartctl -H -d ata /dev/${disk}|/bin/awk /overall-health/'{print $NF}'|/bin/sed 's/\ //g'`
+      ACT=`/usr/bin/smartctl -H -d ata /dev/${disk}|/usr/bin/awk /overall-health/'{print $NF}'|/usr/bin/sed 's/\ //g'`
       ;;
     esac
 
@@ -139,7 +139,7 @@ case ${func} in
  Physical_Disks)
   DiskNum=0
   for scsi in SCSI0 SCSI1; do
-   MODEL=`/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
+   MODEL=`/usr/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
    [ "$MODEL" == "" ] && continue || DiskNum=`expr $DiskNum + 1`
     REAL=$scsi
   done
@@ -149,8 +149,8 @@ case ${func} in
    echo "Drive 2:--:--:No Disk:removed"
    } || {
    [ $DiskNum -lt 2 ] && {
-    Capacity=`/bin/fdisk -l /dev/sda|/bin/awk /sda:/'{print $3}'|sed 's/\ //g'`
-    MODEL=`/bin/awk -F: /${REAL}/'{print $2}' ${scsi_list}`
+    Capacity=`/bin/fdisk -l /dev/sda|/usr/bin/awk /sda:/'{print $3}'|sed 's/\ //g'`
+    MODEL=`/usr/bin/awk -F: /${REAL}/'{print $2}' ${scsi_list}`
     /usr/bin/mdadm -D /dev/md1 >/dev/null 2>&1
     [ $? -eq 0 ] && ACT="active" || ACT="removed"
 
@@ -164,14 +164,14 @@ case ${func} in
     } || {
     SCSI0=sda ; SCSI1=sdb
     for scsi in SCSI1 SCSI0; do
-     MODEL=`/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
+     MODEL=`/usr/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
      eval str=\$${scsi}
-     Capacity=`/bin/fdisk -l /dev/${str}|/bin/awk /${str}:/'{print $3}'|sed 's/\ //g'`
+     Capacity=`/bin/fdisk -l /dev/${str}|/usr/bin/awk /${str}:/'{print $3}'|sed 's/\ //g'`
      MD_STATUS=`/usr/bin/mdadm -D /dev/md1`
      [ "$MD_STATUS" == "" ] && ACT="removed" || {
-      echo "$MD_STATUS"|/bin/grep "$str" >/dev/null 2>&1
+      echo "$MD_STATUS"|/usr/bin/grep "$str" >/dev/null 2>&1
       [ $? -eq 0 ] && {
-       echo "$MD_STATUS"|/bin/grep "$str"|/bin/grep "rebuilding" >/dev/null 2>&1
+       echo "$MD_STATUS"|/usr/bin/grep "$str"|/bin/grep "rebuilding" >/dev/null 2>&1
        [ $? -eq 0 ] && ACT="rebuilding" || ACT="active"
        } || ACT="removed"
       }
@@ -183,7 +183,7 @@ case ${func} in
  SingleDisk_Volumes)
   DiskNum=0
   for scsi in SCSI0 SCSI1; do
-   MODEL=`/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
+   MODEL=`/usr/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
    [ "$MODEL" == "" ] && continue || DiskNum=`expr $DiskNum + 1`
     REAL=$scsi
   done
@@ -193,10 +193,10 @@ case ${func} in
    echo "Drive (Left):--:--:No Disk"
    } || {
    [ $DiskNum -lt 2 ] && {
-    MountPoint=`/bin/df|/bin/grep "^/dev/sda1"|/bin/awk '{print $NF}'`
+    MountPoint=`/bin/df|/usr/bin/grep "^/dev/sda1"|/usr/bin/awk '{print $NF}'`
     [ "$MountPoint" == "/home" ] && {
-     TotalSize=`/bin/df -h|/bin/grep "^/dev/sda1"|/bin/awk '{print $2}'`
-     FreeSize=`/bin/df -h|/bin/grep "^/dev/sda1"|/bin/awk '{print $4}'`
+     TotalSize=`/bin/df -h|/usr/bin/grep "^/dev/sda1"|/usr/bin/awk '{print $2}'`
+     FreeSize=`/bin/df -h|/usr/bin/grep "^/dev/sda1"|/usr/bin/awk '{print $4}'`
      }
 
     [ "$MountPoint" == "" ] && {
@@ -215,10 +215,10 @@ case ${func} in
     DiskNum=0
     for disk in sdb1 sda1; do
      DiskNum=`expr $DiskNum + 1`
-     TotalSize=`/bin/df -h|/bin/grep "^/dev/${disk}"|/bin/awk '{print $2}'`
+     TotalSize=`/bin/df -h|/usr/bin/grep "^/dev/${disk}"|/usr/bin/awk '{print $2}'`
      [ "$TotalSize" == "" ] && TotalSize="--"
 
-     FreeSize=`/bin/df -h|/bin/grep "^/dev/${disk}"|/bin/awk '{print $4}'`
+     FreeSize=`/bin/df -h|/usr/bin/grep "^/dev/${disk}"|/usr/bin/awk '{print $4}'`
      [ "$FreeSize" == "" ] && FreeSize="--"
      [ ${DiskNum} -eq 1 ] && str="(Right)" || str="(Left)"
 
@@ -230,10 +230,10 @@ case ${func} in
  USB_Disks)
   DiskNum=0
   for scsi in SCSI0 SCSI1; do
-   MODEL=`/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
+   MODEL=`/usr/bin/awk -F: /${scsi}/'{print $2}' ${scsi_list}`
    [ "$MODEL" == "" ] && continue || DiskNum=`expr $DiskNum + 1`
   done
-  SHARE_PATH_TREE=`/bin/df|/bin/grep "/home/"|/bin/awk '{print $1}'`
+  SHARE_PATH_TREE=`/bin/df|/usr/bin/grep "/home/"|/usr/bin/awk '{print $1}'`
 
   for disk in $SHARE_PATH_TREE; do
    [ $DiskNum -lt 2 ] || {
@@ -243,28 +243,28 @@ case ${func} in
   done
   ;;
  USB_Disks_Data)
-  dev=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
+  dev=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
   tmp_dev=${dev##*/}
-  Volume=`/bin/df|/bin/awk /${tmp_dev}/'{print $NF}'`
+  Volume=`/bin/df|/usr/bin/awk /${tmp_dev}/'{print $NF}'`
   Volume=${Volume##*/} ; echo "$Volume"
-  /bin/smartctl -i ${dev}|/bin/awk -F: /Device:/'{print $2}'|/bin/tr -s ' ' ' '|\
-  /bin/sed 's/Version//g'|/bin/sed 's/^\ //g'|/bin/sed 's/\ $//g'
-  /bin/df -h /dev/${tmp_dev}|/bin/grep "^/dev"|/bin/awk 'BEGIN{OFS="\n"}{print $2,$4}'
-  #TYPE=`/bin/blkid -c /dev/null -s TYPE $dev|cut '-d=' -f2|sed 's/\"//g'|sed 's/\ //g'`
+  /usr/bin/smartctl -i ${dev}|/usr/bin/awk -F: /Device:/'{print $2}'|/usr/bin/tr -s ' ' ' '|\
+  /usr/bin/sed 's/Version//g'|/usr/bin/sed 's/^\ //g'|/bin/sed 's/\ $//g'
+  /bin/df -h /dev/${tmp_dev}|/usr/bin/grep "^/dev"|/usr/bin/awk 'BEGIN{OFS="\n"}{print $2,$4}'
+  #TYPE=`/usr/bin/blkid -c /dev/null -s TYPE $dev|cut '-d=' -f2|sed 's/\"//g'|sed 's/\ //g'`
   #[ "$TYPE" == "vfat" ] && TYPE=FAT
-  #TYPE=`echo $TYPE|/bin/tr "[:lower:]" "[:upper:]"`
+  #TYPE=`echo $TYPE|/usr/bin/tr "[:lower:]" "[:upper:]"`
   #echo "$TYPE"
 
-  /bin/fdisk -l|/bin/grep "^$dev"|/bin/cut -c55-
+  /bin/fdisk -l|/usr/bin/grep "^$dev"|/usr/bin/cut -c55-
   ;;
  UsersData)
   UsersData=$(echo $(service_smb_modify_share_access))
-  echo "${UsersData}"|/bin/sed 's/\ //g'|/bin/sed 's/,$//'|/bin/tr "," "^"
+  echo "${UsersData}"|/usr/bin/sed 's/\ //g'|/bin/sed 's/,$//'|/usr/bin/tr "," "^"
   ;;
  rebuild_info)
   for disk in sda1 sdb1; do
    MD_STATUS=`/usr/bin/mdadm -D /dev/md1`
-   echo "$MD_STATUS"|/bin/grep "$disk" >/dev/null 2>&1
+   echo "$MD_STATUS"|/usr/bin/grep "$disk" >/dev/null 2>&1
    [ $? -eq 0 ] && {
     active=$disk
     break
@@ -297,26 +297,26 @@ case ${func} in
   $format_hdd $mode
   ;;
  SingleFormat)
-  Disk=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
+  Disk=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
   $SingleFormat $Disk
   ;;
  ntp_action)
   /bin/cat ${NTP_ACTION}
   ;;
  gmtconf)
-  /bin/cat $GMT|/bin/tr -d '\n'
+  /bin/cat $GMT|/usr/bin/tr -d '\n'
   ;;
  tzinfo)
   /bin/cat $TZINFO
   ;;
  datetime)
-  /bin/date '+%Y %m %d %H %M'|/bin/tr -d '\n'
+  /usr/bin/date '+%Y %m %d %H %M'|/usr/bin/tr -d '\n'
   ;;
  ntpserver)
   /bin/cat $NTP_SERVER
   ;;
  ntpconf)
-  /bin/cat $NTP_CONF|/bin/tr -d '\n'
+  /bin/cat $NTP_CONF|/usr/bin/tr -d '\n'
   ;;
  AddNTPServer)
   ADD=`echo ${QUERY_STRING} | cut '-d&' -f2`
@@ -324,7 +324,7 @@ case ${func} in
   ;;
  DelNTPServer)
   DEL=`echo ${QUERY_STRING} | cut '-d&' -f2`
-  OLD=`/bin/cat $NTP_SERVER|/bin/grep -v "^${DEL}$"`
+  OLD=`/bin/cat $NTP_SERVER|/usr/bin/grep -v "^${DEL}$"`
   echo "$OLD" > $NTP_SERVER
   for i in `/bin/cat $NTP_SERVER`; do
    echo "$i" > $NTP_CONF
@@ -350,10 +350,10 @@ case ${func} in
    }
   ;;
  webmaster)
-  Login_user=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
-  Login_passwd=`echo ${QUERY_STRING}|/bin/cut '-d&' -f3`
-  user=`/bin/cat ${WEBMASTER}|/bin/cut '-d:' -f1`
-  passwd=`/bin/cat ${WEBMASTER}|/bin/cut '-d:' -f2`
+  Login_user=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f2`
+  Login_passwd=`echo ${QUERY_STRING}|/usr/bin/cut '-d&' -f3`
+  user=`/bin/cat ${WEBMASTER}|/usr/bin/cut '-d:' -f1`
+  passwd=`/bin/cat ${WEBMASTER}|/usr/bin/cut '-d:' -f2`
   [ ${Login_user} == ${user} ] && [ ${Login_passwd} == ${passwd} ] && /bin/echo "OK"
   ;;
  *)

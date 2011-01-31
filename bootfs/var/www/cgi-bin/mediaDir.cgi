@@ -6,7 +6,7 @@ echo "<HTML><HEAD>"
 echo "<TITLE>Sample CGI Output</TITLE>"
 echo "</HEAD><BODY>"
 DAAP_CONF=/etc/sysconfig/config/daapd.conf
-mp3_dir=`/bin/cat $DAAP_CONF|/bin/grep "^mp3_dir"|/bin/cut -c9-`
+mp3_dir=`/bin/cat $DAAP_CONF|/usr/bin/grep "^mp3_dir"|/usr/bin/cut -c9-`
 path=`echo ${QUERY_STRING} | cut '-d&' -f1`
 
 limitpath="/home"

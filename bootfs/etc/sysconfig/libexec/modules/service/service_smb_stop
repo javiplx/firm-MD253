@@ -8,5 +8,5 @@ for i in $PID; do
 done
 
 /bin/rm -f ${smbd_pid} >/dev/null 2>&1
-/bin/logger "$0 - smbd deamon Stop"
+/usr/bin/logger "$0 - smbd deamon Stop"
 }

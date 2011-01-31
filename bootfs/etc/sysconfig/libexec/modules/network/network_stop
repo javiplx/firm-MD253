@@ -13,5 +13,5 @@ done
 /bin/ifconfig lo down
 /bin/ifconfig eth0 0.0.0.0 up
 /bin/ifconfig eth0 down
-/bin/logger "$0 - NIC Stop"
+/usr/bin/logger "$0 - NIC Stop"
 }

@@ -5,5 +5,5 @@ for i in syslogd klogd; do
 done
 
 rm -f /var/lock/subsys/syslog
-/bin/logger "$0 - \"syslogd & klogd\" deamon Stop"
+/usr/bin/logger "$0 - \"syslogd & klogd\" deamon Stop"
 }

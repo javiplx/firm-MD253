@@ -4,5 +4,5 @@ PID=`/bin/pidof proftpd`
 for i in $PID; do
  /bin/kill -9 $i >/dev/null 2>&1
 done
-/bin/logger "$0 - proftpd deamon Stop"
+/usr/bin/logger "$0 - proftpd deamon Stop"
 }

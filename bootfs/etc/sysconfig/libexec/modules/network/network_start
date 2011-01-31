@@ -26,8 +26,8 @@ TMP_MTU="${MTU}"
 
 /bin/ifconfig eth0 hw ether ${HWADDR}
 [ $? -eq 0 ] &&\
- /bin/logger "$0 - NIC:\"${HWADDR}\" Start Succeed" ||\
- /bin/logger "$0 - NIC:\"${HWADDR}\" Start Failed"
+ /usr/bin/logger "$0 - NIC:\"${HWADDR}\" Start Succeed" ||\
+ /usr/bin/logger "$0 - NIC:\"${HWADDR}\" Start Failed"
 
 /bin/ifconfig eth0 up
 /bin/ifconfig eth0 mtu ${MTU}
@@ -40,7 +40,7 @@ TMP_MTU="${MTU}"
 /bin/killall nmbd
 /usr/local/samba/sbin/nmbd >/dev/null 2>&1
 
-SMB_IPADDR=`/bin/awk "-F = " '/interfaces/{print $2}' $SMB_CONF`
+SMB_IPADDR=`/usr/bin/awk "-F = " '/interfaces/{print $2}' $SMB_CONF`
 $replaceFile "${SMB_CONF}" "interfaces = ${SMB_IPADDR}" "interfaces = ${IPADDR}/${NETMASK}"
 echo "hosts allow = ${NETWORK}/${NETMASK}" > ${SMB_NET_CONF}
 
@@ -56,7 +56,7 @@ done
 [ "${BOOTPROTO}" == "dhcp" ] &&\
  /bin/udhcpc -R -b -i eth0 --timeout=1 --tryagain=1 >/dev/null 2>&1 &
 
-HostName=`/bin/hostname|/bin/sed 's/\ //g'`
+HostName=`/bin/hostname|/usr/bin/sed 's/\ //g'`
 echo "127.0.0.1	localhost.localdomain	localhost" > /etc/hosts
 echo "${IPADDR}	${HostName}.localdomain	${HostName}" >> /etc/hosts
 

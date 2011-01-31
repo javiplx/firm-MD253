@@ -13,12 +13,12 @@ BTPD_TORRENTS_PATH=${BTPD_START_PATH}/torrents_list
  outgoing=50
  maxpeers=5
  service_btpd_modify_conf_data > ${BTPD_CONF}
- /bin/logger "$0 - Modify btpd Config \"btpd.conf\""
+ /usr/bin/logger "$0 - Modify btpd Config \"btpd.conf\""
  }
 
-/bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home$" >/dev/null 2>&1
+/bin/df|/usr/bin/awk '{print $NF}'|/usr/bin/grep "^/home$" >/dev/null 2>&1
 [ $? -ne 0 ] && return
-BT_SERVICE=`/bin/awk -F= /btpd/'{print $2}' ${SERVICE_CONF}`
+BT_SERVICE=`/usr/bin/awk -F= /btpd/'{print $2}' ${SERVICE_CONF}`
 [ "${BT_SERVICE}" == "Enable" ] || return
 
 . ${BTPD_CONF}
@@ -28,7 +28,7 @@ BT_SERVICE=`/bin/awk -F= /btpd/'{print $2}' ${SERVICE_CONF}`
 /bin/test -f ${BTPD_BASE_DIR}/.btpd.tar.bz2 && {
  cd ${BTPD_BASE_DIR}
  /bin/rm -rf ${BTPD_BASE_DIR}/.btpd
- /bin/tar xjf .btpd.tar.bz2
+ /usr/bin/tar xjf .btpd.tar.bz2
  }
 
 [ -d ${BTPD_START_PATH} ] || /bin/mkdir -p ${BTPD_START_PATH}
@@ -37,10 +37,10 @@ BT_SERVICE=`/bin/awk -F= /btpd/'{print $2}' ${SERVICE_CONF}`
 export BTPD_HOME=${BTPD_START_PATH}
 ${BTPD_BIN} -d ${BTPD_START_PATH} ${in_str} ${out_str} --max-peers ${maxpeers} -p ${port}
 [ $? -eq 0 ] &&\
- /bin/logger "$0 - btpd deamon Start Succeed" ||\
- /bin/logger "$0 - btpd deamon Start Failed"
+ /usr/bin/logger "$0 - btpd deamon Start Succeed" ||\
+ /usr/bin/logger "$0 - btpd deamon Start Failed"
 
-file=`/bin/find "${BTPD_TORRENTS_PATH}/" -maxdepth 1 -type f|/bin/tr " " "^"`
+file=`/usr/bin/find "${BTPD_TORRENTS_PATH}/" -maxdepth 1 -type f|/usr/bin/tr " " "^"`
 /bin/cat /dev/null > ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus
 for i in ${file}; do
  [ "$i" == ".torrent" ] && {
@@ -48,16 +48,16 @@ for i in ${file}; do
   continue
   }
 
- name=`echo "${i##*/}"|/bin/tr "^" " "`
- /bin/btcli start ${BTPD_TORRENTS_PATH}/"${name}" >/dev/null 2>&1
- num=`/bin/btcli stat -i ${BTPD_TORRENTS_PATH}/"${name}"|/bin/grep -v "NUM"|\
-      /bin/awk '{print $1}'|/bin/grep -v "%"`
+ name=`echo "${i##*/}"|/usr/bin/tr "^" " "`
+ /usr/bin/btcli start ${BTPD_TORRENTS_PATH}/"${name}" >/dev/null 2>&1
+ num=`/usr/bin/btcli stat -i ${BTPD_TORRENTS_PATH}/"${name}"|/usr/bin/grep -v "NUM"|\
+      /usr/bin/awk '{print $1}'|/usr/bin/grep -v "%"`
 
  [ "$num" == "" ] && {
-  /bin/btcli del ${BTPD_TORRENTS_PATH}/"${name}"
+  /usr/bin/btcli del ${BTPD_TORRENTS_PATH}/"${name}"
   /bin/rm -rf ${BTPD_TORRENTS_PATH}/"${name}"
   } || echo "$num ${name}" >> ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus
 
- /bin/btcli stop ${BTPD_TORRENTS_PATH}/"${name}"
+ /usr/bin/btcli stop ${BTPD_TORRENTS_PATH}/"${name}"
 done
 }

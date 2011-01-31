@@ -13,11 +13,11 @@ bsoft=`expr ${bhard} \* 95 / 100`
 case ${func} in
  adduser|CreateUser)
   service_user_add_modify
-  /bin/logger "$0 - Create new user : \"${user}\" quota : \"${bhard}GB\""
+  /usr/bin/logger "$0 - Create new user : \"${user}\" quota : \"${bhard}GB\""
   ;;
  modifyuser)
-  PASSWD_LINE=`/bin/cat /etc/passwd|/bin/grep "^${user}:"`
-  USER_UID=`/bin/awk -F: /^${user}:/'{print $3}' /etc/passwd`
+  PASSWD_LINE=`/bin/cat /etc/passwd|/usr/bin/grep "^${user}:"`
+  USER_UID=`/usr/bin/awk -F: /^${user}:/'{print $3}' /etc/passwd`
   $replaceFile "/etc/passwd" "${PASSWD_LINE}" "${user}:x:${USER_UID}:500:${bhard},${bhard}:/home:/bin/sh"
 
   [ "$bhard" == "0" ] && bhard=999999999
@@ -28,11 +28,11 @@ case ${func} in
   [ "${passwd}" == "none" ] ||\
    (echo "${passwd}";echo "${passwd}")|${SMB_PASSWD_PROG} -s -a "${user}" >/dev/null 2>&1
 
-  /bin/logger "$0 - Modify user : \"${user}\" password."
+  /usr/bin/logger "$0 - Modify user : \"${user}\" password."
   ;;
  ModifyUsers)
-  PASSWD_LINE=`/bin/cat /etc/passwd|/bin/grep "^${user}:"`
-  USER_UID=`/bin/awk -F: /^${user}:/'{print $3}' /etc/passwd`
+  PASSWD_LINE=`/bin/cat /etc/passwd|/usr/bin/grep "^${user}:"`
+  USER_UID=`/usr/bin/awk -F: /^${user}:/'{print $3}' /etc/passwd`
   $replaceFile "/etc/passwd" "${PASSWD_LINE}" "${user}:x:${USER_UID}:500:${bhard},${bhard}:/home:/bin/sh"
 
   [ "$bhard" == "0" ] && bhard=999999999
@@ -43,16 +43,16 @@ case ${func} in
   [ "${passwd}" == "none" ] ||\
    (echo "${passwd}";echo "${passwd}")|${SMB_PASSWD_PROG} -s -a "${user}" >/dev/null 2>&1
 
-  /bin/logger "$0 - Modify user : \"${user}\" password."
+  /usr/bin/logger "$0 - Modify user : \"${user}\" password."
   ;;
  deluser)
   service_user_del_modify
-  /bin/logger "$0 - Delete user : \"${UserName}\" ."
+  /usr/bin/logger "$0 - Delete user : \"${UserName}\" ."
   ;;
 esac
 [ "${func}" != "deluser" ] && {
  [ "${passwd}" == "none" ] ||\
-  echo "${user}:${passwd}" | /bin/chpasswd
+  echo "${user}:${passwd}" | /usr/bin/chpasswd
  }
 
 case ${func} in

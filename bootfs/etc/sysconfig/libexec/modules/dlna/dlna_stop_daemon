@@ -9,5 +9,5 @@ for i in $service; do
   done
   }
 done
-/bin/logger "$0 - \"daapd\" deamon Stop"
+/usr/bin/logger "$0 - \"daapd\" deamon Stop"
 }
