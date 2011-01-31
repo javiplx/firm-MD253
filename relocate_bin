@@ -4,3 +4,5 @@ rm bin sbin usr/sbin
 mv usr/bin bin
 ln -s bin sbin
 
+mv ../rootfs/bin/hotplug bin
+
