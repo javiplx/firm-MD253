@@ -1,6 +1,0 @@
-#!/bin/sh
-
-rm bin sbin usr/sbin
-mv usr/bin bin
-ln -s bin sbin
-
