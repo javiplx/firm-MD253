@@ -137,6 +137,7 @@ for user in ${USER}; do
  USER_UID=`/bin/awk -F: /^${user}:/'{print $3}' ${PASSWD}`
  bhard=`/bin/awk -F: /^${user}:/'{print $5}' ${PASSWD}|\
         /bin/awk -F, '{print $2}'|/bin/sed 's/\ //g'`
+ [ "$bhard" == "0" ] && bhard=999999999
 
  ${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g ${USER_UID}" ${SHARE_PATH}
 

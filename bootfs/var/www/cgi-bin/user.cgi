@@ -29,6 +29,10 @@ case ${func} in
    bhard=`$XFS_QUOTA -x -c 'report -N -h' /home|\
          /bin/awk /^${user}\ /'{print $4}'|/bin/sed 's/\ //g'`
 
+   str=`/bin/awk -F: /^${user}:/'{print $5}' ${PASSWD}|\
+        /bin/awk -F, '{print $2}'|/bin/sed 's/\ //g'`
+
+   [ "$str" == "0" ] && bhard=""
    [ "$size" == "" ] && size="none"
    [ "$bhard" == "" ] && bhard="none"
    echo "$user^$bhard^$size^manager"

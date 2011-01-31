@@ -7,7 +7,7 @@ SMB_CONF=${SmbPath}/smb.conf
 
 SMB_HOST_CONF=${SmbPath}/host.inc
 SMB_NET_CONF=${SmbPath}/network.inc
-LMHost=${SmbPath}/lmhost
+LMHost=${SmbPath}/lmhosts
 
 discovery=/etc/sysconfig/system-script/cron-discovery
 IFCFG=${ConfigPath}/ifcfg-eth0

@@ -31,6 +31,8 @@ for i in ${FOLDER}; do
  string=${i##*/}
  USBMountPoint=`/bin/df|/bin/awk /"${string}"$/'{print $NF}'`
 
+ [ "${string}" == "Disk_2" -o "${string}" == "Disk_3" ] && USBMountPoint=""
+
  /bin/test -f ${CONFIG_PATH}/smb/folders/${string} || {
   [ "${string}" == "PUBLIC" -o "${string}" == "BitTorrent" -o "${USBMountPoint}" == "/home/${string}" ] &&\
    echo "anonymous" > ${CONFIG_PATH}/smb/folders/${string} ||\

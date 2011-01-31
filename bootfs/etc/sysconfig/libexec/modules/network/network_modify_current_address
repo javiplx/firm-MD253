@@ -5,7 +5,7 @@ ConfigPath=/etc/sysconfig/config
 SmbPath=${ConfigPath}/smb
 SMB_CONF=${SmbPath}/smb.conf
 SMB_NET_CONF=${SmbPath}/network.inc
-LMHost=${SmbPath}/lmhost
+LMHost=${SmbPath}/lmhosts
 
 RESOLV=/etc/resolv.conf
 IFCFG=/etc/sysconfig/config/ifcfg-eth0

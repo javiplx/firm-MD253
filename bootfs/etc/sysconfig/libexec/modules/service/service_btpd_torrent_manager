@@ -65,6 +65,7 @@ case ${action} in
    FileName=`/bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/bin/grep "^$i "|/bin/sed 's/^'$i'\ //'|/bin/sed 's/\.torrent$//'`
    DownloadDir=${BTPD_BASE_DIR}/"${FileName}"
    TorrentName="${FileName}".torrent
+   /bin/btcli start ${BTPD_TORRENTS}/"${TorrentName}"
    /bin/btcli del ${BTPD_TORRENTS}/"${TorrentName}"
    /bin/rm -rf ${BTPD_TORRENTS}/"${TorrentName}"
    [ "$DelAction" == "DelFile" ] && /bin/rm -rf "${DownloadDir}"

@@ -3,7 +3,7 @@ ConfigPath=/etc/sysconfig/config
 SmbPath=${ConfigPath}/smb
 SMB_CONF=${SmbPath}/smb.conf
 SMB_NET_CONF=${SmbPath}/network.inc
-LMHost=${SmbPath}/lmhost
+LMHost=${SmbPath}/lmhosts
 SMB_HOST_CONF=${SmbPath}/host.inc
 DAAP_CONF=${ConfigPath}/daapd.conf
 

@@ -10,7 +10,7 @@ echo "create mask = 0777"
 echo "directory mask = 0777"
 echo "wide links = no"
 echo "map archive = yes"
-echo "preallocate = yes"
+#echo "preallocate = yes"
 echo "include=/etc/sysconfig/config/smb/shares/${string}.inc"
 
 case ${FolderStatus} in
@@ -24,6 +24,12 @@ case ${string} in
   echo "force user = nobody"
   ;;
 esac
+
+[ "${USBMountPoint}" == "/home/${string}" -o "${string}" == "BitTorrent" ] && {
+ echo "force user = root"
+ echo "sync always = yes"
+ echo "strict sync = yes"
+ }
 
 echo "force directory mode = 0777"
 echo "force create mode = 0777"

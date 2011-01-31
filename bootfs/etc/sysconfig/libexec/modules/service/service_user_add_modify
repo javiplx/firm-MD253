@@ -8,7 +8,13 @@ XFS_QUOTA=/usr/local/xfsprogs/xfs_quota
 /bin/adduser "${user}" -h /home -H -G user -D
 USER_UID=`/bin/awk -F: /^${user}:/'{print $3}' /etc/passwd`
 $replaceFile "/etc/passwd" "${user}:x:${USER_UID}:500:Linux User,,,:/home:/bin/sh" "${user}:x:${USER_UID}:500:${bhard},${bhard}:/home:/bin/sh"
+
+[ "$bhard" == "0" ] && bhard=999999999
 ${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g ${USER_UID}" /home
+
+[ -d "/home/Disk_2" ] &&\
+ ${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g ${USER_UID}" /home/Disk_2
+
 (echo "${passwd}";echo "${passwd}")|${SMB_PASSWD_PROG} -s -a "${user}" >/dev/null 2>&1
 
 MODE="shares"

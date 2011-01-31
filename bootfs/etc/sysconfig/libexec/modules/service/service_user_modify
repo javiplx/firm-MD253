@@ -19,7 +19,11 @@ case ${func} in
   PASSWD_LINE=`/bin/cat /etc/passwd|/bin/grep "^${user}:"`
   USER_UID=`/bin/awk -F: /^${user}:/'{print $3}' /etc/passwd`
   $replaceFile "/etc/passwd" "${PASSWD_LINE}" "${user}:x:${USER_UID}:500:${bhard},${bhard}:/home:/bin/sh"
+
+  [ "$bhard" == "0" ] && bhard=999999999
   ${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g ${USER_UID}" /home
+  [ -d "/home/Disk_2" ] &&\
+   ${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g ${USER_UID}" /home/Disk_2
 
   [ "${passwd}" == "none" ] ||\
    (echo "${passwd}";echo "${passwd}")|${SMB_PASSWD_PROG} -s -a "${user}" >/dev/null 2>&1
@@ -30,7 +34,11 @@ case ${func} in
   PASSWD_LINE=`/bin/cat /etc/passwd|/bin/grep "^${user}:"`
   USER_UID=`/bin/awk -F: /^${user}:/'{print $3}' /etc/passwd`
   $replaceFile "/etc/passwd" "${PASSWD_LINE}" "${user}:x:${USER_UID}:500:${bhard},${bhard}:/home:/bin/sh"
+
+  [ "$bhard" == "0" ] && bhard=999999999
   ${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g ${USER_UID}" /home
+  [ -d "/home/Disk_2" ] &&\
+   ${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g ${USER_UID}" /home/Disk_2
 
   [ "${passwd}" == "none" ] ||\
    (echo "${passwd}";echo "${passwd}")|${SMB_PASSWD_PROG} -s -a "${user}" >/dev/null 2>&1

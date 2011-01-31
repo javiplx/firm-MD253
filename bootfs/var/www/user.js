@@ -38,7 +38,7 @@ function showUserDataMessage(msg){
    if(j==1){
     //UserRadio(UserData[0],UserData[1]);
     if(UserData[j].indexOf("none") != -1){
-     oCell.style.cssText="color: #E24242;padding: 0px 0px 0px 10px;";
+     oCell.style.cssText="color: #0000FF;padding: 0px 0px 0px 10px;";
      str=showText(73);
     } else {
      oCell.style.cssText="color: #0000FF;padding: 0px 0px 0px 10px;";
