@@ -1,0 +1,4 @@
+#!/bin/sh
+
+tar -uf skel.tar --exclude bootfs/dev/root bootfs/dev bootfs/etc/sysconfig/config/smb/folders bootfs/etc/sysconfig/config/smb/private bootfs/etc/sysconfig/config/smb/shares bootfs/home bootfs/mnt bootfs/proc bootfs/root bootfs/sys bootfs/tmp bootfs/usr/share/system bootfs/var/spool/system squashfs-root/share/system
+
