@@ -1,0 +1,48 @@
+service_user_modify_smb_action(){
+CONFIG_PATH=/etc/sysconfig/config
+SMB_SHARES_CONF=${CONFIG_PATH}/smb/shares
+
+UserName=`echo ${QUERY_STRING} | cut '-d&' -f2`
+FolderName=`echo ${QUERY_STRING} | cut '-d&' -f3`
+Action=`echo ${QUERY_STRING} | cut '-d&' -f4`
+value=`echo ${QUERY_STRING} | cut '-d&' -f5`
+
+case ${value} in
+ YES)
+  value=NO
+  ;;
+ NO)
+  value=YES
+  ;;
+esac
+
+case ${Action} in
+ Access)
+  old_write_list=`/bin/awk -F= /write/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/bin/sed 's/\ //g'`
+  case ${value} in
+   YES)
+    $replaceFile "${SMB_SHARES_CONF}/${FolderName}.inc" "write list = ${old_write_list}" "write list = ${old_write_list}${UserName},"
+    ;;
+   NO)
+    new_write_list=`echo ${old_write_list}|/bin/sed 's/',${UserName},'/,/g`
+    $replaceFile "${SMB_SHARES_CONF}/${FolderName}.inc" "write list = ${old_write_list}" "write list = ${new_write_list}"
+    ;;
+  esac
+  ;;
+ Login)
+  old_invalid_users=`/bin/awk -F= /invalid/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/bin/sed 's/\ //g'`
+  case ${value} in
+   YES)
+    new_invalid_users=`/bin/awk -F= /invalid/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/bin/sed 's/\ //g'|/bin/sed 's/',${UserName},'/,/g'|/bin/sed 's/'^${UserName},'//g'`
+    $replaceFile "${SMB_SHARES_CONF}/${FolderName}.inc" "invalid users = ${old_invalid_users}" "invalid users = ${new_invalid_users}"
+    ;;
+   NO)
+    $replaceFile "${SMB_SHARES_CONF}/${FolderName}.inc" "invalid users = ${old_invalid_users}" "invalid users = ${old_invalid_users}${UserName},"
+    ;;
+  esac
+  ;;
+esac
+service_smb_stop
+sleep 2
+service_smb_start
+}

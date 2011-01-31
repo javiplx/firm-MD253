@@ -1,0 +1,11 @@
+service_lpd_stop(){
+lpd_prog=/bin/lpd
+lpd_pid=/var/run/lpd.pid
+
+PID=`/bin/pidof lpd`
+/bin/killall lpd
+for i in $PID; do
+ /bin/kill -9 $i >/dev/null 2>&1
+done
+/bin/rm -f ${lpd_pid} >/dev/null 2>&1
+}

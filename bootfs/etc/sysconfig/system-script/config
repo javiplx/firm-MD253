@@ -1,0 +1,24 @@
+#!/bin/sh
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export PATH
+. /usr/libexec/modules/modules.conf
+
+TOUCH=/etc/sysconfig/config/touch
+dev=$1
+count=`echo ${dev}|wc -L`
+[ $count -lt 4 ] && return
+[ -f ${TOUCH} ] && return || touch ${TOUCH}
+
+service_smb_modify_conf
+
+SHARE_PATH=/home
+CONFIG_PATH=/etc/sysconfig/config
+FILE=`/bin/ls ${CONFIG_PATH}/smb/folders`
+
+for file in $FILE; do
+ /bin/ls /home/"${file}" >/dev/null 2>&1
+ [ $? -eq 0 ] || /bin/rm -f ${CONFIG_PATH}/smb/folders/"${file}"
+done
+
+rm -f ${TOUCH}
+/bin/logger "$0 - Modify Samba Config \"shares.conf\""

@@ -1,0 +1,2 @@
+#/dev/ram0	/               ext2    defaults        	0       0
+/dev/shm/tmp	/tmp		tmpfs	size=20m,mode=1777	0	0

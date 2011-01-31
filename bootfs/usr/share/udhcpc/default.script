@@ -1,0 +1,44 @@
+#!/bin/sh
+
+. /usr/libexec/modules/modules.conf
+discovery=/etc/sysconfig/system-script/cron-discovery
+# udhcpc script edited by Tim Riker <Tim@Rikers.org>
+
+[ -z "$1" ] && echo "Error: should be called from udhcpc" && exit 1
+
+RESOLV_CONF="/etc/resolv.conf"
+[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+[ -n "$subnet" ] && NETMASK="netmask $subnet"
+
+case "$1" in
+ deconfig)
+  /bin/logger "$0 - No DHCP Server, DHCP Start Failed"
+  #/sbin/ifconfig $interface 192.168.100.253
+  ;;
+ renew|bound)
+  /sbin/ifconfig $interface $ip $BROADCAST $NETMASK
+  if [ -n "$router" ] ; then
+   echo "deleting routers"
+   while route del default gw 0.0.0.0 dev $interface ; do
+    :
+   done
+
+   metric=0
+   for i in $router ; do
+    route add default gw $i dev $interface metric $((metric++))
+   done
+  fi
+
+  echo -n > $RESOLV_CONF
+  for i in $dns ; do
+   echo adding dns $i
+   echo nameserver $i >> $RESOLV_CONF
+  done
+  $discovery &
+  network_modify_current_address >/dev/null 2>&1 &
+  dlna_mDNSR_modify_conf >/dev/null 2>&1 &
+  kill `pidof udhcpc`
+  /bin/logger "$0 - IPADDR:\"${ip}\" DHCP Start Succeed"
+  ;;
+esac
+exit 0

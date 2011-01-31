@@ -1,0 +1,6 @@
+service_setcolor(){
+SETCOLOR_GREEN="echo -en \\033[1;32m"
+SETCOLOR_RED="echo -en \\033[1;31m"
+SETCOLOR_YELLOW="echo -en \\033[1;33m"
+SETCOLOR_NORMAL="echo -en \\033[0;39m"
+}

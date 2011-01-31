@@ -1,0 +1,6 @@
+service_smb_modify_share_access(){
+PASSWD=/etc/passwd
+for data in `/bin/awk -F: /:500:/'{print $1}' $PASSWD`; do
+ /bin/echo "$data,"
+done
+}

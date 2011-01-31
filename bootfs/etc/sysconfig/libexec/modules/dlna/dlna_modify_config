@@ -1,0 +1,18 @@
+dlna_modify_config(){
+replaceFile=/var/www/cgi-bin/replaceFile
+SERVICE_CONF=/etc/sysconfig/config/service
+SMB_HOST_CONF=/etc/sysconfig/config/smb/host.inc
+DNSR_CONF=/etc/sysconfig/config/responder.conf
+DAAP_CONF=/etc/sysconfig/config/daapd.conf
+
+WORKGROUP=`/bin/cat ${SMB_HOST_CONF}|grep "^workgroup"`
+echo "netbios name = ${name}" > ${SMB_HOST_CONF}
+echo "${WORKGROUP}" >> ${SMB_HOST_CONF}
+/bin/logger "$0 - Modify Samba config : \"host.inc\", netbios name : \"${name}\""
+
+old_daap_name=`/bin/awk /servername/'{print $2}' ${DAAP_CONF}|/bin/sed 's/\ //g'`
+$replaceFile "${DAAP_CONF}" "servername ${old_daap_name}" "servername ${name}"
+/bin/logger "$0 - Modify daapd config : \"daapd.conf\", servername : \"${name}\""
+
+dlna_mDNSR_modify_conf
+}

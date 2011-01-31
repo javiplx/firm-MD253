@@ -1,0 +1,26 @@
+#!/bin/sh
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export PATH
+
+replaceFile=/bin/replaceFile
+crontable=/etc/sysconfig/config/root
+detectRebuild=/etc/sysconfig/system-script/detectRebuild
+
+/usr/bin/mdadm -D /dev/md1|/bin/grep "spare rebuilding" >/dev/null 2>&1
+[ $? -eq 0 ] && {
+ return
+ } || {
+ echo "hdd1 blue clear" > /proc/mp_leds
+ echo "hdd2 blue clear" > /proc/mp_leds
+ echo "hdd1 red clear" > /proc/mp_leds
+ echo "hdd2 red clear" > /proc/mp_leds
+ echo "hdd1 blue set" > /proc/mp_leds
+ echo "hdd2 blue set" > /proc/mp_leds
+
+ detectRebuildLine=`/bin/cat ${crontable}|/bin/grep "${detectRebuild}"`
+ echo "${detectRebuildLine}"|/bin/grep "#" >/devnull 2>&1
+ [ $? -eq 0 ] || {
+  $replaceFile "${crontable}" "${detectRebuildLine}" "#* * * * * /etc/sysconfig/system-script/detectRebuild"
+  service_crond_start
+  }
+}

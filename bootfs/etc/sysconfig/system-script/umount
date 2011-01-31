@@ -1,0 +1,32 @@
+#!/bin/sh
+
+CONFIG_PATH=/etc/sysconfig/config
+DAAP_CONF=${CONFIG_PATH}/daapd.conf
+SHARE_PATH=/home
+dev=$1
+
+LABEL=`/bin/df|/bin/awk /${dev}/'{print $NF}'`
+string=${LABEL##*/}
+
+#/bin/umount -l /dev/${dev}
+TYPE=`/bin/df|/bin/awk /${dev}/'{print $1}'|/bin/uniq`
+[ "$TYPE" == "" ] || /bin/umount -l /dev/${dev}
+
+PID=`/bin/ps|/bin/grep "${SHARE_PATH}/${string}"|\
+     /bin/awk '{print $1}'|/bin/sed 's/\ //g'`
+for i in $PID; do
+ /bin/kill -9 ${i}
+done
+
+[ "${string}" != "" ] &&\
+[ -d "${SHARE_PATH}/${string}" ] &&\
+ /bin/rm -rf "${SHARE_PATH}/${string}"
+
+/bin/rm -f ${CONFIG_PATH}/smb/shares/"${string}".inc
+/bin/rm -f ${CONFIG_PATH}/smb/folders/"${string}"
+/bin/cat /etc/sysconfig/config/USBData|/bin/grep -v "^${string}=" > /tmp/.USBData
+/bin/mv /tmp/.USBData /etc/sysconfig/config/USBData
+
+mp3_dir=`/bin/awk /mp3_dir/'{print $2}' $DAAP_CONF|/bin/sed 's/\ //g'`
+[ -d "${mp3_dir}" ] || /bin/rm -rf /tmp/songs.gdb
+/bin/logger "$0 - Unmount device : \"/dev/${dev}\", Remove folder : \"${SHARE_PATH}/${string}\""

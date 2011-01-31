@@ -1,0 +1,24 @@
+#!/bin/sh
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export PATH
+
+SOURCE_PATH=/home
+PUBLIC_PATH=/home/PUBLIC
+
+/bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home$" >/dev/null 2>&1
+[ $? -ne 0 ] && return;
+
+DESTINATION_PATH=${PUBLIC_PATH}/"`date '+%Y_%m_%d_%H_%M_%S'`"
+#BACKUP_PATH=`/bin/find "${SOURCE_PATH}" -maxdepth 1 -type d|tr " " "^"`
+
+BACKUP_PATH=`/bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home"|\
+             /bin/grep -v "^/home$"|/bin/grep -v "^/home/Disk_2$"`
+
+[ "$BACKUP_PATH" == "" ] && return;
+[ -d "$DESTINATION_PATH" ] || /bin/mkdir -p ${DESTINATION_PATH}
+
+for i in $BACKUP_PATH; do
+ /bin/cp -af ${i} ${DESTINATION_PATH}/
+done
+
+echo "clear" > /proc/mp_otb_button

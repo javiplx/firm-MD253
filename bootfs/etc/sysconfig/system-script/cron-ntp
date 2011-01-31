@@ -1,0 +1,121 @@
+#!/bin/sh
+. /usr/libexec/modules/modules.conf
+DATE_CONF=/etc/sysconfig/config/date.conf
+NTP_CONF=`/bin/cat /etc/sysconfig/config/ntp.conf`
+NTP_SERVER=`/bin/cat /etc/sysconfig/config/ntp_server`
+GMT_CONF=/etc/sysconfig/config/gmt.conf
+DST_CONF=/etc/sysconfig/config/dst.conf
+NTP_ACTION_CONF=/etc/sysconfig/config/ntp.action
+replaceFile=/var/www/cgi-bin/replaceFile
+GMT=`cat $GMT_CONF`
+tmpfile=/tmp/tmp.$$
+
+mysettime(){
+yy=$1
+mm=$2
+dd=$3
+HH=$4
+MM=$5
+}
+
+mathweek(){
+month=$1
+sun=$2
+
+for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20; do
+ /bin/date "$month$i$HH$MM$yy" >/dev/null 2>&1
+ week=`date '+%A'`
+ [ "$week" == "Sunday" ] && {
+  tmp=`expr $tmp + 1`
+  [ $tmp -eq $sun ] && {
+   DST_DATE=`date '+%d'`
+   }
+  }
+done
+}
+
+/bin/test -f ${NTP_ACTION_CONF} ||\
+ echo "auto" > ${NTP_ACTION_CONF}
+
+NTP_ACTION=`cat ${NTP_ACTION_CONF}`
+[ "${NTP_ACTION}" == "auto" ] || exit 0
+
+/bin/ntpdate ${NTP_CONF}
+[ $? -eq 0 ] || {
+ for ser in ${NTP_SERVER}; do
+  echo "${ser}" > /etc/sysconfig/config/ntp.conf
+  break
+ done
+
+ return 1
+ }
+
+tmpmydate=`date '+%Y %m %d %H %M'`
+echo "$tmpmydate" > $tmpfile
+
+echo "$GMT"|grep "-" >/dev/null 2>&1
+[ $? -eq 0 ] || GMT="+${GMT}"
+/bin/date `/bin/date -d "${GMT} Hour" +"%m%d%H%M%Y"` >/dev/null 2>&1
+
+mydate=`date '+%Y %m %d %H %M'`
+echo "$mydate" > $DATE_CONF
+mysettime $mydate
+
+tmp=0; month=03; sun=2
+mathweek $month $sun
+START_DST_DATE=$DST_DATE
+
+tmp=0; month=11; sun=1
+mathweek $month $sun
+END_DST_DATE=$DST_DATE
+
+tmpmydate=`/bin/cat $tmpfile`
+mysettime $tmpmydate
+date "$mm$dd$HH$MM$yy" >/dev/null 2>&1
+/bin/rm -rf $tmpfile
+
+/bin/test -f ${DST_CONF} && {
+ OLD_START_DST_DATE=`/bin/awk -F= /START/'{print $2}' ${DST_CONF}`
+ OLD_END_DST_DATE=`/bin/awk -F= /END/'{print $2}' ${DST_CONF}`
+ $replaceFile "${DST_CONF}" "START=$OLD_START_DST_DATE" "START=$START_DST_DATE"
+ $replaceFile "${DST_CONF}" "END=$OLD_END_DST_DATE" "END=$OLD_END_DST_DATE"
+ } || {
+ echo "DST_STATUS=Disable" > ${DST_CONF}
+ echo "START=$START_DST_DATE" >> ${DST_CONF}
+ echo "END=$END_DST_DATE" >> ${DST_CONF}
+ }
+
+. ${DST_CONF}
+[ "$DST_STATUS" == "Disable" ] && {
+ service_ntp_start
+ } || {
+ [ $mm -gt 3 ] && {
+  [ $mm -lt 11 ] && {
+   GMT=`expr $GMT + 1`
+   echo "$GMT"|grep "-" >/dev/null 2>&1
+   [ $? -eq 0 ] || GMT="+${GMT}"
+   /bin/date `/bin/date -d "${GMT} Hour" +"%m%d%H%M%Y"` >/dev/null 2>&1
+   } || {
+   [ $mm -eq 11 ] && {
+    [ $dd -le $END_DST_DATE -a $HH -le 2 ] && {
+     GMT=`expr $GMT + 1`
+     echo "$GMT"|grep "-" >/dev/null 2>&1
+     [ $? -eq 0 ] || GMT="+${GMT}"
+     /bin/date `/bin/date -d "${GMT} Hour" +"%m%d%H%M%Y"` >/dev/null 2>&1
+     }
+    }
+   }
+  } || {
+  [ $mm -eq 3 ] && {
+   [ $dd -ge $START_DST_DATE -a $HH -ge 2 ] && {
+    GMT=`expr $GMT + 1`
+    echo "$GMT"|grep "-" >/dev/null 2>&1
+    [ $? -eq 0 ] || GMT="+${GMT}"
+    /bin/date `/bin/date -d "${GMT} Hour" +"%m%d%H%M%Y"` >/dev/null 2>&1
+    }
+   }
+  }
+
+ mydate=`date '+%Y %m %d %H %M'`
+ echo "$mydate" > $DATE_CONF
+ }

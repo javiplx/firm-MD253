@@ -1,0 +1,8 @@
+manufacturer:TwonkyVision GmbH
+manufacturerurl:http://www.twonkyvision.com
+modelname:TwonkyMedia
+modelnumber:4.4
+modelurl:http://www.twonkyvision.com
+modeldescription:TwonkyMedia
+modelserial:4.4
+presentationpage:index.html

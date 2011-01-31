@@ -1,0 +1,9 @@
+service_syslogd_stop(){
+for i in syslogd klogd; do
+ /bin/kill -9 `/bin/pidof ${i}`
+ /bin/rm -f /var/run/${i}.pid
+done
+
+rm -f /var/lock/subsys/syslog
+/bin/logger "$0 - \"syslogd & klogd\" deamon Stop"
+}

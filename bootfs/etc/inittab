@@ -1,0 +1,13 @@
+# Startup the system
+::sysinit:/bin/mount -a
+::sysinit:/bin/mount -n -t proc none proc/
+::sysinit:/bin/mount -n -o remount,rw /
+::sysinit:/bin/mount -t devpts devpts /dev/pts
+::sysinit:/bin/mount -t usbfs usbfs /proc/bus/usb
+::sysinit:/bin/mount -t sysfs sysfs /sys
+ 
+# run gettys on the serial ports
+#ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100
+# system initialisation
+::sysinit:/etc/init.d/rc.sysinit
+::shutdown:/etc/init.d/rc.reboot

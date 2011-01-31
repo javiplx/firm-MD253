@@ -1,0 +1,72 @@
+service_smb_modify_conf(){
+CONFIG_PATH=/etc/sysconfig/config
+SMB_CONF=${CONFIG_PATH}/smb/smb.conf
+SMB_SHARES_CONF=${CONFIG_PATH}/smb/shares.inc
+
+SLEEP=1
+DiskStatus=`/bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home$"`
+[ "$DiskStatus" == "" ] || {
+ #Directory="PUBLIC Media BitTorrent"
+ Directory="PUBLIC BitTorrent"
+ SHARE_PATH=/home
+ for path in $Directory; do
+  [ -d ${SHARE_PATH}/${path} ] || {
+   /bin/mkdir -p ${SHARE_PATH}/${path}
+   /bin/chmod 777 ${SHARE_PATH}/${path}
+   }
+ done
+ }
+
+FOLDER=`/bin/find "${SHARE_PATH}" -maxdepth 1 -type d|/bin/tr " " "^"`
+
+new_write_list=$(echo $(service_smb_modify_share_access))
+new_write_list=`echo "${new_write_list}"|/bin/sed 's/\ //g'`
+new_login_list="${new_write_list}"
+
+/bin/cat /dev/null > ${SMB_SHARES_CONF}
+for i in ${FOLDER}; do
+ i=`echo ${i}|/bin/tr "^" " "`
+ [ "${i}" == "${SHARE_PATH}" ] && continue
+ [ "${i}" == "/home/.lpd" ] && continue
+ string=${i##*/}
+ USBMountPoint=`/bin/df|/bin/awk /"${string}"$/'{print $NF}'`
+
+ /bin/test -f ${CONFIG_PATH}/smb/folders/${string} || {
+  [ "${string}" == "PUBLIC" -o "${string}" == "BitTorrent" -o "${USBMountPoint}" == "/home/${string}" ] &&\
+   echo "anonymous" > ${CONFIG_PATH}/smb/folders/${string} ||\
+   echo "personal" > ${CONFIG_PATH}/smb/folders/${string}
+  }
+
+ FolderStatus=`/bin/cat ${CONFIG_PATH}/smb/folders/${string}`
+
+ service_smb_modify_conf_data >> ${SMB_SHARES_CONF}
+
+ /bin/test -f ${CONFIG_PATH}/smb/shares/${string}.inc || {
+  [ "${string}" == "PUBLIC" -o "${FolderStatus}" == "anonymous" ] && {
+   echo "guest ok = yes" > ${CONFIG_PATH}/smb/shares/${string}.inc
+   } || {
+   echo "write list = toor,admin," > ${CONFIG_PATH}/smb/shares/${string}.inc
+   echo "invalid users = ${new_write_list}" >> ${CONFIG_PATH}/smb/shares/${string}.inc
+   }
+  }
+
+ [ "${string}" == "PUBLIC" -o "${USBMountPoint}" == "/home/${string}" ] && {
+  new_access_list=""
+  new_login_list="toor,admin,nobody,${new_write_list}"
+  } || {
+  new_access_list="${new_write_list}"
+  new_login_list="toor,admin,"
+  }
+
+ /bin/test -f ${i}/.ftpaccess && {
+  inner=`/bin/cat "${i}/.ftpaccess"`
+  [ "$inner" == "" ] && {
+   service_ftp_modify_ftpaccess_data > ${i}/.ftpaccess
+   } || continue
+  } || {
+  service_ftp_modify_ftpaccess_data > ${i}/.ftpaccess
+  }
+
+done
+/bin/logger "$0 - Modify Samba Config \"shares.inc\""
+}

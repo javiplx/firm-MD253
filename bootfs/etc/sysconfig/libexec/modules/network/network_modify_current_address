@@ -1,0 +1,56 @@
+network_modify_current_address(){
+replaceFile=/bin/replaceFile
+
+ConfigPath=/etc/sysconfig/config
+SmbPath=${ConfigPath}/smb
+SMB_CONF=${SmbPath}/smb.conf
+SMB_NET_CONF=${SmbPath}/network.inc
+LMHost=${SmbPath}/lmhost
+
+RESOLV=/etc/resolv.conf
+IFCFG=/etc/sysconfig/config/ifcfg-eth0
+. $IFCFG
+
+NEW_IPADDR=`/bin/ifconfig eth0|/bin/awk '/inet\ addr/{print $2}'|/bin/cut -d ":" -f2`
+NEW_NETMASK=`/bin/ifconfig eth0|/bin/awk '/inet\ addr/{print $4}'|/bin/cut -d ":" -f2`
+NEW_NETWORK=`/bin/ipcalc -n $NEW_IPADDR $NEW_NETMASK|/bin/cut -d "=" -f2`
+NEW_BROADCAST=`/bin/ipcalc -b $NEW_IPADDR $NEW_NETMASK|/bin/cut -d "=" -f2`
+NEW_GATEWAY=`/bin/ip route|/bin/awk '/default/{print $3}'`
+
+STATUS="IPADDR NETWORK BROADCAST NETMASK GATEWAY"
+for i in $STATUS; do
+ eval value=\$${i}
+ eval new_value=\$NEW_${i}
+ $replaceFile "$IFCFG" "${i}=${value}" "${i}=${new_value}"
+done
+
+num=1
+for dns in `/bin/cat ${RESOLV}|/bin/awk '{print $2}'`; do
+ [ $num -eq 1 ] && {
+  str=`/bin/awk /PDNS/'{print $1}' $IFCFG`
+  $replaceFile "$IFCFG" "$str" "PDNS=$dns"
+  }
+
+ [ $num -eq 2 ] && {
+  str=`/bin/awk /SDNS/'{print $1}' $IFCFG`
+  $replaceFile "$IFCFG" "$str" "SDNS=$dns"
+  }
+
+ [ $num -ge 2 ] && break
+
+ num=`expr $num + 1`
+done
+
+SMB_IPADDR=`/bin/awk "-F = " '/interfaces/{print $2}' $SMB_CONF`
+$replaceFile "${SMB_CONF}" "interfaces = ${SMB_IPADDR}" "interfaces = ${NEW_IPADDR}/${NEW_NETMASK}"
+
+echo "hosts allow = ${NEW_NETWORK}/${NEW_NETMASK}" > ${SMB_NET_CONF}
+/bin/logger "$0 - Modify NIC config : \"ifcfg-eth0\" IPADDR : \"${NEW_IPADDR}\""
+
+HostName=`/bin/hostname|/bin/sed 's/\ //g'`
+echo "127.0.0.1	localhost" > ${LMHost}
+echo "${NEW_IPADDR}	${HostName}" >> ${LMHost}
+
+echo "127.0.0.1	localhost.localdomain	localhost" > /etc/hosts
+echo "${NEW_IPADDR}	${HostName}.localdomain	${HostName}" >> /etc/hosts
+}

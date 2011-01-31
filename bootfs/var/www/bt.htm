@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+ <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="Expires" content="-1" />
+  <link rel="stylesheet" href="set.css">
+  <script type="text/javascript" src="getlanguage.js"></script>
+  <script type="text/javascript" src="ajax.js"></script>
+  <script type="text/javascript" src="services.js"></script>
+  <style>a {text-decoration: none;} a:link,a:visited,a:hover,a:active {color:#3c5d86;font-weight:bold;}</style>
+  <title>Bittorent client</title>
+ </head>
+ <body style="background-image:none;background-color:transparent;">
+  <div class="topbar">
+   <ul id="topbartabs">
+    <script type="text/javascript">servicesLink(1);</script>
+   </ul>
+  </div>
+  <br><br>
+  <blockquote>
+   <table width="900px" border="0" cellspacing="2">
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(86))</script></td>
+    </tr>
+    <tr>
+     <td class="background" style="width:25%"><script type="text/javascript">document.write(showText(182))</script> :&nbsp;</td>
+     <td>
+      <input type="radio" id="status_enable" onClick="OnChgBTPDStatus(this.id)" />
+      <label for="Enable"><script type="text/javascript">document.write(showText(102))</script></label>&nbsp;
+      <input type="radio" id="status_disable" onClick="OnChgBTPDStatus(this.id)" />
+      <label for="Disable"><script type="text/javascript">document.write(showText(156))</script></label>
+     </td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(103))</script> :&nbsp;</td>
+     <td><input type="text" id="port" class="ftp_input_text" maxlength="5" /></td>
+    </tr>
+    <tr>
+     <td class="background" style="width:25%"><script type="text/javascript">document.write(showText(87))</script> :&nbsp;</td>
+     <td><input type="text" id="outgoing" class="ftp_input_text" maxlength="4" />&nbsp;kB/s</td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(88))</script> :&nbsp;</td>
+     <td><input type="text" id="incoming" class="ftp_input_text" maxlength="4" />&nbsp;kB/s</td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(89))</script> :&nbsp;</td>
+     <td><input type="text" id="maxpeers" class="ftp_input_text" maxlength="4" />&nbsp;<script type="text/javascript">document.write(showText(90))</script></td>
+    </tr>
+    <tr>
+     <td align="right" colspan="2"><script type="text/javascript">document.write('<input type="button" value="'+showText(37)+'" onclick="bt_submit()" />');</script></td>
+    </tr>
+   </table>
+   <br><br>
+   <form name="UpgradeForm" method="post" action="cgi-bin/uploadtorrents" enctype="multipart/form-data">
+    <table width="900px" id="addTorrent" border="0" cellspacing="2">
+     <tr>
+      <td class="emphasize"><script type="text/javascript">document.write(showText(100))</script></td>
+     </tr>
+     <tr>
+      <td class="background" style="width:25%"><script type="text/javascript">document.write(showText(101))</script> :&nbsp;</td>
+      <td id=Upload><input type="file" size="25" maxlength="31" id="UploadFile" name="file" /></td>
+     </tr>
+     <tr>
+      <td align="right" colspan="2">
+       <script type="text/javascript">
+        document.write('<input type="submit" id="UpLoadBTFileBtn" value="'+showText(37)+'" onClick="return UpLoadFile()" />&nbsp;<input type="reset" id="UpLoadCancel" value="'+showText(114)+'" onClick="UpLoadCancel()" />');
+       </script>
+      </td>
+     </tr>
+    </table>
+   </form>
+   <div id="Disk_Table">
+    <table class="Disk_Table_ALL" id="TorrentListData">
+     <tr>
+      <td class="emphasize" colspan="3"><script type="text/javascript">document.write(showText(91))</script></td>
+     </tr>
+     <tr>
+      <td COLSPAN=2 class="emphasize">
+       <script type="text/javascript">
+        document.write('<input type="button" id="DeleteTorrents" value="'+showText(66)+'" onclick="DeleteTorrents()" />');
+        document.write('<input type="button" id="StartTorrents" value="'+showText(98)+'" onclick="TorrentAction(\'start\')" />');
+        document.write('<input type="button" id="StopTorrents" value="'+showText(99)+'" onclick="TorrentAction(\'stop\')" />');
+       </script>
+      </td>
+      <td>&nbsp;</td><td>&nbsp;</td>
+      <td style="text-align:right" COLSPAN=2 class="emphasize">
+       <script type="text/javascript">
+        document.write('<input type="button" id="RefreshTorrents" value="'+showText(168)+'" onclick="RefreshTorrents()" />');
+       </script>
+      </td>
+     </tr>
+     <tr class="Disk_Table_Title">
+      <td><input type="checkbox" id="torrent_all" onClick="SelectAll()"></td>
+      <td class="background" style="text-align:center"><script type="text/javascript">document.write(showText(55))</script></td>
+      <td class="background" style="text-align:center"><script type="text/javascript">document.write(showText(57))</script></td>
+      <td class="background" style="text-align:center"><script type="text/javascript">document.write(showText(204))</script></td>
+      <td class="background" style="text-align:center"><script type="text/javascript">document.write(showText(56))</script></td>
+     </tr>
+    </table>
+   </div>
+   <div id="Value"></div>
+   <div id=ShowUpLoadBTFile style="height:50px;"></div>
+<!-- Delete Torrents popupwindow Function Start -->
+   <div id="DelTorrents" style="position:absolute; top:100px; left:300px;">
+    <div class="row">
+     <span class="emphasize"><SCRIPT LANGUAGE="JavaScript">document.write(showText(206))</SCRIPT><br /><br /></span>
+    </div>
+    <div class="row" style="text-align: left;">
+     <span class="popName_Value">
+      <input type=checkbox id=DelTorrent checked />
+      <SCRIPT LANGUAGE="JavaScript">document.write(showText(207));</SCRIPT>
+     </span>
+    </div>
+    <div class="row" style="text-align: left;">
+     <span class="popName_Value">
+      <input type=checkbox id=DelFile />
+      <SCRIPT LANGUAGE="JavaScript">document.write(showText(208));</SCRIPT>
+     </span>
+    </div>
+    <div class="row">
+     <span class="popName_Value">
+      <script type="text/javascript">
+       document.write('<input type="submit" value="'+showText(37)+'" onClick="TorrentAction(\'del\')" />&nbsp;<input type="reset" value="'+showText(114)+'" onClick="closePopWindow(\'DelTorrents\')" />');
+      </script>
+     </span>
+    </div>
+   </div>
+<!-- Delete Torrents popupwindow Function End -->
+<!-- Information Torrents popupwindow Function Start -->
+   <div id="TorrentsStatus" style="position:absolute; width: 600px; top:10px; left:170px;">
+    <div class="emphasize_torrent">
+     <span><SCRIPT LANGUAGE="JavaScript">document.write(showText(209));</SCRIPT><br /><br /></span>
+    </div>
+    <div id="Torrent_Table">
+     <table class="Torrent_Table_ALL" id="TorrentInfoTable"></table>
+    </div>
+    <div class="emphasize_torrent" style="padding: 10px 0px 0px 0px;">
+     <span><SCRIPT LANGUAGE="JavaScript">document.write(showText(57));</SCRIPT><br /><br /></span>
+    </div>
+    <div id="Torrent_Table">
+     <table class="Torrent_Table_ALL" id="TorrentStatusTable">
+      <tr class="Torrent_Table_Title">
+       <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(204));</SCRIPT></td>
+       <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(210));</SCRIPT></td>
+       <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(210)+'&nbsp;'+showText(205));</SCRIPT></td>
+       <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(211));</SCRIPT></td>
+       <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(211)+'&nbsp;'+showText(205));</SCRIPT></td>
+       <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(90));</SCRIPT></td>
+       <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(181));</SCRIPT></td>
+      </tr>
+     </table>
+    </div>
+    <br><br>
+    <div class="row" style="text-align: center;">
+     <script type="text/javascript">
+      document.write('<input type="reset" value="'+showText(114)+'" onClick="closePopWindow(\'TorrentsStatus\')" />');
+     </script>
+    </div>
+   </div>
+<!-- Information Torrents popupwindow Function End -->
+  </blockquote>
+ </body>
+</html>
+<script type="text/javascript">
+BTStart();
+</script>

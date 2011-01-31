@@ -1,0 +1,14 @@
+network_modify_conf_data(){
+echo "DEVICE=eth0"
+echo "BOOTPROTO=${iptype}"
+echo "BROADCAST=${BROADCAST}"
+echo "HWADDR=${MAC}"
+echo "IPADDR=${IP}"
+echo "NETMASK=${MASK}"
+echo "NETWORK=${NETWORK}"
+echo "GATEWAY=${GATEWAY}"
+echo "ONBOOT=yes"
+echo "MTU=${MTU}"
+echo "PDNS=${DNS_1}"
+echo "SDNS=${DNS_2}"
+}

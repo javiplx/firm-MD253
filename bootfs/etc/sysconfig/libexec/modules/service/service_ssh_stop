@@ -1,0 +1,8 @@
+service_ssh_stop(){
+ kill `/bin/pidof ssh`
+ PID=`/bin/pidof ssh`
+ for pid in PID; do
+  kill $pid
+ done
+ /bin/logger "$0 - SSH deamon Stop"
+}

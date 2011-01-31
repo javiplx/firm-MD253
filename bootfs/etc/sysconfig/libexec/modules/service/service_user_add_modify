@@ -1,0 +1,35 @@
+service_user_add_modify(){
+CONFIG_PATH=/etc/sysconfig/config
+SMB_PATH=${CONFIG_PATH}/smb
+SMB_PASSWD_PROG=/usr/local/samba/sbin/smbpasswd
+replaceFile=/var/www/cgi-bin/replaceFile
+XFS_QUOTA=/usr/local/xfsprogs/xfs_quota
+
+/bin/adduser "${user}" -h /home -H -G user -D
+USER_UID=`/bin/awk -F: /^${user}:/'{print $3}' /etc/passwd`
+$replaceFile "/etc/passwd" "${user}:x:${USER_UID}:500:Linux User,,,:/home:/bin/sh" "${user}:x:${USER_UID}:500:${bhard},${bhard}:/home:/bin/sh"
+${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g ${USER_UID}" /home
+(echo "${passwd}";echo "${passwd}")|${SMB_PASSWD_PROG} -s -a "${user}" >/dev/null 2>&1
+
+MODE="shares"
+for dir in $MODE; do
+ file=`ls ${SMB_PATH}/${dir}`
+ for i in ${file}; do
+  string=${i%.*}
+
+  FolderStatus=`/bin/cat ${SMB_PATH}/folders/${string}`
+  OLD_AllowUser=`/bin/cat /home/${string}/.ftpaccess|/bin/grep "AllowUser"|/bin/sed 's/\ $//'`
+  OLD_DenyUser=`/bin/awk /DenyUser/'{print $2}' /home/${string}/.ftpaccess|/bin/sed 's/\ //g'`
+
+  [ "${string}" == "PUBLIC" -o "${FolderStatus}" == "anonymous" ] || {
+   old_invalid_users_line=`/bin/cat ${SMB_PATH}/${dir}/${i}|/bin/grep "invalid"`
+   $replaceFile "${SMB_PATH}/${dir}/${i}" "${old_invalid_users_line}" "${old_invalid_users_line}${user},"
+   }
+
+  [ "${string}" == "PUBLIC" ] &&\
+   $replaceFile "/home/${string}/.ftpaccess" "${OLD_AllowUser}" "${OLD_AllowUser}${user}," ||\
+   $replaceFile "/home/${string}/.ftpaccess" "DenyUser ${OLD_DenyUser}" "DenyUser ${OLD_DenyUser}${user},"
+
+ done
+done
+}

@@ -1,0 +1,10 @@
+/var/log/kernel /var/log/messages /var/log/auth.log /var/log/daemon /var/log/user {
+ weekly
+ missingok
+ size=256k
+ sharedscripts
+ postrotate
+  /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
+  /bin/kill -HUP `cat /var/run/klogd.pid 2> /dev/null` 2> /dev/null || true
+ endscript
+}

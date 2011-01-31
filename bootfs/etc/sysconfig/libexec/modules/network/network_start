@@ -1,0 +1,69 @@
+network_start(){
+RESOLV=/etc/resolv.conf
+
+ConfigPath=/etc/sysconfig/config
+SmbPath=${ConfigPath}/smb
+SMB_CONF=${SmbPath}/smb.conf
+
+SMB_HOST_CONF=${SmbPath}/host.inc
+SMB_NET_CONF=${SmbPath}/network.inc
+LMHost=${SmbPath}/lmhost
+
+discovery=/etc/sysconfig/system-script/cron-discovery
+IFCFG=${ConfigPath}/ifcfg-eth0
+IFCFG_DEFAULT=${ConfigPath}/ifcfg-eth0.default
+
+. $IFCFG
+TMP_HWADDR="${HWADDR}"
+TMP_MTU="${MTU}"
+
+/bin/ifconfig lo 127.0.0.1 up
+[ "${BOOTPROTO}" == "dhcp" ] && {
+ . $IFCFG_DEFAULT
+ HWADDR="${TMP_HWADDR}"
+ MTU="${TMP_MTU}"
+ }
+
+/bin/ifconfig eth0 hw ether ${HWADDR}
+[ $? -eq 0 ] &&\
+ /bin/logger "$0 - NIC:\"${HWADDR}\" Start Succeed" ||\
+ /bin/logger "$0 - NIC:\"${HWADDR}\" Start Failed"
+
+/bin/ifconfig eth0 up
+/bin/ifconfig eth0 mtu ${MTU}
+/bin/ifconfig eth0 down
+/bin/ifconfig eth0 ${IPADDR}  broadcast ${BROADCAST} netmask ${NETMASK} up
+
+/bin/ip route add default via ${GATEWAY} dev eth0
+/bin/ip route flush cache
+
+/bin/killall nmbd
+/usr/local/samba/sbin/nmbd >/dev/null 2>&1
+
+SMB_IPADDR=`/bin/awk "-F = " '/interfaces/{print $2}' $SMB_CONF`
+$replaceFile "${SMB_CONF}" "interfaces = ${SMB_IPADDR}" "interfaces = ${IPADDR}/${NETMASK}"
+echo "hosts allow = ${NETWORK}/${NETMASK}" > ${SMB_NET_CONF}
+
+network_modify_current_address_data > $IFCFG
+
+/bin/cat /dev/null > ${RESOLV}
+for x in P S; do
+ eval value=\$${x}DNS
+ [ "$value" == "" ] && continue
+ echo "nameserver $value" >> ${RESOLV}
+done
+
+[ "${BOOTPROTO}" == "dhcp" ] &&\
+ /bin/udhcpc -R -b -i eth0 --timeout=1 --tryagain=1 >/dev/null 2>&1 &
+
+HostName=`/bin/hostname|/bin/sed 's/\ //g'`
+echo "127.0.0.1	localhost.localdomain	localhost" > /etc/hosts
+echo "${IPADDR}	${HostName}.localdomain	${HostName}" >> /etc/hosts
+
+echo "127.0.0.1	localhost" > ${LMHost}
+echo "${IPADDR}	${HostName}" >> ${LMHost}
+
+#$discovery &
+/bin/hostname -F /etc/hostname
+#lld2d eth0
+}

@@ -1,0 +1,162 @@
+
+.body-main { 
+  BACKGROUND: #ffffff;
+}
+
+.body-head {
+	FONT-SIZE: 12px; 
+	BACKGROUND-IMAGE: url(/images/head-background.jpg); 
+	BACKGROUND-REPEAT: no-repeat; 
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+
+.body-menu {
+	FONT-SIZE: 12px; 
+	BACKGROUND-IMAGE: url(/images/menu-background.jpg); 
+	BACKGROUND-REPEAT: no-repeat; 
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+
+.title {
+	FONT-WEIGHT: bold; 
+	FONT-SIZE: 16px; 
+	COLOR: #ffffff; 
+	FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; 
+	TEXT-ALIGN: right;
+	margin-left: 300px;
+	margin-top: 60px;
+	width: 700px;
+	vertical-align: bottom;
+	white-space:nowrap;
+}
+.version {
+	FONT-WEIGHT: bold; 
+	FONT-SIZE: 12px; 
+	COLOR: #ffffff; 
+	FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; 
+	TEXT-ALIGN: left;
+	vertical-align: top;
+	margin-top: 5px;
+	margin-left: 227px;
+	white-space:nowrap;	
+}
+
+.header-buttons {
+	vertical-align: top;
+	margin-left: 750px;	
+	margin-top: -5px;
+	text-decoration: none;
+}
+
+.alert {
+	COLOR: #ff0000;
+	FONT: 12px Arial, Helvetica, sans-serif; 
+	TEXT-ALIGN: left;
+	width: 750px; 
+}
+
+.optionItem {
+	FONT: 12px Arial, Helvetica, sans-serif; 
+	TEXT-ALIGN: left;
+	width: 750px;
+}
+
+.optionItemSmall {
+	FONT: 12px Arial, Helvetica, sans-serif; 
+	TEXT-ALIGN: left;
+	width: 200px;
+}
+
+.optionName {
+	FONT: 12px Arial, Helvetica, sans-serif; 
+	font-weight: bold;
+	TEXT-ALIGN: left;
+	VERTICAL-ALIGN: top;	
+	width: 25%;
+	COLOR: #495f8b; 	
+}
+
+.optionHeading {
+	FONT: 12px Arial, Helvetica, sans-serif; 
+	font-weight: bold;
+	TEXT-ALIGN: left;
+	VERTICAL-ALIGN: top;	
+	COLOR: #495f8b; 	
+}
+
+.inputValue {
+	FONT: 12px Arial, Helvetica, sans-serif; 
+	TEXT-ALIGN: left;
+	COLOR: #000000;
+}
+
+.inputKeyValue {
+	FONT: 12px monospace; 
+	TEXT-ALIGN: center;
+	COLOR: #000000;
+}
+
+.infoGroup {
+	FONT: 12px Verdana; 
+	font-weight: normal;
+	TEXT-ALIGN: left;
+	VERTICAL-ALIGN: top;	
+	width: 25%;
+	COLOR: #000000; 
+	text-decoration: none;	
+}
+
+.button {
+	FONT: 12px Arial, Helvetica, sans-serif; 
+	TEXT-ALIGN: center;
+	COLOR: #000000;
+}
+
+HR {
+    height:2px;
+    width:100%;
+    background:#495f8b;
+   }
+
+UL {
+  list-style-image: url(/images/tri-blau.gif);
+  margin-left: 10px;
+  margin-top: -10px;
+  padding-left: 10px;
+}
+
+.menuGroup {
+	COLOR: #ffffff; 
+	FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; 
+	BACKGROUND-COLOR: #7388b6;
+	margin-right: 10px;
+}
+
+.helpText {
+	FONT-WEIGHT: normal; 
+	FONT-SIZE: 12px; 
+	COLOR: #000000; 
+	FONT-FAMILY: Arial;
+	width: 100%;
+}
+
+.dir_dialog {
+	WIDTH: 700px; 
+	POSITION: absolute; 
+	left: 40px;
+	top: 140px;
+	FONT-WEIGHT: normal;
+	FONT-SIZE: 12px; 
+	FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif;
+	COLOR: #000000;
+	BACKGROUND-COLOR: #FFFFFF;
+  BORDER-RIGHT: #7288B2 4px solid;
+	PADDING-RIGHT: 4px; 
+	BORDER-TOP: #7288B2 4px solid; 
+	PADDING-TOP: 4px; 
+	BORDER-LEFT: #7288B2 4px solid; 
+	PADDING-LEFT: 4px; 
+	BORDER-BOTTOM: #7288B2 4px solid;  
+	PADDING-BOTTOM: 4px; 
+}
+

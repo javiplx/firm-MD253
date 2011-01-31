@@ -1,0 +1,148 @@
+#Disk_Table {
+ color: #EEEEEE;
+ width: 99%;
+ text-align: left;
+}
+
+#Disk_Table .Disk_Table_ALL {
+ width: 99%;
+ text-align: left;
+ border-bottom-width: 1px;
+ border-bottom-style: solid;
+ border-bottom-color: #d7e0ef;
+ border-width: 0.01cm;
+}
+
+#Disk_Table .Disk_Table_BUTTON {
+ width: 99%;
+ text-align: left;
+}
+
+#Disk_Table .Disk_Table_Head {
+ font-weight: bold;
+ background-color: #CCCCCC;
+ text-align: left;
+}
+
+#Disk_Table .Disk_Table_Title {
+ background-color:#d7e0ef;
+ color:#3c5d86;
+ font-weight:bold;
+ font-size:9pt;
+ text-align:center;
+ padding: 0px 0px 20px 0px;
+}
+
+#Torrent_Table {
+ color: #EEEEEE;
+ width: 99%;
+ text-align: left;
+}
+
+#Torrent_Table .Torrent_Table_ALL {
+ width: 99%;
+ border-bottom-width: 1px;
+ border-bottom-style: solid;
+ border-bottom-color: #d7e0ef;
+ border-width: 0.01cm;
+}
+
+#Torrent_Table .Torrent_Table_Head {
+ font-weight: bold;
+ background-color: #CCCCCC;
+ text-align: left;
+}
+
+#Torrent_Table .Torrent_Table_Title {
+ background-color:#d7e0ef;
+ color:#3c5d86;
+ font-weight:bold;
+ font-size:9pt;
+ text-align:center;
+ padding: 0px 0px 20px 0px;
+}
+
+#DelTorrents {
+	background-color: #FFFFFF;
+	border: medium ridge #d7e0ef;
+	position: absolute;
+	left: 300px;
+	top: 100px;
+	text-align: center;
+	padding: 10px;
+	display: none;
+}
+
+#TorrentsStatus {
+	background-color: #FFFFFF;
+	border: medium ridge #d7e0ef;
+	position: absolute;
+	width: 600px;
+	left: 170px;
+	top: 10px;
+
+	padding: 10px;
+	display: none;
+}
+
+#SingleFormat {
+	background-color: #FFFFFF;
+	border: medium ridge #d7e0ef;
+	position: absolute;
+	left: 300px;
+	top: 100px;
+	text-align: center;
+	padding: 10px;
+	display: none;
+}
+
+#SingleFormat_Table {
+ color: #EEEEEE;
+ width: 350px;
+ text-align: center;
+}
+
+#SingleFormat_Table .SingleFormat_Table_ALL {
+ width: 350px;
+ border-bottom-width: 1px;
+ border-bottom-style: solid;
+ border-bottom-color: #d7e0ef;
+ border-width: 0.01cm;
+}
+
+#SingleFormat_Table .SingleFormat_Table_Head {
+ font-weight: bold;
+ background-color: #CCCCCC;
+ text-align: left;
+}
+
+#SingleFormat_Table .SingleFormat_Table_Title {
+ background-color:#d7e0ef;
+ color:#3c5d86;
+ font-weight:bold;
+ font-size:9pt;
+ text-align:center;
+ padding: 0px 0px 20px 0px;
+}
+
+#LoginWindow {
+	background-color: #FFFFFF;
+	border: medium ridge #d7e0ef;
+	position: absolute;
+	left: 300px;
+	top: 100px;
+	text-align: center;
+	padding: 10px;
+
+}
+
+#ModifyUserWindow {
+	background-color: #FFFFFF;
+	border: medium ridge #d7e0ef;
+	position: absolute;
+	left: 300px;
+	top: 100px;
+	text-align: center;
+	padding: 10px;
+ display: none;
+}

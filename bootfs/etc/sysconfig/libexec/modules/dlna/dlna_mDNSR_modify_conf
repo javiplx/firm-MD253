@@ -1,0 +1,23 @@
+dlna_mDNSR_modify_conf(){
+/bin/killall DNSR >/dev/null 2>&1
+DNSR_PID=`/bin/pidof DNSR`
+for i in $DNSR_PID; do
+ kill -9 $i >/dev/null 2>&1
+done
+
+SERVICE_PATH=/etc/sysconfig/config
+CONF_FILE=${SERVICE_PATH}/responder.conf
+DISK=`/bin/fdisk -l|/bin/grep "^/dev/sd"`
+HOSTNAME=`/bin/cat /etc/hostname|/bin/sed 's/\ //g'`
+dlna_mDNSR_modify_conf_data > ${CONF_FILE}
+
+/usr/bin/DNSR -f ${CONF_FILE}
+sleep 2
+
+DNSR_PID=`/bin/pidof DNSR`
+for i in $DNSR_PID; do
+ kill -9 $i >/dev/null 2>&1
+done
+
+/usr/bin/DNSR -d -f ${CONF_FILE} >/dev/null 2>&1 &
+}

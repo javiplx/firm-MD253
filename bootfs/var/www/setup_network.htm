@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0" />
+  <meta http-equiv="Expires" content="Tue, 01 Jan 2000 12:12:12 GMT">
+  <link rel="stylesheet" href="set.css">
+  <script type="text/javascript" src="getlanguage.js"></script>
+  <script type="text/javascript" src="ajax.js"></script>
+  <script type="text/javascript" src="setup.js"></script>
+  <title>Setup Network</title>
+ </head>
+ <body style="background-image:none;background-color:transparent;">
+  <div class="topbar">
+   <ul id="topbartabs">
+    <script type="text/javascript">setupLink(2);</script>
+   </ul>
+  </div>
+  <br><br>
+  <blockquote>
+   <table width="900px" border="0" cellspacing="2">
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(38))</script></td>
+    </tr>
+    <tr>
+     <td width="25%" class="background"><script type="text/javascript">document.write(showText(39))</script> :&nbsp;</td>
+     <td>
+      <input type="radio" id="iptype_dhcp" onClick="OnChgType(this.id)" />
+      <label for="DHCP">
+       <SCRIPT LANGUAGE="JavaScript">document.write(showText(44))</SCRIPT>
+      </label>
+      <input type="radio" id="iptype_static" onClick="OnChgType(this.id)" />
+      <label for="Static">
+       <SCRIPT LANGUAGE="JavaScript">document.write(showText(45))</SCRIPT>
+      </label>
+     </td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(28))</script> :&nbsp;</td>
+     <td><input type="text" size="16" maxlength="15" id="ipadd" class="input_text" /></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(40))</script> :&nbsp;</td>
+     <td><input type="text" size="16" maxlength="15" id="mask" class="input_text" /></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(41))</script> :&nbsp;</td>
+     <td><input type="text" size="16" maxlength="15" id="gateway" class="input_text" /></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(42))</script> :&nbsp;</td>
+     <td><input type="text" size="16" maxlength="15" id="dns_1" class="input_text" /></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(43))</script> :&nbsp;</td>
+     <td><input type="text" size="16" maxlength="15" id="dns_2" class="input_text" /></td>
+    </tr>
+    <tr>
+     <td width="25%" class="background"><script type="text/javascript">document.write(showText(155))</script> :&nbsp;</td>
+     <td id=JumboFrames></td>
+    </tr>
+<!--
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(29))</script> :&nbsp;</td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(29))</script> :&nbsp;</td>
+     <td><input type="text" size="18" maxlength="17" id="macaddr" class="input_text" /></td>
+    </tr>
+-->
+    <tr>
+     <td align="right" colspan="2"><script type="text/javascript">document.write('<input type="button" value="'+showText(37)+'" onclick="ChangeIPStatus()" />');</script></td>
+    </tr>
+   </table>
+   <div id="wait_message" style="height:50px;"></div>
+  </blockquote>
+ </body>
+</html>
+<script type="text/javascript">
+GetDeviceIP();
+</script>

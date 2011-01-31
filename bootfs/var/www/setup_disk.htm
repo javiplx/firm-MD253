@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="Expires" content="-1" />
+  <link rel="stylesheet" href="set.css">
+  <script type="text/javascript" src="getlanguage.js"></script>
+  <script type="text/javascript" src="ajax.js"></script>
+  <script type="text/javascript" src="setup.js"></script>
+  <title>Setup Disk</title>
+ </head>
+ <body style="background-image:none;background-color:transparent;">
+  <div class="topbar">
+   <ul id="topbartabs">
+    <script type="text/javascript">setupLink(3);</script>
+   </ul>
+  </div>
+  <br><br>
+  <blockquote>
+   <table width="900px" border="0" cellspacing="2">
+    <tr>
+     <td class="emphasize">
+      <script type="text/javascript">document.write(showText(12))</script>
+      <div id=raid_mode></div>
+     </td>
+    </tr>
+    <tr>
+     <td width="25%" class="background"><script type="text/javascript">document.write(showText(46))</script> :&nbsp;</td>
+     <td>
+      <span id="RaidType"></span>
+      <span><script type="text/javascript">document.write('<input type="button" id="FormatButton" value="'+showText(216)+'" onclick="CreateRaid()" />');</script></span>
+     </td>
+    </tr
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(47))</script> :&nbsp;</td>
+     <td><script type="text/javascript">document.write('<input type="button" id="RepairButton" value="'+showText(48)+'" onclick="scandisk_action()" />');</script></td>
+    </tr>
+<!-- Disk spindown function
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(49))</script> :&nbsp;</td>
+     <td><input type="text" size="2"> <script type="text/javascript">document.write(showText(51))</script></td>
+    </tr>
+    <tr>
+     <td align="right" colspan="3"><script type="text/javascript">document.write('<input type="button" value="'+showText(37)+'" onclick="showMsg(\'ok\')" />');</script></td>
+    </tr>
+-->
+   </table>
+   <br /><br >
+   <div id="Disk_Table">
+    <table class="Disk_Table_ALL" id="LogicalDiskData">
+     <tr>
+      <td class="emphasize"><script type="text/javascript">document.write(showText(53))</script></td>
+     </tr>
+     <tr class="Disk_Table_Title">
+      <td id=RaidLevel></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(160));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(161));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(57));</SCRIPT></td>
+     </tr>
+    </table>
+   </div>
+   <br /><br /><br />
+   <div id="Disk_Table">
+    <table class="Disk_Table_ALL" id="PhysicalDiskData">
+     <tr>
+      <td class="emphasize"><script type="text/javascript">document.write(showText(52))</script></td>
+     </tr>
+     <tr class="Disk_Table_Title">
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(162));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(163));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(164));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(57));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(165));</SCRIPT></td>
+     </tr>
+    </table>
+   </div>
+   <div id="Disk_Table">
+    <table class="Disk_Table_BUTTON">
+     <tr>
+      <td class="emphasize" id=rebuild style="text-align: right;"></td>
+     </tr>
+    </table>
+   </div>
+   <br /><br /><br />
+   <div id="Disk_Table">
+    <table class="Disk_Table_ALL" id="USBDiskData">
+     <tr>
+      <td class="emphasize"><script type="text/javascript">document.write(showText(54))</script></td>
+     </tr>
+     <tr class="Disk_Table_Title">
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(166));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(163));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(160));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(161));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(165));</SCRIPT></td>
+     </tr>
+    </table>
+   </div>
+   <div id="Disk_Table">
+    <table class="Disk_Table_BUTTON">
+     <tr>
+      <td class="emphasize" id=rebuild style="text-align: right;"><script type="text/javascript">document.write('<input type="button" value="'+showText(168)+'" onclick="refresh()" />');</script></td>
+     </tr>
+    </table>
+   </div>
+   <div id="Disk"></div>
+   <div id="wait_message" style="height:50px;"></div>
+  </blockquote>
+ </body>
+</html>
+<script type="text/javascript">
+DiskUI_Status();
+</script>

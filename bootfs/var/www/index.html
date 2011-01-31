@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="cache-control" content="no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0" />
+		<meta http-equiv="Expires" content="Tue, 01 Jan 2000 12:12:12 GMT">
+		<title>Sitecom NAS</title>
+		<link href="set.css" type="text/css" rel="stylesheet">
+		<script type="text/javascript" src="setlanguage.js"></script>
+		<script type="text/javascript" src="getlanguage.js"></script>
+		<!--[if lt IE 7]>
+		<script language="JavaScript">
+			function correctPNG() // correctly handle PNG transparency in Win IE 5.5 & 6.
+				{
+   			var arVersion = navigator.appVersion.split("MSIE")
+   			var version = parseFloat(arVersion[1])
+   			if ((version >= 5.5) && (document.body.filters))
+   			{
+      		for(var i=0; i<document.images.length; i++)
+      			{
+         		var img = document.images[i]
+         		var imgName = img.src.toUpperCase()
+         		if (imgName.substring(imgName.length-3, imgName.length) == "PNG")
+         			{
+            		var imgID = (img.id) ? "id='" + img.id + "' " : ""
+            		var imgClass = (img.className) ? "class='" + img.className + "' " : ""
+            		var imgTitle = (img.title) ? "title='" + img.title + "' " : "title='" + img.alt + "' "
+            		var imgStyle = "display:inline-block;" + img.style.cssText
+            		if (img.align == "left") imgStyle = "float:left;" + imgStyle
+            		if (img.align == "right") imgStyle = "float:right;" + imgStyle
+            		if (img.parentElement.href) imgStyle = "cursor:hand;" + imgStyle
+            		var strNewHTML = "<span " + imgID + imgClass + imgTitle
+            		+ " style=\"" + "width:" + img.width + "px; height:" + img.height + "px;" + imgStyle + ";"
+            		+ "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader"
+            		+ "(src=\'" + img.src + "\', sizingMethod='image');\"></span>"
+            		img.outerHTML = strNewHTML
+            		i = i-1
+         		}
+      		}
+   			}
+			}
+			window.attachEvent("onload", correctPNG);
+		</script>
+		<![endif]-->
+		<script type="text/javascript">
+			var d = new Date();
+			var copy = "&copy 1996 - "+d.getFullYear()+" Sitecom Europe BV, all rights reserved";
+		</script>
+	</head>
+	<body onload="document.getElementById('start').innerHTML=showText(5);document.getElementById('copyright').innerHTML=copy;" topmargin="5" leftmargin="0">
+		<div class="container">
+			<div class="header">
+				<img style="float:left;padding:0 0 10px 10px;" src="pictures/header.png" alt="header" height="85px" width="500px" />
+				<img style="float:right;padding:24px 0 0 0" src="pictures/logo2.png" alt="logo" height="45px" width="265px" />
+				<div class="menu">
+					<script type="text/javascript">
+					document.write('<ul id="menu"><li class="on" id="one" name="one" onclick="swapClass(\'one\')"><a href="status.htm" target="iframe">' + showText(0) +'</a></li><li style="padding:0"><img src="pictures/seperator.png" /></li>')
+					document.write('<li class="off" id="two" name="two" onclick="swapClass(\'two\')"><a href="setup_system.htm" target="iframe">' + showText(1) +'</a></li><li style="padding:0"><img src="pictures/seperator.png" /></li>')
+					document.write('<li class="off" id="three" name="three" onclick="swapClass(\'three\')"><a href="user.htm" target="iframe">' + showText(2) +'</a></li><li style="padding:0"><img src="pictures/seperator.png" /></li>')
+					document.write('<li class="off" id="four" name="four" onclick="swapClass(\'four\')"><a class="twee" href="bt.htm" target="iframe">' + showText(3) +'</a></li><li style="padding:0"><img src="pictures/seperator.png" /></li>')
+					document.write('<li class="off" id="five" name="five" onclick="swapClass(\'five\')"><a class="twee" href="default.htm" target="iframe">' + showText(4) +'</a></li><li style="padding:0"><img src="pictures/seperator.png" /></li></ul>')
+					</script>
+					<form name="form" style="float:right;padding:0;margin-top:-27px;margin-right:5px;">
+					<select id="site" name="site" onChange="javascript:setlanguage(this)">
+						<option id="start" value="">Choose your language</option>
+						<option value="uk">English</option>
+						<option value="de">Deutsch</option>
+						<option value="nl">Nederlands</option>
+						<option value="fr">Fran&ccedil;ais</option>
+						<option value="it">Italiano</option>
+						<option value="es">Espa&ntilde;ol</option>
+						<option value="pt">Portugu&ecirc;s</option>
+						<option value="no">Norsk</option>
+						<option value="dk">Dansk</option>
+						<option value="se">Svenska</option>
+						<option value="fi">Suomi</option>
+						<option value="ru">&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</option>
+					</select>
+					</form>
+				</div>
+			</div>
+			<div class="content">
+				<script type="text/javascript">
+					if (typeof document.body.style.maxHeight == "undefined") {
+						document.write('<p class="emphasize">&nbsp;'+ showText(6) +'</p>')
+					}
+     if(document.cookie.indexOf("CD32N:MD-253")<0)
+      var str = 'login.htm'
+     else
+      var str = 'status.htm'
+
+				</script>
+				<noscript><p class="emphasize"><span style="color:black">Error:<br /></span>It seems you have turned off Javascript support in your browser.<br /> Please turn on Javascript because it is needed for this userinterface to function properly.</p></noscript>
+				<script type="text/javascript">
+				 document.write("<iframe src="+str+" name=iframe id=iframe frameborder=no width=994px onload=\"calcHeight('parent')\" allowtransparency></iframe>");
+				</script>
+			</div>
+			<div class="footer">
+				<a class="footer" href="http://www.sitecom.com">www.sitecom.com</a> | <span id="copyright"></span>
+			</div>
+		</div>
+	</body>
+</html>

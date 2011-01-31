@@ -1,0 +1,13 @@
+# rescale jpeg images
+#(c) 2006 by TwonkyVision
+exec: cgi-jpegscale
+# transcodes
+from=image/jpeg
+to=image/jpeg
+source=$source
+# params
+cachedirectory
+targetwidth
+targetheight
+sourcestart
+sourcelength

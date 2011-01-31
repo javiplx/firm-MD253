@@ -1,0 +1,9 @@
+# for auto mount
+#KERNEL=="sda", NAME="my_usb_disk"
+#KERNEL=="sdb", NAME="my_usb_disk1", SYMLINK+="sym_usb"
+
+#KERNEL=="sd*[0-9]", PROGRAM="/root/e.sh %k"
+KERNEL=="sd[a-h]*", ACTION=="add", RUN+="/etc/sysconfig/system-script/mount %k %n"
+KERNEL=="sd[a-h]*", ACTION=="add", RUN+="/etc/sysconfig/system-script/config %k %n"
+KERNEL=="sd[a-h]*", ACTION=="remove", RUN+="/etc/sysconfig/system-script/umount %k %n"
+KERNEL=="sd[a-h]*", ACTION=="remove", RUN+="/etc/sysconfig/system-script/config %k %n"

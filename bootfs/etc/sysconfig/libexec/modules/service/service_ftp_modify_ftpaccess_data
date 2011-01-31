@@ -1,0 +1,11 @@
+service_ftp_modify_ftpaccess_data(){
+echo "<Limit ALL>"
+echo " DenyAll"
+echo "</Limit>"
+echo "<Limit ALL>"
+echo " AllowUser ${new_login_list}"
+echo "</Limit>"
+echo "<Limit WRITE>"
+echo " DenyUser ${new_access_list}"
+echo "</Limit>"
+}

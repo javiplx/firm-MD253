@@ -1,0 +1,51 @@
+network_modify_conf(){
+QUERY_STRING=$1
+replaceFile=/var/www/cgi-bin/replaceFile
+RESOLV=/etc/resolv.conf
+SMB_CONF=/usr/local/samba/lib/smb.conf
+SMB_NET_CONF=/etc/sysconfig/config/smb/network.inc
+IFCFG=/etc/sysconfig/network-scripts/ifcfg-eth0
+IFCFG_DEFAULT=/etc/sysconfig/network-scripts/ifcfg-eth0.default
+. $IFCFG
+iptype=`echo ${QUERY_STRING} | cut '-d&' -f2`
+
+case ${iptype} in
+ dhcp)
+  OLD_MTU=`/bin/awk -F= /MTU/'{print $2}' $IFCFG|/bin/sed 's/\ //g'`
+  NEW_MTU=`echo ${QUERY_STRING} | cut '-d&' -f3`
+  [ "$OLD_MTU" == "$NEW_MTU" ] ||\
+   $replaceFile "${IFCFG}" "MTU=${OLD_MTU}" "MTU=${NEW_MTU}"
+
+  #NEW_MAC=`echo ${QUERY_STRING} | /bin/cut '-d&' -f3|/bin/tr 'a-z' 'A-Z'`
+  #OLD_MAC=`/bin/awk -F= /HWADDR/'{print $2}' $IFCFG|/bin/sed 's/\ //g'`
+  OLD_iptype=`/bin/awk -F= /BOOTPROTO/'{print $2}' $IFCFG|/bin/sed 's/\ //g'`
+  #[ "${NEW_MAC}" != "${OLD_MAC}" ] || [ "${BOOTPROTO}" != "${iptype}" ] && {
+  [ "${OLD_iptype}" != "${iptype}" ] && {
+   #$replaceFile "${IFCFG}" "HWADDR=${OLD_MAC}" "HWADDR=${NEW_MAC}"
+   $replaceFile "${IFCFG}" "BOOTPROTO=${OLD_iptype}" "BOOTPROTO=${iptype}"
+   }
+
+  network_stop
+  network_start &
+  ;;
+ static)
+  for i in `echo ${QUERY_STRING} | /bin/tr "&" " "`; do
+   val=`echo $i|/bin/grep "="`
+   [ "$val" == "" ] && continue
+   export "$i"
+  done
+  NETWORK=`/bin/ipcalc -n ${IP} ${MASK}|/bin/awk -F= '{print $2}'|/bin/sed 's/\ //g'`
+  BROADCAST=`/bin/ipcalc -b ${IP} ${MASK}|/bin/awk -F= '{print $2}'|/bin/sed 's/\ //g'`
+  MAC=`/bin/awk -F= /HWADDR/'{print $2}' ${IFCFG}|/bin/sed 's/\ //g'`
+  network_modify_conf_data > $IFCFG
+
+  network_stop
+  network_start &
+
+  SMB_IPADDR=`/bin/awk "-F = " '/interfaces/{print $2}' $SMB_CONF`
+  $replaceFile "${SMB_CONF}" "interfaces = ${SMB_IPADDR}" "interfaces = ${IP}/${MASK}"
+  echo "hosts allow = ${NETWORK}/${MASK}" > ${SMB_NET_CONF}
+  dlna_mDNSR_modify_conf >/dev/null 2>&1 &
+  ;;
+esac
+}

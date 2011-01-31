@@ -1,0 +1,61 @@
+service_create_partition(){
+SLEEP=3
+
+for i in a b; do
+ # clear out old partition info and all "hidden" sectors with zeros
+ dd if=/dev/zero of=/dev/sd${i} bs=8225280 count=3
+
+/sbin/fdisk "/dev/sd${i}" <<EOF
+
+n
+p
+1
+1
+$dataSize
+p
+w
+EOF
+done
+sleep $SLEEP
+
+case ${mode} in
+ raid0|raid1)
+  for DISK in sda sdb; do
+   SIZE=`fdisk -l /dev/${DISK}|awk /${DISK}:/'{print $5}'`
+   i="${DISK}=${SIZE}"
+   export $i
+  done
+
+  [ $sda -eq $sdb ] && {
+   dataSize=`fdisk -l /dev/sda|awk /sectors/'{print $5}'`
+   } || {
+   [ $sda -gt $sdb ] &&\
+    dataSize=`fdisk -l /dev/sdb|awk /sectors/'{print $5}'` ||\
+    dataSize=`fdisk -l /dev/sda|awk /sectors/'{print $5}'`
+   }
+  ;;
+esac
+
+#dataSize=
+
+for i in a b; do
+ # clear out old partition info and all "hidden" sectors with zeros
+ dd if=/dev/zero of=/dev/sd${i} bs=8225280 count=3
+
+/sbin/fdisk "/dev/sd${i}" <<EOF
+
+n
+p
+1
+1
+$dataSize
+t
+fd
+p
+w
+EOF
+done
+
+sleep $SLEEP
+/bin/logger "$0 - Create \"/dev/sda & /dev/sdb\" new partition"
+}

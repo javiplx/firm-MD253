@@ -1,0 +1,59 @@
+service_user_modify(){
+func=`echo ${QUERY_STRING} | cut '-d&' -f1`
+SMB_PASSWD_PROG=/usr/local/samba/sbin/smbpasswd
+replaceFile=/var/www/cgi-bin/replaceFile
+XFS_QUOTA=/usr/local/xfsprogs/xfs_quota
+tmpfile=/tmp/menu.$$
+
+user=`echo ${QUERY_STRING} | cut '-d&' -f2`
+passwd=`echo ${QUERY_STRING} | cut '-d&' -f3`
+bhard=`echo ${QUERY_STRING} | cut '-d&' -f4`
+bsoft=`expr ${bhard} \* 95 / 100`
+
+case ${func} in
+ adduser|CreateUser)
+  service_user_add_modify
+  /bin/logger "$0 - Create new user : \"${user}\" quota : \"${bhard}GB\""
+  ;;
+ modifyuser)
+  PASSWD_LINE=`/bin/cat /etc/passwd|/bin/grep "^${user}:"`
+  USER_UID=`/bin/awk -F: /^${user}:/'{print $3}' /etc/passwd`
+  $replaceFile "/etc/passwd" "${PASSWD_LINE}" "${user}:x:${USER_UID}:500:${bhard},${bhard}:/home:/bin/sh"
+  ${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g ${USER_UID}" /home
+
+  [ "${passwd}" == "none" ] ||\
+   (echo "${passwd}";echo "${passwd}")|${SMB_PASSWD_PROG} -s -a "${user}" >/dev/null 2>&1
+
+  /bin/logger "$0 - Modify user : \"${user}\" password."
+  ;;
+ ModifyUsers)
+  PASSWD_LINE=`/bin/cat /etc/passwd|/bin/grep "^${user}:"`
+  USER_UID=`/bin/awk -F: /^${user}:/'{print $3}' /etc/passwd`
+  $replaceFile "/etc/passwd" "${PASSWD_LINE}" "${user}:x:${USER_UID}:500:${bhard},${bhard}:/home:/bin/sh"
+  ${XFS_QUOTA} -x -c "limit -u bsoft=${bhard}g bhard=${bhard}g ${USER_UID}" /home
+
+  [ "${passwd}" == "none" ] ||\
+   (echo "${passwd}";echo "${passwd}")|${SMB_PASSWD_PROG} -s -a "${user}" >/dev/null 2>&1
+
+  /bin/logger "$0 - Modify user : \"${user}\" password."
+  ;;
+ deluser)
+  service_user_del_modify
+  /bin/logger "$0 - Delete user : \"${UserName}\" ."
+  ;;
+esac
+[ "${func}" != "deluser" ] && {
+ [ "${passwd}" == "none" ] ||\
+  echo "${user}:${passwd}" | /bin/chpasswd
+ }
+
+case ${func} in
+ adduser|deluser)
+  service_ftp_stop
+  service_smb_stop
+  sleep 2
+  service_ftp_start
+  service_smb_start
+  ;;
+esac
+}

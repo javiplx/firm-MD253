@@ -1,0 +1,1589 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<head>
+<title>TwonkyMedia Configuration</title>
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+<meta name="description" content="TwonkyVision Digital Home">
+<meta name="keywords" content="UPnP, UPnP AV, MediaServer, Media Server, SDK, Digital Home">
+<meta http-equiv="cache-control" content="no-cache">
+<script src="/configpage/TwonkyMediaConfig.js" type="text/javascript"></script>
+<script src="/configpage/TwonkyMediaConfig_grouping.js" type="text/javascript"></script>
+<script src="/configpage/platform-specific-menu-grouping.js" type="text/javascript"></script>
+<link rel="StyleSheet" href="/configpage/TwonkyMediaConfig.css" type="text/css" media="screen">
+
+<script type="text/javascript">
+	
+var globalLanguage = "";
+var newContentDirs = "";
+var enable_cancel = false;
+var enable_cancel_musictree = false;
+var enable_cancel_picturetree = false;
+var enable_cancel_videotree = false;
+var new_treeArray = new Array();
+var new_picture_treeArray = new Array();
+var new_video_treeArray = new Array();
+var global_level = 0;
+var userkey = ""; 
+
+// create new input field for contentdir
+function addContentDir()
+{ 
+  newContentDirs = build_contentDir ();
+  enable_cancel = true;
+  var contentObject = document.getElementById("divContentdir");
+  contentObject.innerHTML = showContentdirs();	
+}
+
+function addMusicNode()
+{ 
+	if (musicnodeCount < 10)
+	{
+		build_musicNodes ();
+		enable_cancel_musictree = true;
+		var musicObject = document.getElementById("divMusicNodes");
+		musicObject.innerHTML = showMusicNodes();	
+	}
+}
+
+function addPictureNode()
+{ 
+	if (picturenodeCount < 5)
+	{
+		build_pictureNodes ();
+		enable_cancel_picturetree = true;
+		var pictureObject = document.getElementById("divPictureNodes");
+		pictureObject.innerHTML = showPictureNodes();	
+	}
+}
+
+function addVideoNode()
+{ 
+	if (videonodeCount < 5)
+	{
+		build_videoNodes ();
+		enable_cancel_videotree = true;
+		var videoObject = document.getElementById("divVideoNodes");
+		videoObject.innerHTML = showVideoNodes();	
+	}
+}
+
+function cancelAll()
+{ 
+  enable_cancel = false;
+  enable_cancel_musictree = false;
+  enable_cancel_picturetree = false;
+  enable_cancel_videotree = false;
+  if ((parent.actualPage == 0) || (parent.actualPage == 1)) 
+  {
+	  var contentObject = document.getElementById("divContentdir");
+	  contentObject.innerHTML = showContentdirs();	  	
+  }
+  else
+    {
+		var tmpObject = document.getElementById("divMusicNodes");
+		tmpObject.innerHTML = showMusicNodes();	 
+		tmpObject = document.getElementById("divPictureNodes");
+		tmpObject.innerHTML = showPictureNodes();	   	
+		tmpObject = document.getElementById("divVideoNodes");
+		tmpObject.innerHTML = showVideoNodes();	   	  	
+	  }
+}
+
+// built contentdir string
+function build_contentDir ()
+{
+  var first = true;
+  var contentDirString = '';
+  var i = 0;
+  //cdir_checkbox
+  while ((document.forms[egal.name].elements[i]) && (document.forms[egal.name].elements[i].name.substring(0,13) != "cdir_checkbox"))
+  	{ i++;}
+	while ((document.forms[egal.name].elements[i]) && (document.forms[egal.name].elements[i].name.substring(0,13) == "cdir_checkbox"))
+  { 
+	  if (document.forms[egal.name].elements[i+1].value != "")
+		  { 
+		  if (!first) {contentDirString = contentDirString + ",";}
+		  if (document.forms[egal.name].elements[i].checked) 
+				contentDirString = contentDirString + "+" + document.forms[egal.name].elements[i+2].value + document.forms[egal.name].elements[i+1].value;
+			else 
+				contentDirString = contentDirString + "-" + document.forms[egal.name].elements[i+2].value + document.forms[egal.name].elements[i+1].value;
+			first = false;
+			}
+    i = i+4;
+	}
+	//alert(contentDirString);
+	return contentDirString;
+}
+
+// save changes
+function returnForm(form) 
+{ 
+// all those which do not require special handling
+	setValue("friendlyname",form.friendlyname.value);  	
+	setValue("ignoredir",form.ignoredir.value);  
+	setValue("compilationsdir",form.compilationsdir.value);  
+	setValue("scantime",form.scantime.value); 
+	setValue("playlistnumentries",form.playlistnumentries.value);  
+	setValue("playlists",form.playlists.value);  
+	setValue("playlistlastplayed",form.playlistlastplayed.value);  
+	setValue("playlistmostplayed",form.playlistmostplayed.value); 
+	setValue("radioreread",form.radioreread.value);   
+	setValue("internetradio",form.internetradio.value);   
+	setValue("folderprefix",form.folderprefix.value); 
+  setValue("alltracks",form.alltracks.value);    
+	setValue("playlists",form.playlists.value);  
+	setValue("playlistlastplayed",form.playlistlastplayed.value);  
+	setValue("playlistmostplayed",form.playlistmostplayed.value);  
+	setValue("allpictures",form.allpictures.value); 
+  setValue("allvideos",form.allvideos.value);    
+  setValue("rootmusic",form.rootmusic.value);    
+	setValue("rootpicture",form.rootpicture.value); 
+	setValue("rootvideo",form.rootvideo.value);  
+	setValue("allname",form.allname.value);  
+	setValue("enableweb",form.enableweb.value);    
+	setValue("httpport",form.httpport.value);  
+	setValue("rtpport",form.rtpport.value);  
+	setValue("ip",form.ip.value);  
+  setValue("streambuffer",form.streambuffer.value);
+	setValue("dbdir",form.dbdir.value);
+	setValue("cachedir",form.cachedir.value);
+	setValue("cachemaxsize",form.cachemaxsize.value); 	  
+
+
+	setValue("accessuser",form.accessuser.value); 	  
+	setValue("accesspwd",form.accesspwd.value); 	  
+
+
+// remote access
+	setValue("dyndns",form.dyndns.value); 	  
+	setValue("httpremoteport",form.httpremoteport.value); 	  
+
+
+// randomizeplaylists
+  var checkString = '0';
+	if (form.random.checked) { checkString = '1'; }
+	setValue("randomizeplaylists",checkString);	
+
+// upnptimeout
+	checkString = '';
+	if (form.upnptimeout.checked) { checkString = '99999'; }
+	setValue("upnptimeout",checkString);	
+
+
+// upload
+  checkString = '0';
+	if (form.uploadenabled.checked) { checkString = '1'; }
+	setValue("uploadenabled",checkString);	
+  setValue('uploadmusicdir',form.elements['my_uploadmusicdir'].value);	
+  setValue('uploadpicturedir',form.elements['my_uploadpicturedir'].value);	
+  setValue('uploadvideodir',form.elements['my_uploadvideodir'].value);	
+
+// contentdir
+	setValue("contentdir",build_contentDir());
+	enable_cancel=false;
+
+// clients - new 
+// client_autoenable
+  var checkString = '0';
+  var clientstring="";
+	if (form.client_autoenable.checked) { checkString = '1'; }
+	setValue("clientautoenable",checkString);	
+
+  var i = 0;
+  while ((document.forms[form.name].elements[i]) && (document.forms[form.name].elements[i].name.substring(0,14) != "client_enabled"))
+  	{ i++;}
+	while ((document.forms[form.name].elements[i]) && (document.forms[form.name].elements[i].name.substring(0,14) == "client_enabled"))
+  {
+  	if (document.forms[form.name].elements[i+1].value=="") break;
+		checkString = '0';
+		if (document.forms[form.name].elements[i].checked) { checkString = '1'; }
+		if (document.forms[form.name].elements[i+2].value>0) {
+			//alert(document.forms[form.name].elements[i+1].name);
+			if (document.forms[form.name].elements[i+1].name == "new_client_mac") {
+				var check=document.forms[form.name].elements[i+1].value.split(":");
+				if (check.length <6) {
+					alert("required MAC format: XX:XX:XX:XX:XX:XX");
+				}
+				else {
+					addClient(document.forms[form.name].elements[i+1].value,document.forms[form.name].elements[i+2].value,checkString);
+				}
+		  }
+		  else {
+				addClient(document.forms[form.name].elements[i+1].value,document.forms[form.name].elements[i+2].value,checkString);
+				//setClientEnable(document.forms[form.name].elements[i+1].value,checkString);  // call with MAC and Enable Flag
+				//clientstring=document.forms[form.name].elements[i+1].value+"::"+checkString;
+				//alert(clientstring);
+				//clientstring=clientstring+document.forms[form.name].elements[i+1].value+"|"+document.forms[form.name].elements[i+2].value+"|"+checkString;
+			}
+		}
+		else {
+			if (document.forms[form.name].elements[i+1].value.length>0) removeClient(document.forms[form.name].elements[i+1].value);
+	  }
+		i=i+3;
+	}
+  //alert(clientstring);
+	//setValue("clients",clientstring);	
+
+			  		
+// 3rd party applications		
+	setValue('ituneslib',form.elements['my_ituneslib'].value);
+  setValue('adobepath',form.elements['my_adobepath'].value);	
+  
+// Naming
+	var checkString = '0';
+	if (form.adapt.checked) { checkString = '1'; }
+	setValue("adaptcase",checkString);  
+
+	
+// Internet Radio  
+	var checkString = '0';
+	if (!(form.shoutcast.checked) && !(form.vTuner.checked)) { checkString = "0"; };
+	if (form.shoutcast.checked && !(form.vTuner.checked)) { checkString = "1"; };
+	if (!(form.shoutcast.checked) && form.vTuner.checked) { checkString = "2"; };						
+	if (form.shoutcast.checked && form.vTuner.checked) { checkString = "3"; };
+	setValue("radio",checkString);	
+
+
+	checkString = "";
+	for ( var i = 0; i < 18; i++)
+	{
+		if (form.myradiogenre[i].checked)
+		{ 
+		if (checkString.length > 0) { checkString = checkString + ","}
+		checkString = checkString + form.myradiogenre[i].value ;
+		};
+	}
+	setValue("radiogenre",checkString);
+
+	
+// network
+		checkString = '0';
+		if (form.nicrestartBox.checked) { checkString = '1'; }
+		setValue("nicrestart",checkString);
+		
+// NAS-only	
+	var checkString = '0';
+	if (form.norescaleBox.checked) { checkString = '1'; }
+	setValue("norescale",checkString);
+	
+// music tree
+
+  if (navitreeTypeMusic == "iPod")
+  {
+   	string_node = translateOption("songs");
+    setValue("alltracks",string_node);
+    string_node = translateOption("playlists");
+    setValue("playlists",string_node);     		    	    	    	    	    	    	
+  } 
+  build_musicNodes(); 
+  setValue("musicnode1",new_treeArray[0]); 	
+	setValue("musicnode2",new_treeArray[1]); 	
+	setValue("musicnode3",new_treeArray[2]); 		
+	setValue("musicnode4",new_treeArray[3]); 	
+	setValue("musicnode5",new_treeArray[4]); 	
+	setValue("musicnode6",new_treeArray[5]); 	
+	setValue("musicnode7",new_treeArray[6]); 	
+	setValue("musicnode8",new_treeArray[7]); 	
+	setValue("musicnode9",new_treeArray[8]); 	
+	setValue("musicnode10",new_treeArray[9]); 	    	    	    	    	    	    		
+
+// Picture tree
+  build_pictureNodes(); 
+  setValue("picturenode1",new_picture_treeArray[0]); 	
+	setValue("picturenode2",new_picture_treeArray[1]); 	
+	setValue("picturenode3",new_picture_treeArray[2]); 		
+	setValue("picturenode4",new_picture_treeArray[3]); 	
+	setValue("picturenode5",new_picture_treeArray[4]); 	 
+ 
+// Video tree
+  build_videoNodes(); 
+  setValue("videonode1",new_video_treeArray[0]); 	
+	setValue("videonode2",new_video_treeArray[1]); 	
+	setValue("videonode3",new_video_treeArray[2]); 		
+	setValue("videonode4",new_video_treeArray[3]); 	
+	setValue("videonode5",new_video_treeArray[4]); 	 
+
+  enable_cancel_musictree = false;
+  enable_cancel_picturetree = false;
+  enable_cancel_videotree = false;
+
+// Client setup	
+	var checkString = '0';
+	if (form.nosearchBox.checked) { checkString = '1'; }
+	setValue("nosearch",checkString);
+	checkString = '0';
+	
+// loglevel
+var tmp_level = 0
+	if (form.loglevel[0].checked) tmp_level = tmp_level + 1;
+	if (form.loglevel[1].checked) tmp_level = tmp_level + 2;
+	if (form.loglevel[2].checked) tmp_level = tmp_level + 4;
+	if (form.loglevel[3].checked) tmp_level = tmp_level + 8;
+	if (form.loglevel[4].checked) tmp_level = tmp_level + 16;
+	if (form.loglevel[5].checked) tmp_level = tmp_level + 32;
+	if (form.loglevel[6].checked) tmp_level = tmp_level + 64;
+	if (form.loglevel[7].checked) tmp_level = tmp_level + 128;
+	if (form.loglevel[8].checked) tmp_level = tmp_level + 256;
+	var tmp_str = parseInt(tmp_level);
+	setValue("v", tmp_str );
+
+
+	// set as last value
+	setValue("autotree",form.treetype.value); 	  
+
+// language	
+	if (globalLanguage != form.language.value)
+	{
+		globalLanguage = form.language.value;
+		setValue("language",globalLanguage);	
+		top.frames['NAV_FRAME_LEFT'].location.reload();
+	}
+
+
+	// cd-key
+	if (form.cdkey1.value.length>0) {
+		setValue("cdkey",form.cdkey1.value.toUpperCase()+"-"+
+		                 form.cdkey2.value.toUpperCase()+"-"+
+		                 form.cdkey3.value.toUpperCase()+"-"+
+		                 form.cdkey4.value.toUpperCase()+"-"+
+		                 form.cdkey5.value.toUpperCase()+"-"+
+		                 form.cdkey6.value.toUpperCase()+"-"+
+		                 form.cdkey7.value.toUpperCase()+"-"+
+		                 form.cdkey8.value.toUpperCase());
+	}
+	else setValue("cdkey","");
+	
+	// commit changes
+	setAllValues();
+	optionsShow(parent.actualPage);
+}
+
+window.onload = function iniPagex()
+{
+	iniPage();
+}
+
+function iniPage() {
+  StopRefresh();
+  show_div("divEMPTY");
+	if (!enable_cancel_musictree) 
+	{ 
+		new_treeArray [0] = getValue("musicnode1");	
+		new_treeArray [1] = getValue("musicnode2");	
+		new_treeArray [2] = getValue("musicnode3");	
+		new_treeArray [3] = getValue("musicnode4");	
+		new_treeArray [4] = getValue("musicnode5");	
+		new_treeArray [5] = getValue("musicnode6");	
+		new_treeArray [6] = getValue("musicnode7");	
+		new_treeArray [7] = getValue("musicnode8");	
+		new_treeArray [8] = getValue("musicnode9");	
+		new_treeArray [9] = getValue("musicnode10");	
+	}
+	
+	if (!enable_cancel_picturetree) 
+	{		
+		new_picture_treeArray [0] = getValue("picturenode1");	
+		new_picture_treeArray [1] = getValue("picturenode2");	
+		new_picture_treeArray [2] = getValue("picturenode3");	
+		new_picture_treeArray [3] = getValue("picturenode4");	
+		new_picture_treeArray [4] = getValue("picturenode5");	
+	}
+	
+	if (!enable_cancel_videotree) 
+	{		
+		new_video_treeArray [0] = getValue("videonode1");	
+		new_video_treeArray [1] = getValue("videonode2");	
+		new_video_treeArray [2] = getValue("videonode3");	
+		new_video_treeArray [3] = getValue("videonode4");	
+		new_video_treeArray [4] = getValue("videonode5");			
+	}
+
+	setRadioGenre();
+	
+	// keine Ahnung warum der code zu einem block führt bei /configpage/index.htm?14
+	// chg
+	//var is_input = parent.document.URL.indexOf('?');
+	
+	// Check the position of the ? in the url
+	//if (is_input != -1)
+	//{ 
+	//	addr_str = parent.document.URL.substring(is_input+1, document.URL.length);
+	//	parent.actualPage =parseInt(addr_str);
+  //}
+	// end changhes chg
+	
+	optionsShow(parent.actualPage);
+
+// restart pending?
+  if (restartpending) {show_div("divRestartWarning")}
+  else {hide_div("divRestartWarning")}
+
+// loglevel
+
+  var tmp_level = parseInt(getValue("v"),10);
+  var logging = document.egal;
+	if (tmp_level > 255) 
+	{
+		tmp_level = tmp_level - 256;
+		logging.loglevel[8].checked = true;
+	}
+	else logging.loglevel[8].checked = false;
+	if (tmp_level > 127) 
+	{
+		tmp_level = tmp_level - 128;
+		logging.loglevel[7].checked = true;
+	}
+	else logging.loglevel[7].checked = false;
+	if (tmp_level > 63) 
+	{
+		tmp_level = tmp_level - 64;
+		logging.loglevel[6].checked = true;
+	}
+	else logging.loglevel[6].checked = false;
+	if (tmp_level > 31) 
+	{
+		tmp_level = tmp_level - 32;
+		logging.loglevel[5].checked = true;
+	}
+	else logging.loglevel[5].checked = false;
+	if (tmp_level > 15) 
+	{
+		tmp_level = tmp_level - 16;
+		logging.loglevel[4].checked = true;
+	}
+	else logging.loglevel[4].checked = false;
+	if (tmp_level > 7) 
+	{
+		tmp_level = tmp_level - 8;
+		logging.loglevel[3].checked = true;
+	}
+	else logging.loglevel[3].checked = false;
+	if (tmp_level > 3) 
+	{
+		tmp_level = tmp_level - 4;
+		logging.loglevel[2].checked = true;
+	}
+	else logging.loglevel[2].checked = false;
+	if (tmp_level > 1) 
+	{
+		tmp_level = tmp_level - 2;
+		logging.loglevel[1].checked = true;
+	}
+	else logging.loglevel[1].checked = false;
+	if (tmp_level > 0) 
+	{logging.loglevel[0].checked = true;
+	}
+	else logging.loglevel[0].checked = false;
+		
+}
+</script>
+</head>
+
+<body text="#000000" link="#495F8B" vlink="#495F8B" class="body-main">
+
+<div id="divEMPTY"><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</div>
+
+
+
+<!-- Configuration -->
+<FORM name="egal" action="/configpage/config-content.html" method="post" onSubmit="returnForm(this);">
+
+<!-- Buttons -->
+  <TABLE width="750" border="0">
+  	<tr>
+  		<td>
+  		<div id="divButtons">
+			  <script type="text/javascript">
+					document.write("<INPUT class=\"button\" type=\"submit\" value=\"" + translateOption("savechanges")+"\" name=\"submit\">&nbsp;&nbsp;&nbsp;&nbsp;");
+					document.write("<INPUT class=\"button\" type=\"reset\" value=\"" + translateOption("cancel")+"\" name=\"cancel\" onClick=\"cancelAll();\">")
+				</script> 
+  		</div>
+			<td>
+			<div id="divExit">
+				<script type="text/javascript">
+					document.write("<INPUT class=\"button\" type=\"button\" value=\"" + translateOption("stopserver") + "\" onClick=\"stopServer();\" name=\"stop\">")
+				</script>
+			</div>
+			<td>
+			<div id="divRestart">
+				<script type="text/javascript">
+					document.write("<INPUT class=\"button\" type=\"button\" value=\"" + translateOption("restartserver") + "\" onClick=\"parent.location.href='/rpc/restart';\" name=\"restart\">")
+				</script>
+			</div>
+			<td>
+			<div id="divRescan">
+				<script type="text/javascript">
+					document.write("<INPUT class=\"button\" type=\"button\" value=\"" + translateOption("rescandirs") + "\" onClick=\"rescanDirectories();\" name=\"rescan\">")
+				</script> 
+			</div>
+			<td>
+			<div id="divTrouble">
+				<script type="text/javascript">
+					document.write("<INPUT class=\"button\" type=\"button\" value=\"" + translateOption("rebuiltdb") + "\" onClick=\"rebuiltDB();\" name=\"rebuilt\">")
+					document.write("<INPUT class=\"button\" type=\"button\" value=\"" + translateOption("resetdefaults")+"\" onClick=\"resetDefaults();\" name=\"defaults\">")
+				</script> 
+			</div>
+    </tr>
+    <tr>
+    	<TD class="alert" colspan="5">
+    		<div id="divError">
+    			<script type="text/javascript">document.write(errorStr())</script>
+    		</div>
+    	</TD>
+    </tr>
+    <tr>
+    	<TD class="alert" colspan="5">
+    		<div id="divRestartWarning">
+    			<script type="text/javascript">document.write(translateOption("restartrequired"))</script>
+    		</div>
+    	</TD>
+    </tr>
+  </table>
+
+	<div id="divFirstHR">
+	  <hr>
+	</div>
+
+  
+<!-- cd key -->           
+	<div id="divCDKey">					
+		<p></p>	
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("cdkey")+":")</script>
+		    <td class="optionValue">
+		    	<script type="text/javascript">
+		    		document.write("<INPUT class=\"inputKeyValue\"  type=\"text\"  onKeyUp=\"KeyPress(this,event,4,'egal.cdkey2.focus()')\" onkeypress=\"return noenter(event)\" name=\"cdkey1\" size=\"4\" value=\""+getValue("cdkey").substring(0,4)+"\">")
+		    		document.write(" - ")
+		    		document.write("<INPUT class=\"inputKeyValue\"  type=\"text\"  onKeyUp=\"KeyPress(this,event,4,'egal.cdkey3.focus()')\" onkeypress=\"return noenter(event)\" name=\"cdkey2\" size=\"4\" value=\""+getValue("cdkey").substring(5,9)+"\">")
+		    		document.write(" - ")
+		    		document.write("<INPUT class=\"inputKeyValue\"  type=\"text\"  onKeyUp=\"KeyPress(this,event,4,'egal.cdkey4.focus()')\" onkeypress=\"return noenter(event)\" name=\"cdkey3\" size=\"4\" value=\""+getValue("cdkey").substring(10,14)+"\">")
+		    		document.write(" - ")
+		    		document.write("<INPUT class=\"inputKeyValue\"  type=\"text\"  onKeyUp=\"KeyPress(this,event,4,'egal.cdkey5.focus()')\" onkeypress=\"return noenter(event)\" name=\"cdkey4\" size=\"4\" value=\""+getValue("cdkey").substring(15,19)+"\">")
+		    		document.write(" - ")
+		    		document.write("<INPUT class=\"inputKeyValue\"  type=\"text\"  onKeyUp=\"KeyPress(this,event,4,'egal.cdkey6.focus()')\" onkeypress=\"return noenter(event)\" name=\"cdkey5\" size=\"4\" value=\""+getValue("cdkey").substring(20,24)+"\">")
+		    		document.write(" - ")
+		    		document.write("<INPUT class=\"inputKeyValue\"  type=\"text\"  onKeyUp=\"KeyPress(this,event,4,'egal.cdkey7.focus()')\" onkeypress=\"return noenter(event)\" name=\"cdkey6\" size=\"4\" value=\""+getValue("cdkey").substring(25,29)+"\">")
+		    		document.write(" - ")
+		    		document.write("<INPUT class=\"inputKeyValue\"  type=\"text\"  onKeyUp=\"KeyPress(this,event,4,'egal.cdkey8.focus()')\" onkeypress=\"return noenter(event)\" name=\"cdkey7\" size=\"4\" value=\""+getValue("cdkey").substring(30,34)+"\">")
+		    		document.write(" - ")
+		    		document.write("<INPUT class=\"inputKeyValue\"  type=\"text\"  onkeypress=\"return noenter(event)\" name=\"cdkey8\" maxlength=\"4\" size=\"4\" value=\""+getValue("cdkey").substring(35,39)+"\">")
+		    </script>
+			</tr>
+			<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("cdkey"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- Status -->
+<div id="divStatus">
+		<p></p>	
+  	<TABLE cellspacing="3" width="750" border="0"> 
+  	<tr><td><br>&nbsp;<script type="text/javascript">document.write(statusInfo())</script>
+    </tr>
+  	</table> 
+</div>
+
+
+<!-- language --> 
+	<div id="divLanguage">
+		<p></p>	
+		<table class="optionItem">
+			<tr>
+		    <TD class="optionName"><script type="text/javascript">document.write(translateOption("language")+":")</script>
+		    <TD class="optionValue">	    	
+	        <script  type="text/javascript">
+	        	document.write("<select class=\"inputValue\" name=\"language\">");
+	          var strLanguage=getValue("language");
+	          globalLanguage = strLanguage;
+						if (strLanguage == 'en') {
+							document.write("<option selected value='en' class=\"inputValue\">English<\/option>")
+						}
+						else {
+							document.write("<option value='en' class=\"inputValue\">English<\/option>")
+					  }
+						if (strLanguage == 'de') {
+							document.write("<option selected value='de' class=\"inputValue\">Deutsch<\/option>")
+						}
+						else {
+							document.write("<option value='de' class=\"inputValue\">Deutsch<\/option>")
+					  }
+						if (strLanguage == 'fr') {
+							document.write("<option selected value='fr' selected class=\"inputValue\">Francais<\/option>")
+						}
+						else {
+							document.write("<option value='fr' class=\"inputValue\">Francais<\/option>")
+					  }
+						if (strLanguage == 'it') {
+							document.write("<option selected value='it' selected class=\"inputValue\">Italiano<\/option>")
+						}
+						else {
+							document.write("<option value='it' class=\"inputValue\">Italiano<\/option>")
+					  }
+						if (strLanguage == 'es') {
+							document.write("<option selected value='es' class=\"inputValue\">Espa&ntilde;ol<\/option>")
+						}
+						else {
+							document.write("<option value='es' class=\"inputValue\">Espa&ntilde;ol<\/option>")
+					  }
+						//if (strLanguage == 'fi') {
+						//	document.write("<option selected value='fi' class=\"inputValue\">Finnish<\/option>")
+						//}
+						//else {
+						//	document.write("<option value='fi' class=\"inputValue\">Finnish<\/option>")
+					  //}
+					  if (strLanguage == 'nl') {
+							document.write("<option selected value='nl' class=\"inputValue\">Nederlands<\/option>")
+						}
+						else {
+							document.write("<option value='nl' class=\"inputValue\">Nederlands<\/option>")
+					  }
+					  if (strLanguage == 'ko') {
+							document.write("<option selected value='ko' class=\"inputValue\">Korean<\/option>")
+						}
+						else {
+							document.write("<option value='ko' class=\"inputValue\">Korean<\/option>")
+					  }		
+					  if (strLanguage == 'cht') {
+							document.write("<option selected value='cht' class=\"inputValue\">Traditional Chinese<\/option>")
+						}
+						else {
+							document.write("<option value='cht' class=\"inputValue\">Traditional Chinese<\/option>")
+					  }
+					  if (strLanguage == 'chs') {
+							document.write("<option selected value='chs' class=\"inputValue\">Simplified Chinese<\/option>")
+						}
+						else {
+							document.write("<option value='chs' class=\"inputValue\">Simplified Chinese<\/option>")
+					  }
+						if (strLanguage == 'jp') {
+							document.write("<option selected value='jp' class=\"inputValue\">Japanese<\/option>")
+						}
+						else {
+							document.write("<option value='jp' class=\"inputValue\">Japanese<\/option>")
+					  }
+					  document.write("<\/select>");					  							  				  
+	        </script>		          
+	      </TD>
+	  	</TR>
+			<tr>
+				<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("language"))</script>
+			</tr>			    	
+	  </table><hr>
+  </div>
+
+<!-- friendlyname -->      
+	<div id="divFriendlyname">    
+		<p></p>	
+  	<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("friendlyname")+":")</script>
+		    <td class="optionValue"><script  type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"friendlyname\" size=\"30\" value=\""+getValue("friendlyname")+"\">")</script>
+			</tr>
+			<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("friendlyname"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+			    
+<!-- contentdir -->           
+	<div id="divContentdir">	
+		<script type="text/javascript">document.write(showContentdirs())</script>				
+<!--
+		<p></p>	
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("contentdir")+":")</script></td>
+		    <td class="optionValue"><div id="content_directories"></div></td>
+			</tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("contentdir"))</script>
+  		</tr>
+    </table><hr>
+-->
+
+  </div>
+
+<!-- ignoredir -->           
+	<div id="divIgnoredir">
+		<p></p>				
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("ignoredir")+":")</script></td>
+		    <td class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"ignoredir\" size=\"50\" value=\""+getValue("ignoredir")+"\">")</script></td>
+			</tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("ignoredir"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- compilationsdir --> 
+  <div id="divCompilationsdir">					
+		<p></p>	
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("compilationsdir")+":")</script></td>
+		    <td class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"compilationsdir\" size=\"50\" value=\""+getValue("compilationsdir")+"\">")</script></td>
+			</tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("compilationsdir"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- scantime -->           
+	<div id="divScantime">					
+		<p></p>	
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("scantime")+":")</script>
+		    <td class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"scantime\" size=\"5\" value=\""+getValue("scantime")+"\">")</script>
+			</tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("scantime"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+	
+<!-- randomizeplaylists --> 
+	<div id="divRandomizeplaylists">	
+		<p></p>	
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("randomizeplaylists")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">
+							var random=getValue("randomizeplaylists");
+							if (random == '1') {document.write("<INPUT type=\"checkbox\" name=\"random\" checked><\/input>&nbsp;&nbsp;&nbsp;")}
+						  	else {document.write("<INPUT type=\"checkbox\" name=\"random\"><\/input>&nbsp;&nbsp;&nbsp;")}				
+		        </script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("randomizeplaylists"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- upnptimeout --> 
+	<div id="divUpnptimeout">	
+		<p></p>	
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("upnptimeout")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">
+							var upnptimeout=getValue("upnptimeout");
+							if (upnptimeout == '99999') {document.write("<INPUT type=\"checkbox\" name=\"upnptimeout\" checked><\/input>&nbsp;&nbsp;&nbsp;")}
+						  	else {document.write("<INPUT type=\"checkbox\" name=\"upnptimeout\"><\/input>&nbsp;&nbsp;&nbsp;")}				
+		        </script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("upnptimeout"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+        
+<!-- playlistnumentries -->           
+	<div id="divPlaylistnumentries">	
+		<p></p>	
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("playlistnumentries")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"playlistnumentries\" size=\"4\" value=\""+getValue("playlistnumentries")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("playlistnumentries"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+        
+<!-- radio --> 
+	<div id="divRadio">						
+		<p></p>	
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName">
+					<script type="text/javascript">document.write(translateOption("radio")+":")</script></td>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+						var strRadio=getValue("radio");
+						if (strRadio == '0') {
+							document.write("<INPUT type=\"checkbox\" name=\"shoutcast\">Shoutcast<\/input>&nbsp;&nbsp;&nbsp;")
+							document.write("<INPUT type=\"checkbox\" name=\"vTuner\" >vTuner<\/input>")
+						}
+					
+						if (strRadio == '1') {
+							document.write("<INPUT type=\"checkbox\" name=\"shoutcast\" checked >Shoutcast<\/input>&nbsp;&nbsp;&nbsp;")
+							document.write("<INPUT type=\"checkbox\" name=\"vTuner\" >vTuner<\/input>")
+						}
+						
+						if (strRadio == '2') {
+							document.write("<INPUT type=\"checkbox\" name=\"shoutcast\"  >Shoutcast<\/input>&nbsp;&nbsp;&nbsp;")
+							document.write("<INPUT type=\"checkbox\" name=\"vTuner\" checked >vTuner<\/input>")
+						}
+						
+						if (strRadio == '3') {
+							document.write("<INPUT type=\"checkbox\" name=\"shoutcast\" checked >Shoutcast<\/input>&nbsp;&nbsp;&nbsp;")
+							document.write("<INPUT type=\"checkbox\" name=\"vTuner\" checked >vTuner<\/input>")
+						}
+		      </script>
+		    </td>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("radio"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+            
+<!-- radioreread -->           
+	<div id="divRadioreread">						
+		<p></p>	
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("radioreread")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"radioreread\" size=\"5\" value=\""+getValue("radioreread")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("radioreread"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- radiogenre -->           
+	<div id="divRadiogenre">						
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("radiogenre")+":")</script>
+		    <TD class="inputValue"></TD>
+      </tr>
+			<tr>
+			  <td>&nbsp;
+			  <td>
+			  	<table class="inputValue" border="0" cellpadding="0" cellspacing="0">
+			  		<tr>
+			  			<td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Alternative\">Alternative<\/input>&nbsp;")</script></TD>
+			  			<td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Classical\">Classical<\/input>&nbsp;")</script></TD>
+			  			<td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"80s\">80\'s<\/input>&nbsp;")</script></TD>
+            </tr>
+			  		<tr>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Comedy\">Comedy&nbsp;<\/input>&nbsp;")</script></TD>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Country\">Country<\/input>&nbsp;")</script></TD>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Dance\">Dance<\/input>&nbsp;")</script></TD>
+            </tr>
+			  		<tr>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Funk\">Funk<\/input>&nbsp;")</script></TD>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Jazz\">Jazz<\/input>&nbsp;")</script></TD>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Metal\">Metal<\/input>&nbsp;")</script></TD>
+            </tr>
+			  		<tr>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Mixed\">Mixed<\/input>&nbsp;")</script></TD>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Pop\">Pop<\/input>&nbsp;")</script></TD>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Rap\">Rap<\/input>&nbsp;")</script></TD>
+            </tr>
+			  		<tr>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"RnB\">RnB<\/input>&nbsp;")</script></TD>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Rock\">Rock<\/input>&nbsp;")</script></TD>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Talk\">Talk<\/input>&nbsp;")</script></TD>
+            </tr>
+			  		<tr>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"Techno\">Techno<\/input>&nbsp;")</script></TD>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"70s\">70\'s<\/input>&nbsp;")</script></TD>
+					    <td><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"myradiogenre\" value=\"World\">World<\/input>&nbsp;")</script></TD>
+             </tr>
+          </table>
+        </td>
+			</tr>           
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("radiogenre"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+
+<!-- adobepath -->           
+	<div id="divAdobepath">					
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("adobepath")+":")</script>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+		    		document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\" name=\"my_adobepath\" id=\"my_adobepath\" size=\"50\" value=\""+getValue("adobepath")+"\">&nbsp;&nbsp;")
+						document.write("<INPUT class=\"button\" type=button value=\"" + translateOption("browse")+"\" name=browse-adobepath onClick=\"showFile('my_adobepath');\">")
+					</script>
+				</td>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("adobepath"))</script></TD>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- ituneslib -->           
+	<div id="divItuneslib">					
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("ituneslib")+":")</script>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+		    		document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\" name=\"my_ituneslib\" id=\"my_ituneslib\" size=\"50\" value=\""+getValue("ituneslib")+"\">&nbsp;&nbsp;")
+				  	document.write("<INPUT class=\"button\" type=button value=\"" + translateOption("browse")+"\" name=browse-ituneslib onClick=\"showFile('my_ituneslib');\">")
+				  </script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("ituneslib"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+    
+<!-- adaptcase --> 
+	<div id="divAdaptcase">					
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("adaptcase")+":")</script>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+						var strAdapt=getValue("adaptcase");
+						if (strAdapt == '0') {document.write("<INPUT type=\"checkbox\" name=\"adapt\" ><\/input>&nbsp;&nbsp;&nbsp;")}
+					  else {document.write("<INPUT type=\"checkbox\" name=\"adapt\" checked ><\/input>&nbsp;&nbsp;&nbsp;")}				
+		      </script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("adaptcase"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- folderprefix -->           
+	<div id="divFolderprefix">					
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("folderprefix")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"folderprefix\" size=\"30\" value=\""+getValue("folderprefix")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("folderprefix"))</script>
+  		</tr>
+    </table><hr>
+  </div>         
+
+<!-- Upload -->           
+	<div id="divUpload">					
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("uploadenabled")+":")</script>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+						var strUploadenabled=getValue("uploadenabled");
+						if (strUploadenabled == '0') {document.write("<INPUT type=\"checkbox\" name=\"uploadenabled\" ><\/input>&nbsp;&nbsp;&nbsp;")}
+					  else {document.write("<INPUT type=\"checkbox\" name=\"uploadenabled\" checked ><\/input>&nbsp;&nbsp;&nbsp;")}				
+		      </script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("uploadenabled"))</script>
+  		</tr>
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("uploadmusicdir")+":")</script>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+		    		document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\" name=\"my_uploadmusicdir\" id=\"my_uploadmusicdir\" size=\"50\" value=\""+getValue("uploadmusicdir")+"\">&nbsp;&nbsp;")
+						document.write("<INPUT class=\"button\" type=button value=\"" + translateOption("browse")+"\" name=browse-uploadmusicdir onClick=\"showDir('my_uploadmusicdir');\">")
+					</script>
+				</td>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("uploadmusicdir"))</script>
+  		</tr>
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("uploadpicturedir")+":")</script>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+		    		document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\" name=\"my_uploadpicturedir\" id=\"my_uploadpicturedir\" size=\"50\" value=\""+getValue("uploadpicturedir")+"\">&nbsp;&nbsp;")
+						document.write("<INPUT class=\"button\" type=button value=\"" + translateOption("browse")+"\" name=browse-uploadpicturedir onClick=\"showDir('my_uploadpicturedir');\">")
+					</script>
+				</td>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("uploadpicturedir"))</script>
+  		</tr>
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("uploadvideodir")+":")</script>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+		    		document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\" name=\"my_uploadvideodir\" id=\"my_uploadvideodir\" size=\"50\" value=\""+getValue("uploadvideodir")+"\">&nbsp;&nbsp;")
+						document.write("<INPUT class=\"button\" type=button value=\"" + translateOption("browse")+"\" name=browse-uploadvideodir onClick=\"showDir('my_uploadvideodir');\">")
+					</script>
+				</td>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("uploadvideodir"))</script>
+  		</tr>
+    </table><hr>
+  </div>         
+
+<!-- naming -->           
+	<div id="divNaming">					
+		<p></p>
+		<table class="optionItem">
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("naming"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- alltracks -->           
+	<div id="divAlltracks">					
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("alltracks")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"alltracks\" size=\"30\" value=\""+getValue("alltracks")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("alltracks"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- playlists -->           
+	<div id="divPlaylists">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("playlists")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"playlists\" size=\"30\" value=\""+getValue("playlists")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("playlists"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- playlistlastplayed -->           
+	<div id="divPlaylistlastplayed">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("playlistlastplayed")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"playlistlastplayed\" size=\"30\" value=\""+getValue("playlistlastplayed")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("playlistlastplayed"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- playlistmostplayed -->           
+	<div id="divPlaylistmostplayed">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("playlistmostplayed")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"playlistmostplayed\" size=\"30\" value=\""+getValue("playlistmostplayed")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("playlistmostplayed"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+  
+<!-- internetradio -->           
+	<div id="divInternetradio">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("shoutcast")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"internetradio\" size=\"30\" value=\""+getValue("internetradio")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("shoutcast"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- allpictures -->           
+	<div id="divAllpictures">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("allpictures")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"allpictures\" size=\"30\" value=\""+getValue("allpictures")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("allpictures"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- allvideos -->           
+					<div id="divAllvideos">
+					<p></p>
+					<table class="optionItem">
+						<tr>
+							<TD class="optionName"><script type="text/javascript">document.write(translateOption("allvideos")+":")</script>
+					    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"allvideos\" size=\"30\" value=\""+getValue("allvideos")+"\">")</script>
+			      </tr>
+			  		<tr>
+			  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("allvideos"))</script>
+			  		</tr>
+			    </table><hr>
+			  </div>
+
+<!-- rootmusic -->           
+	<div id="divRootmusic">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("rootmusic")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"rootmusic\" size=\"30\" value=\""+getValue("rootmusic")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("rootmusic"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- rootpicture -->           
+	<div id="divRootpicture">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("rootpicture")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"rootpicture\" size=\"30\" value=\""+getValue("rootpicture")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("rootpicture"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+ 
+<!-- rootvideo -->           
+	<div id="divRootvideo">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("rootvideo")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"rootvideo\" size=\"30\" value=\""+getValue("rootvideo")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("rootvideo"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- allname -->           
+	<div id="divAllname">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("allname")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"allname\" size=\"30\" value=\""+getValue("allname")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("allname"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+  
+  <!-- tagspicture -->           
+	<div id="divTagspicture">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("tagspicture")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"tagspicture\" size=\"30\" value=\""+getValue("tagspicture")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("tagspicture"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+        
+<!-- enableweb --> 
+
+  <div id="divEnableweb">
+		<p></p>
+  	<table class="optionItem">
+  		<tr>
+		    <TD class="optionName"><script type="text/javascript">document.write(translateOption("enableweb")+":")</script>
+		    <TD>
+          <script type="text/javascript">
+          	document.write("<select class=\"inputValue\" name=\"enableweb\">");
+	          var strLanguage=getValue("enableweb");
+						if (strLanguage == '1') {
+							document.write("<option selected value='1' class=\"inputValue\">" + translateOption("localweb") + "<\/option>")
+						}
+						else {
+							document.write("<option value='1' class=\"inputValue\">" + translateOption("localweb") + "<\/option>")
+					  }
+						if (strLanguage == '2') {
+							document.write("<option value='2' selected class=\"inputValue\">" + translateOption("publicweb") + "<\/option>")
+						}
+						else {
+							document.write("<option value='2' class=\"inputValue\">" + translateOption("publicweb") + "<\/option>")
+					  }
+					  document.write("<\/select>");	
+          </script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("enableweb"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- nicrestart --> 
+	<div id="divNicrestart">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("nicrestart")+":")</script>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+						var nicrestartVar=getValue("nicrestart");
+						if (nicrestartVar == '0') {document.write("<INPUT type=\"checkbox\" name=\"nicrestartBox\" ><\/input>&nbsp;&nbsp;&nbsp;")}
+						 if (nicrestartVar == '1') {document.write("<INPUT type=\"checkbox\" name=\"nicrestartBox\" checked ><\/input>&nbsp;&nbsp;&nbsp;")}				
+		      </script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("nicrestart"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- httpport -->           
+	<div id="divHttpport">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("httpport")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"httpport\" size=\"15\" value=\""+getValue("httpport")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("httpport"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- rtpport -->           
+	<div id="divRtpport">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("rtpport")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"rtpport\" size=\"15\" value=\""+getValue("rtpport")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("rtpport"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- ip -->           
+	<div id="divIp">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("ip")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"ip\" size=\"15\" value=\""+getValue("ip")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("ip"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+
+<!-- remoteaccess -->           
+	<div id="divRemoteaccess">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("httpremoteport")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"httpremoteport\" size=\"15\" value=\""+getValue("httpremoteport")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("httpremoteport"))</script>
+  		</tr>
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("dyndns")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"dyndns\" size=\"15\" value=\""+getValue("dyndns")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("dyndns"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+			  
+
+<!--nosearch -->
+	<div id="divNosearch">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("nosearch")+":")</script>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+						var nosearchVar=getValue("nosearch");
+						if (nosearchVar == '0') {document.write("<INPUT type=\"checkbox\" name=\"nosearchBox\"><\/input>&nbsp;&nbsp;&nbsp;")}
+					  else {document.write("<INPUT type=\"checkbox\" name=\"nosearchBox\" Checked><\/input>&nbsp;&nbsp;&nbsp;")}				
+		      </script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("nosearch"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+                
+<!--streambuffer -->
+	<div id="divStreambuffer">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("streambuffer")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"streambuffer\" size=\"12\" value=\""+getValue("streambuffer")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("streambuffer"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+  
+		  
+<!--dbdir -->
+	<div id="divDbdir">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("dbdir")+":")</script>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+		    		document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"dbdir\" size=\"80\" value=\""+getValue("dbdir")+"\">&nbsp;&nbsp;")
+						document.write("<INPUT class=\"button\" type=button value=\"" + translateOption("browse")+"\" name=browse-dbdir onClick=\"showDir('dbdir');\">")
+					</script>
+			</tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("dbdir"))</script>
+  		</tr>
+		</table><hr>
+	</div>
+	
+	
+<!-- cachedir -->
+	<div id="divCachedir">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("cachedir")+":")</script>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+		    		document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"cachedir\" size=\"80\" value=\""+getValue("cachedir")+"\">&nbsp;&nbsp;")
+						document.write("<INPUT class=\"button\" type=button value=\"" + translateOption("browse")+"\" name=browse-cachedir onClick=\"showDir('cachedir');\">")
+					</script>
+			</tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("cachedir"))</script>
+  		</tr>
+		</table><hr>
+	</div>
+	
+<!-- cachemaxsize -->  
+	<div id="divCachemaxsize">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("cachemaxsize")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"cachemaxsize\" size=\"12\" value=\""+getValue("cachemaxsize")+"\">")</script>
+      </tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("cachemaxsize"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+ 
+<!--norescale -->
+	<div id="divNorescale">
+		<p></p>
+		<table class="optionItem">
+  		<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("norescale")+":")</script>
+		    <TD class="optionValue"><script type="text/javascript">
+							var norescaleVar=getValue("norescale");
+						    if (norescaleVar == '1') {document.write("<INPUT class=\"inputValue\" aling=\"left\" type=\"checkbox\" name=\"norescaleBox\" checked ><\/input>&nbsp;")}				
+							else {document.write("<INPUT class=\"inputValue\" type=\"checkbox\" name=\"norescaleBox\" ><\/input>&nbsp;&nbsp;&nbsp;")}
+		        </script>
+			</tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("norescale"))</script>
+  		</tr>
+		</table><hr>
+	</div>
+	
+	
+				
+<!-- music tree -->
+	<div id="divMusictree">
+    <div id="divMusicNodes"><script type="text/javascript">document.write(showMusicNodes())</script></div>
+		<p class="helpText"><script type="text/javascript">document.write(translateHelp("musicnode"))</script></p>
+    <hr>
+	</div>
+  
+<!-- picture tree -->
+	<div id="divPicturetree">
+    <div id="divPictureNodes"><script type="text/javascript">document.write(showPictureNodes())</script></div>
+		<p class="helpText"><script type="text/javascript">document.write(translateHelp("picturenode"))</script></p>
+	  <hr>
+	</div>
+
+<!-- video tree -->
+	<div id="divVideotree">
+    <div id="divVideoNodes"><script type="text/javascript">document.write(showVideoNodes())</script></div>
+		<p class="helpText"><script type="text/javascript">document.write(translateHelp("videonode"))</script></p>
+	  <hr>
+	</div>
+
+<!-- log level -->	
+	<div id="divLogfile">
+		<table class="optionItem">
+  		<tr>
+  			<TD class="optionName"><script type="text/javascript">document.write(translateOption("loglevel")+":")</script></td>
+			  <td>
+			  	<table class="inputValue" border="0" cellpadding="0" cellspacing="0">
+			  		<tr>			
+			  			<td class="optionValue"><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"loglevel\">System<\/input>&nbsp;")</script></td>
+					    <td class="optionValue"><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"loglevel\">SSDP<\/input>&nbsp;")</script></td>
+					    <td class="optionValue"><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"loglevel\">DB<\/input>&nbsp;")</script></td>
+			      </tr>
+			  		<tr>
+					    <td class="optionValue"><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"loglevel\">HTTP<\/input>&nbsp;")</script></td>
+					    <td class="optionValue"><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"loglevel\">Client<\/input>&nbsp;")</script></td>
+					    <td class="optionValue"><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"loglevel\">Eventing<\/input>&nbsp;")</script></td>
+			      </tr>
+			  		<tr>
+					    <td class="optionValue"><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"loglevel\">XML<\/input>&nbsp;")</script></td>
+					    <td class="optionValue"><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"loglevel\">Plugin<\/input>&nbsp;")</script></td>
+					    <td class="optionValue"><script type="text/javascript">document.write("<INPUT type=\"checkbox\" name=\"loglevel\">Scan<\/input>&nbsp;")</script></td>
+			      </tr>
+			      <tr><td>&nbsp;</td>
+			      </tr>
+			      <tr>
+				  		<td colspan="3">
+							  <script type="text/javascript">
+									document.write("<INPUT class=\"button\" type=\"button\" value=\"" + translateOption("clearlog")+"\" name=\"clearlog\" onClick=\"clearLog();\">&nbsp;&nbsp;&nbsp;");
+									document.write("<INPUT class=\"button\" type=\"button\" value=\"" + translateOption("getlog")+"\" name=\"getlog\" onClick=\"getLog();\">&nbsp;&nbsp;&nbsp;") 
+								</script>
+							</td>
+			      </tr>	
+			    </table>
+			  </td>
+			</tr>
+			<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("loglevel"))</script>
+  		</tr>
+            
+    </table><hr>
+    </div>
+
+
+<!-- Webaccess -->           
+	<div id="divWebaccess">
+		<p></p>				
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("username")+":")</script></td>
+		    <td class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"  type=\"text\"  onkeypress=\"return noenter(event)\"name=\"accessuser\" size=\"50\" value=\""+getValue("accessuser")+"\">")</script></td>
+			</tr>
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("userpwd")+":")</script></td>
+		    <td class="optionValue"><script type="text/javascript">document.write("<INPUT class=\"inputValue\"   type=\"password\" onkeypress=\"return noenter(event)\"name=\"accesspwd\" size=\"50\" value=\""+getValue("accesspwd")+"\">")</script></td>
+			</tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("webaccess"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+
+<!-- tree type -->           
+	<div id="divTreetype">
+		<p></p>				
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("treetype")+":")</script></td>
+		    <td class="optionValue">
+		    	<script type="text/javascript">
+				document.write("<select class=\"inputValue\" name=\"treetype\" >");
+		    		var ntreetype=getValue("autotree");
+		    		if (ntreetype==0) document.write("<option selected value=\"0\">"+translateOption("custom")+"<\/option>");
+		    		else document.write("<option value=\"0\">"+translateOption("custom")+"<\/option>");
+		    		if (ntreetype==1) document.write("<option selected value=\"1\">"+translateOption("simpledefault")+"<\/option>");
+		    		else document.write("<option value=\"1\">"+translateOption("simpledefault")+"<\/option>");
+		    		if (ntreetype==2) document.write("<option selected value=\"2\">"+translateOption("ipodlike")+"<\/option>");
+		    		else document.write("<option value=\"2\">"+translateOption("ipodlike")+"<\/option>");
+		    		if (ntreetype==3) document.write("<option selected value=\"3\">"+translateOption("advanceddefault")+"<\/option>");
+		    		else document.write("<option value=\"3\">"+translateOption("advanceddefault")+"<\/option>");
+					document.write("<\/select>");	
+		    	</script>
+		    	</td>
+			</tr>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("treetype"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+
+
+<!--client database (new) -->
+	<div id="divClientDB">
+		<p></p>
+		<table class="optionItem">
+			<tr>
+				<TD class="optionName"><script type="text/javascript">document.write(translateOption("clients")+":")</script>
+      </tr>
+      <tr><td></td></tr>
+			<tr>
+				<TD class="optionName">
+					<script type="text/javascript">document.write(translateOption("clientautoenable")+":")</script></td>
+		    <TD class="optionValue">
+		    	<script type="text/javascript">
+						if (getValue("clientautoenable") == '1') {
+							document.write("<INPUT type=\"checkbox\" name=\"client_autoenable\" checked><\/input>")
+						}
+						else {
+							document.write("<INPUT type=\"checkbox\" name=\"client_autoenable\"><\/input>")
+						}
+						document.write("&nbsp;<INPUT class=\"button\" type=\"button\" value=\"" + translateOption("resetclients")+"\" name=\"resetclients\" onClick=\"resetClients();\">");
+	      </script>
+		    </td>
+      </tr>
+      <script type="text/javascript">document.write(clientInfo())</script>
+  		<tr>
+  			<td class="helpText" colspan="2"><script type="text/javascript">document.write(translateHelp("clientdetection"))</script>
+  		</tr>
+    </table><hr>
+  </div>
+
+<!-- popup for file and directory selection 
+     required for adobepath, ituneslib, winamp and content dir -->    
+	<div id="divBrowse">					
+		<table>
+  		<tr><td>&nbsp;</td></tr>
+  		<tr><td><DIV id="divPopup"></DIV></td></tr>
+    </table>
+  </div>
+
+
+</FORM>
+
+      
+</body>
+</html>

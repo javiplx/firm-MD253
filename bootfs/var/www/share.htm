@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="Expires" content="-1" />
+  <link rel="stylesheet" href="set.css">
+  <script type="text/javascript" src="getlanguage.js"></script>
+  <script type="text/javascript" src="ajax.js"></script>
+  <script type="text/javascript" src="user.js"></script>
+  <title>User Management</title>
+ </head>
+ <body style="background-image:none;background-color:transparent;">
+  <div class="topbar">
+   <ul id="topbartabs">
+    <script type="text/javascript">userLink(2);</script>
+   </ul>
+  </div>
+  <br><br>
+  <blockquote>
+   <table width="900px" border="0" cellspacing="2">
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(74))</script></td>
+    </tr>
+    <tr>
+     <td class="background" style="width:25%"><script type="text/javascript">document.write(showText(182))</script> :&nbsp;</td>
+     <td><input type="radio" id="status_enable" onClick="OnChgSMBStatus(this.id)" /><label for="Enable"><script type="text/javascript">document.write(showText(102))</script></label>&nbsp;<input type="radio" id="status_disable" onClick="OnChgSMBStatus(this.id)" /><label for="Disable"><script type="text/javascript">document.write(showText(156))</script></label></td>
+    </tr>
+    <tr>
+     <td class="background" style="width:25%"><script type="text/javascript">document.write(showText(233))</script> :&nbsp;</td>
+     <td style="padding: 0px 0px 0px 10px;" id=PublicQuotaUsed></td>
+    </tr>
+    <tr>
+     <td class="background" style="width:25%"><script type="text/javascript">document.write(showText(232))</script> :&nbsp;</td>
+     <td><script type="text/javascript">document.write("<input type=text MAXLENGTH=20 id=PublicQuota class=input_text />&nbsp;GB");</script></td>
+    </tr>
+    <tr>
+     <td align="right" colspan="2"><script type="text/javascript">document.write('<input type="button" value="'+showText(37)+'" onclick="Samba_submit()" />');</script></td>
+    </tr>
+   </table>
+   <br /><br />
+   <table width="900px" border="0" cellspacing="2">
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(80)+' ('+showText(79)+')')</script></td>
+    </tr>
+    <tr>
+     <td id="FolderList">
+      <select size="7" id="FolderSelect" style="width: 200px" onChange="FolderSelect()"></select>
+     </td>
+    </tr>
+   </table>
+   <span style="margin-left:3px">
+	  <script type="text/javascript">document.write('<input type="button" id="FolderCreate" value="'+showText(64)+'" onClick="OpenFolderCreate()" />');</script>
+	  <script type="text/javascript">document.write('<input type="button" id="FolderModify" value="'+showText(65)+'" onClick="OpenFolderModify()" />');</script>
+	  <script type="text/javascript">document.write('<input type="button" id="FolderDelete" value="'+showText(66)+'" onClick="FolderDelete()" />');</script>
+   </span>
+   <br /><br /><br />
+   <div id="Disk_Table">
+    <table class="Disk_Table_ALL" id="UserData">
+     <tr class="Disk_Table_Title">
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(68));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(185));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(186));</SCRIPT></td>
+     </tr>
+    </table>
+   </div>
+   <div id="wait_message" style="height:50px;"></div>
+   <div id="UsersData"></div>
+   <div id="SecurityData"></div>
+   <div id="USBData"></div>
+   <div id=OLD_FOLDER></div>
+   <div id=HDD_STATUS></div>
+   <div id="SIZE"></div>
+<!-- Modify Folder popupwindow Function Start -->
+   <div id="ModifyUserWindow" style="position:absolute; width: 330px; height:150px; top:100px; left:300px;">
+    <div class="emphasize_torrent">
+     <span id=WindowTitle></span>
+    </div>
+    <div>
+     <table style="width: 100%;" border="0" cellspacing="2">
+      <tr>
+       <td style="width: 35%;padding: 0px 3px 0px 0px;" class="background"><SCRIPT LANGUAGE="JavaScript">document.write(showText(107)+'&nbsp;'+showText(55));</SCRIPT></td>
+       <td style="text-align: left;padding: 0px 0px 0px 3px;"><input type=text style="width: 200px;" MAXLENGTH=30 id=FolderText class=user_input_text /></td>
+      </tr>
+      <tr>
+       <td style="width: 35%;padding: 0px 3px 0px 0px;" class="background"><SCRIPT LANGUAGE="JavaScript">document.write(showText(75));</SCRIPT></td>
+       <td style="text-align: left;padding: 0px 0px 0px 3px;">
+        <SCRIPT LANGUAGE="JavaScript">
+         document.write("<input type=radio id=anonymous title='"+showText(183)+"' alt='"+showText(183)+"' onClick='OnChgScurity(this.id)' checked />");
+         document.write("<label for=guest>"+showText(224)+"</label>&nbsp;");
+         document.write("<input type=radio id=personal title='"+showText(184)+"' alt='"+showText(184)+"' onClick='OnChgScurity(this.id)' />");
+         document.write("<label for=user>"+showText(225)+"</label>");
+        </SCRIPT>
+       </td>
+      </tr>
+     </table>
+    </div>
+    <br>
+    <div class="row" style="text-align: center;">
+     <script type="text/javascript">
+      document.write('<input type="reset" id="Modify" value="'+showText(37)+'" onClick="FolderAction()" />');
+      document.write('<input type="reset" value="'+showText(114)+'" onClick="FolderCreateCancel()" />');
+     </script>
+    </div>
+    <div id=Action></div>
+   </div>
+<!-- Modify Folder popupwindow Function End -->
+  </blockquote>
+ </body>
+</html>
+<script language="javascript">
+getSambaStatus();
+</script>

@@ -1,0 +1,30 @@
+service_smb_modify_conf_data(){
+echo " "
+echo "[${string}]"
+echo "path = ${SHARE_PATH}/${string}"
+echo "comment = ${string} Device"
+echo "dead time = 10"
+echo "admin users = admin"
+echo "browseable = Yes"
+echo "create mask = 0777"
+echo "directory mask = 0777"
+echo "wide links = no"
+echo "map archive = yes"
+echo "preallocate = yes"
+echo "include=/etc/sysconfig/config/smb/shares/${string}.inc"
+
+case ${FolderStatus} in
+ anonymous)
+  echo "writable = Yes"
+  ;;
+esac
+
+case ${string} in
+ PUBLIC)
+  echo "force user = nobody"
+  ;;
+esac
+
+echo "force directory mode = 0777"
+echo "force create mode = 0777"
+}

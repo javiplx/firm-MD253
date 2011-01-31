@@ -1,0 +1,18 @@
+dlna_mDNSR_modify_conf_data(){
+SERVICE_PATH=/etc/sysconfig/config
+SERVICE_CONF=$SERVICE_PATH/service
+. $SERVICE_CONF
+
+echo "\"$HOSTNAME\" _http._tcp local. 80"
+[ -z "$DISK" ] || {
+ echo "\"$HOSTNAME\" _netbios-ns._tcp local. 137"
+ echo "\"$HOSTNAME\" _smb._tcp local. 139"
+
+ case $daapd in
+  Enable)
+   echo "\"$HOSTNAME\" _daap._tcp local. 3689 txtvers=1 iTShVersion=131073 Version=196610"
+   ;;
+ esac
+ }
+/bin/logger "$0 - Modify mDNSResponder config : \"responder.conf\""
+}

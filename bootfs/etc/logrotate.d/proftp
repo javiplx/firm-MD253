@@ -1,0 +1,9 @@
+/var/log/proftpd/proftpd.log {
+ weekly
+ missingok
+ size=512k
+ sharedscripts
+ postrotate
+  /bin/kill -HUP `cat /var/run/proftpd.pid 2> /dev/null` 2> /dev/null || true
+ endscript
+}

@@ -1,0 +1,8 @@
+service_smb_modify_lpd_data(){
+echo "[printers]"
+echo "comment = Printers"
+echo "path = ${SHARE_PATH}/.lpd"
+echo "printable = yes"
+echo "print command = /bin/lpr -P%p -r %s"
+echo "guest only = yes"
+}

@@ -1,0 +1,27 @@
+dlna_daapd_modify_conf(){
+replaceFile=/var/www/cgi-bin/replaceFile
+SERVICE_PATH=/etc/sysconfig/config
+SERVICE_CONF=${SERVICE_PATH}/service
+DAAPD_CONF=${SERVICE_PATH}/daapd.conf
+
+old_status=`/bin/awk -F= /daapd/'{print $2}' $SERVICE_CONF|/bin/sed 's/\ //g'`
+old_dir=`/bin/cat $DAAPD_CONF|/bin/grep "^mp3_dir"|/bin/cut -c9-`
+[ -d "${old_dir}" ] || {
+ $replaceFile "${DAAPD_CONF}" "mp3_dir $old_dir" "mp3_dir /tmp/" >/dev/null 2>&1
+ }
+
+[ "${old_dir}" == "/home/" ] && {
+ $replaceFile "${DAAPD_CONF}" "mp3_dir $old_dir" "mp3_dir /tmp/" >/dev/null 2>&1
+ }
+
+[ "${old_dir}" == "/tmp/" -o "${old_dir}" == "/home/" ] && {
+ [ "$old_status" == "Enable" ] &&\
+  $replaceFile "${SERVICE_CONF}" "daapd=$old_status" "daapd=Disable"
+ }
+
+old_runas=`/bin/cat $DAAPD_CONF|/bin/awk '/runas/{print $2}'|/bin/sed 's/\ //g'`
+[ "$old_runas" == "root" ] || {
+ $replaceFile "${DAAPD_CONF}" "runas $old_runas" "runas root" >/dev/null 2>&1
+ }
+/bin/logger "$0 - Modify daapd config : \"daapd.conf\""
+}

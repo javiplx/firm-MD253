@@ -1,0 +1,11 @@
+service_syslogd_start(){
+SYSLOGD_OPTIONS="-m 0 -r"
+KLOGD_OPTIONS="-x"
+
+[ -f /var/log/messages ] ||\
+ /bin/touch /var/log/messages
+
+/bin/syslogd $SYSLOGD_OPTIONS
+/bin/klogd $KLOGD_OPTIONS
+/bin/touch /var/lock/subsys/syslog
+}

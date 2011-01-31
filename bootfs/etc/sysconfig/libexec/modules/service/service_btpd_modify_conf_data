@@ -1,0 +1,6 @@
+service_btpd_modify_conf_data(){
+echo "port=${port}"
+echo "incoming=${incoming}"
+echo "outgoing=${outgoing}"
+echo "maxpeers=${maxpeers}"
+}

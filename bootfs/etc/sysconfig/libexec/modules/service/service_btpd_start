@@ -1,0 +1,63 @@
+service_btpd_start(){
+CONFIG_PATH=/etc/sysconfig/config
+SERVICE_CONF=${CONFIG_PATH}/service
+BTPD_BIN=/usr/bin/btpd
+BTPD_CONF=${CONFIG_PATH}/btpd.conf
+BTPD_BASE_DIR=/home/BitTorrent
+BTPD_START_PATH=${BTPD_BASE_DIR}/.btpd
+BTPD_TORRENTS_PATH=${BTPD_START_PATH}/torrents_list
+
+[ -f ${BTPD_CONF} ] || {
+ port=6900
+ incoming=0
+ outgoing=50
+ maxpeers=5
+ service_btpd_modify_conf_data > ${BTPD_CONF}
+ /bin/logger "$0 - Modify btpd Config \"btpd.conf\""
+ }
+
+/bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home$" >/dev/null 2>&1
+[ $? -ne 0 ] && return
+BT_SERVICE=`/bin/awk -F= /btpd/'{print $2}' ${SERVICE_CONF}`
+[ "${BT_SERVICE}" == "Enable" ] || return
+
+. ${BTPD_CONF}
+[ ${incoming} == "0" ] && in_str="" || in_str="--bw-in ${incoming}"
+[ ${outgoing} == "0" ] && out_str="" || out_str="--bw-out ${outgoing}"
+
+/bin/test -f ${BTPD_BASE_DIR}/.btpd.tar.bz2 && {
+ cd ${BTPD_BASE_DIR}
+ /bin/rm -rf ${BTPD_BASE_DIR}/.btpd
+ /bin/tar xjf .btpd.tar.bz2
+ }
+
+[ -d ${BTPD_START_PATH} ] || /bin/mkdir -p ${BTPD_START_PATH}
+[ -d ${BTPD_TORRENTS_PATH} ] || /bin/mkdir -p ${BTPD_TORRENTS_PATH}
+
+export BTPD_HOME=${BTPD_START_PATH}
+${BTPD_BIN} -d ${BTPD_START_PATH} ${in_str} ${out_str} --max-peers ${maxpeers} -p ${port}
+[ $? -eq 0 ] &&\
+ /bin/logger "$0 - btpd deamon Start Succeed" ||\
+ /bin/logger "$0 - btpd deamon Start Failed"
+
+file=`/bin/find "${BTPD_TORRENTS_PATH}/" -maxdepth 1 -type f|/bin/tr " " "^"`
+/bin/cat /dev/null > ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus
+for i in ${file}; do
+ [ "$i" == ".torrent" ] && {
+  /bin/rm -rf ${BTPD_TORRENTS_PATH}/"${i}"
+  continue
+  }
+
+ name=`echo "${i##*/}"|/bin/tr "^" " "`
+ /bin/btcli start ${BTPD_TORRENTS_PATH}/"${name}" >/dev/null 2>&1
+ num=`/bin/btcli stat -i ${BTPD_TORRENTS_PATH}/"${name}"|/bin/grep -v "NUM"|\
+      /bin/awk '{print $1}'|/bin/grep -v "%"`
+
+ [ "$num" == "" ] && {
+  /bin/btcli del ${BTPD_TORRENTS_PATH}/"${name}"
+  /bin/rm -rf ${BTPD_TORRENTS_PATH}/"${name}"
+  } || echo "$num ${name}" >> ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus
+
+ /bin/btcli stop ${BTPD_TORRENTS_PATH}/"${name}"
+done
+}

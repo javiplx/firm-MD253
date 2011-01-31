@@ -1,0 +1,4 @@
+#iTunes library import plugin
+#(c) 2006 by TwonkyVision
+launch on change:$ituneslib
+exec: itunes-import !ituneslib $dbdir $contentbase

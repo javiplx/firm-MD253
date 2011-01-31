@@ -1,0 +1,55 @@
+#!/bin/sh
+
+SHARE_PATH=/home
+dev=$1
+
+TYPE=`/bin/blkid -c /dev/null -s TYPE /dev/${dev}|\
+      /bin/awk -F= '{print $2}'|/bin/sed 's/\"//g'|/bin/sed 's/\ //g'`
+
+string=`/bin/blkid -c /dev/null -s LABEL /dev/${dev}|\
+      /bin/awk -F= '{print $2}'|/bin/sed 's/\"//g'|\
+      /bin/sed 's/\ $//'|/bin/tr " " "_"`
+
+temp=`echo "$string"|/bin/tr -s '[A-Z]' '-'|/bin/tr -s '[a-z]' '-'|\
+     /bin/tr -s '[0-9]' '-'|/bin/tr -s '_' '-'|/bin/sed 's/-//g'`
+[ "$temp" != "" ] && string=""
+
+[ "$string" == "" ] && {
+ name=`/bin/echo $dev|/bin/sed 's/sd//'|/bin/tr "[:lower:]" "[:upper:]"`
+ string=UNTITLED-${name}
+ }
+
+[ -d "$SHARE_PATH/${string}" ] || /bin/mkdir -p "${SHARE_PATH}/${string}"
+
+case ${TYPE} in
+ ext2|ext3|xfs)
+  /bin/mount /dev/${dev} ${SHARE_PATH}/${string} && /bin/chmod 777 ${SHARE_PATH}/${string}
+  ;;
+ vfat)
+  /bin/blkid -c /dev/null -s TYPE|/bin/grep "hfsplus" >/dev/null 2>&1
+  [ $? -ne 0 ] &&\
+   /bin/mount -o utf8,umask=0000 /dev/${dev} ${SHARE_PATH}/${string}
+  ;;
+ hpfs|ntfs)
+  /bin/ntfs-3g /dev/${dev} ${SHARE_PATH}/${string} -o force,umask=0000,locale=zh_TW.UTF-8
+  ;;
+ hfsplus)
+  case ${string} in
+   Boot_OSX)
+    ;;
+   *)
+    /bin/fsck.hfsplus -fy /dev/${dev}
+    /bin/mount -t hfsplus /dev/${dev} ${SHARE_PATH}/${string} -o rw,force,umask=0000
+    ;;
+  esac
+  ;;
+esac
+
+df|grep ${dev}
+[ $? -eq 0 ] && {
+ /bin/echo "${string}=${dev}" >> /etc/sysconfig/config/USBData
+ /bin/logger "$0 - Mount new device : \"/dev/${dev}\", New folder : \"${SHARE_PATH}/${string}\""
+ } || {
+ rm -rf ${SHARE_PATH}/${string}
+ /bin/logger "$0 - Mount new device : \"/dev/${dev}\" failed"
+ }

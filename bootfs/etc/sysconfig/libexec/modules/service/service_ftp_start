@@ -1,0 +1,42 @@
+service_ftp_start(){
+SERVICE_PATH=/etc/sysconfig/config
+SERVICE_CONF=${SERVICE_PATH}/service
+PROFTPD_CONF=${SERVICE_PATH}/proftpd/proftpd.conf
+PUBLIC_ACCESS=/home/PUBLIC/.ftpaccess
+replaceFile=/var/www/cgi-bin/replaceFile
+
+FTP_SERVICE=`/bin/awk -F= /ftp/'{print $2}' $SERVICE_CONF`
+
+[ -d /var/log/proftpd ] || /bin/mkdir -p /var/log/proftpd
+[ -d /var/run/proftpd ] || /bin/mkdir -p /var/run/proftpd
+[ -f /etc/sysconfig/config/ftpd.conf ] && /bin/rm -rf /etc/sysconfig/config/ftpd*
+
+HOST=`/bin/awk /host.conf/'{print $1}' ${PROFTPD_CONF}`
+[ "$HOST" == "" ] && {
+ echo "Include				/etc/sysconfig/config/proftpd/host.conf"
+ hostname=`/bin/hostname`
+ echo "ServerName			\"${hostname}\"" > /etc/sysconfig/config/proftpd/host.conf
+ }
+
+HOME=`/bin/awk -F: /^ftp:/'{print $6}' /etc/passwd|/bin/sed 's/\ //g'`
+[ "$HOME" == "/home" ] && {
+ LINE=`/bin/grep '^ftp:' /etc/passwd`
+ $replaceFile "/etc/passwd" "${LINE}" "ftp:x:14:50:ftp:/home/PUBLIC:/sbin/nologin"
+ }
+
+/bin/test -f ${PUBLIC_ACCESS} && {
+ /bin/awk /AllowUser/'{print $2}' ${PUBLIC_ACCESS}|/bin/grep ",ftp," >/dev/null 2>&1
+ [ $? -eq 0 ] || {
+  LINE=`/bin/cat ${PUBLIC_ACCESS}|/bin/grep "AllowUser"`
+  OldAllowUser=`echo "$LINE"|/bin/awk '{print $2}'|/bin/sed 's/'toor,admin,'//g'`
+  $replaceFile "${PUBLIC_ACCESS}" "$LINE" " AllowUser toor,admin,ftp,${OldAllowUser}"
+  }
+ }
+
+[ "${FTP_SERVICE}" == "Enable" ] && {
+ /bin/nice -n -16 /usr/sbin/proftpd -c ${PROFTPD_CONF}
+ [ $? -eq 0 ] &&\
+  /bin/logger "$0 - proftpd deamon Start Succeed" ||\
+  /bin/logger "$0 - proftpd deamon Start Failed"
+ }
+}

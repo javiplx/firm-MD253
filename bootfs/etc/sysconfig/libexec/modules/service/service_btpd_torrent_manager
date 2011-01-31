@@ -1,0 +1,94 @@
+service_btpd_torrent_manager(){
+CONFIG_PATH=/etc/sysconfig/config
+DownloadTorrentPath=/tmp/.btpd
+SERVICE_CONF=${CONFIG_PATH}/service
+BTPD_CONF=${CONFIG_PATH}/btpd.conf
+BTPD_BASE_DIR=/home/BitTorrent
+BTPD_TORRENTS=${BTPD_BASE_DIR}/.btpd/torrents_list
+ICONV=/usr/sbin/iconv
+
+QUERY_STRING=$1
+action=$2
+export BTPD_HOME=${BTPD_BASE_DIR}/.btpd
+
+case ${action} in
+ add)
+  FileName=`/bin/ls ${DownloadTorrentPath}`
+  #Source="`/bin/btinfo ${DownloadTorrentPath}/"${FileName}"|/bin/awk -F: /Name:/'{print $2}'|/bin/sed 's/^\ //'|/bin/sed 's/\ $//'`"
+
+  Source=`/bin/btinfo ${DownloadTorrentPath}/"${FileName}"|/bin/grep -v "^Tracker URLs:"|\
+  /bin/tr -s ' ' ' '|/bin/tr '\n' '#'|/bin/sed 's/'Files:#'/\n/'|/bin/sed 's/\#$//'`
+
+  echo "${Source}"|${ICONV} -f CP936 -t UTF-8 >/dev/null 2>&1
+  [ $? -eq 0 ] && Target=`echo "${Source}"|${ICONV} -f CP936 -t UTF-8` ||\
+   Target=`echo "${Source}"|${ICONV} -f CP950 -t UTF-8`
+
+  SourceNum=`echo "${Source}"|/bin/wc -c`
+  TargetNum=`echo "${Target}"|/bin/wc -c`
+  [ $SourceNum -gt $TargetNum ] && TorrentDir="${Source}" || TorrentDir="${Target}"
+
+  TorrentDir=`echo "${TorrentDir}"|/bin/tr '#' '\n'|/bin/grep "^Name:"|/bin/sed 's/^Name://'|/bin/sed 's/^\ //'|/bin/sed 's/\ $//'`
+
+  [ "${TorrentDir}" == "" ] && /bin/rm -rf ${DownloadTorrentPath}/* || {
+   TorrentName="${TorrentDir}".torrent
+
+   /bin/test -f ${BTPD_TORRENTS}/"${TorrentName}" || {
+    /bin/mv ${DownloadTorrentPath}/"${FileName}" ${BTPD_TORRENTS}/"${TorrentName}"
+
+    [ -d ${BTPD_DOWNLOAD}/"${TorrentDir}" ] || {
+     /bin/mkdir -p ${BTPD_BASE_DIR}/"${TorrentDir}"
+     /bin/chmod 777 ${BTPD_BASE_DIR}/"${TorrentDir}"
+     }
+
+    /bin/btcli add -d ${BTPD_BASE_DIR}/"${TorrentDir}" ${BTPD_TORRENTS}/"${TorrentName}"
+    [ $? -eq 0 ] && {
+     /bin/logger "$0 - Add new torrent : \"${TorrentDir}\""
+
+     num=`/bin/btcli stat -i ${BTPD_TORRENTS}/"${TorrentName}"|/bin/grep -v "NUM"|\
+         /bin/awk '{print $1}'|/bin/grep -v "%"`
+
+     [ "$num" == "" ] && {
+      /bin/btcli del ${BTPD_TORRENTS}/"${TorrentName}"
+      /bin/rm -f ${BTPD_TORRENTS}/"${TorrentName}"
+      /bin/rm -rf ${BTPD_BASE_DIR}/"${TorrentDir}"
+      } || echo "$num ${TorrentName}" >> ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus
+     } || /bin/logger "$0 - Add new torrent : \"${TorrentDir}\" failed"
+   }
+  }
+  /bin/rm -f ${BTPD_TORRENTS}/.torrent
+  /bin/rm -rf ${DownloadTorrentPath}/*
+  ;;
+ del)
+  num=`echo ${QUERY_STRING}|/bin/cut '-d&' -f3|/bin/sed 's/\^/\ /g'`
+  DelAction=`echo ${QUERY_STRING}|/bin/cut '-d&' -f4`
+  for i in $num; do
+   FileName=`/bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/bin/grep "^$i "|/bin/sed 's/^'$i'\ //'|/bin/sed 's/\.torrent$//'`
+   DownloadDir=${BTPD_BASE_DIR}/"${FileName}"
+   TorrentName="${FileName}".torrent
+   /bin/btcli del ${BTPD_TORRENTS}/"${TorrentName}"
+   /bin/rm -rf ${BTPD_TORRENTS}/"${TorrentName}"
+   [ "$DelAction" == "DelFile" ] && /bin/rm -rf "${DownloadDir}"
+
+    /bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/bin/grep -v "${i} " > /tmp/.TorrentNumStatus
+    /bin/mv /tmp/.TorrentNumStatus ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus
+  done
+  ;;
+ start)
+  num=`echo ${QUERY_STRING}|/bin/cut '-d&' -f3|/bin/sed 's/\^/\ /g'`
+  for i in $num; do
+   TorrentName=`/bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/bin/grep "^$i "|/bin/sed 's/^'$i'\ //'`
+   /bin/btcli start ${BTPD_TORRENTS}/"${TorrentName}"
+  done
+  ;;
+ stop)
+  num=`echo ${QUERY_STRING}|/bin/cut '-d&' -f3|/bin/sed 's/\^/\ /g'`
+  for i in $num; do
+   TorrentName=`/bin/cat ${BTPD_BASE_DIR}/.btpd/TorrentNumStatus|/bin/grep "^$i "|/bin/sed 's/^'$i'\ //'`
+   /bin/btcli stop ${BTPD_TORRENTS}/"${TorrentName}"
+  done
+  ;;
+esac
+
+cd ${BTPD_BASE_DIR}/
+/bin/tar cjf .btpd.tar.bz2 .btpd
+}

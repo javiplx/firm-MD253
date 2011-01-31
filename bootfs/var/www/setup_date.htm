@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="Expires" content="-1" />
+  <link rel="stylesheet" href="set.css">
+  <script type="text/javascript" src="getlanguage.js"></script>
+  <script type="text/javascript" src="ajax.js"></script>
+  <script type="text/javascript" src="datetime.js"></script>
+  <title>Setup Network</title>
+ </head>
+ <body style="background-image:none;background-color:transparent;">
+  <div class="topbar">
+   <ul id="topbartabs">
+    <script type="text/javascript">setupLink(4);</script>
+   </ul>
+  </div>
+  <br><br>
+  <blockquote>
+   <table width="900px" border="0" cellspacing="2">
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(25))</script></td>
+    </tr>
+    <tr>
+     <td width="25%" class="background"><script type="text/javascript">document.write(showText(59))</script> :&nbsp;</td>
+     <td id="tzinfo"></td>
+    </tr>
+    <tr>
+     <td class="background"><input type="radio" id="manual_config" onClick="OnChgNTPStatus(this.id)" />&nbsp;<label for="Manual"><script type="text/javascript">document.write(showText(60))</script> :&nbsp;</label></td>
+     <td><span id="date"></span>&nbsp;<span id="hour"></span>:<span id="minute"></span><span><script type="text/javascript">document.write('<input type="button" id="ChgManualDateStatus" value="'+showText(63)+'" onClick="NewCal(\'date_end_query\', \'DDMMYYYY\')" />');</script></span></td>
+    </tr>
+    <tr>
+     <td class="background"><input type="radio" id="auto_config" onClick="OnChgNTPStatus(this.id)" />&nbsp;<label for="NTP"><script type="text/javascript">document.write(showText(61))</script> :&nbsp;</label></td>
+     <td><span id="ntpconf"></span><span id="ntpselect"></span></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(62))</script> :&nbsp;</td>
+     <td>
+      <input type="text" id="ntp_text">&nbsp;<script type="text/javascript">document.write('<input type="button" id="AddNTPServer" value="'+showText(64)+'" onClick="NTPAdd()" />');</script>&nbsp;<script type="text/javascript">document.write('<input type="button" id="DelNTPServer" value="'+showText(66)+'" onClick="NTPDel()" />');</script>
+     </td>
+    </tr>
+    <tr>
+     <td align="right" colspan="2"><script type="text/javascript">document.write('<input type="button" value="'+showText(37)+'" onclick="ChgDateStatus()" />');</script></td>
+    </tr>
+   </table>
+   <div id="wait_message" style="height:50px;"></div>
+  </blockquote>
+ </body>
+</html>
+<script type="text/javascript">
+NTPAction();
+</script>

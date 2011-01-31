@@ -1,0 +1,9 @@
+/usr/local/samba/var/log.nmbd {
+ daily
+ missingok
+ size=512k
+ sharedscripts
+ postrotate
+  /bin/kill -HUP `cat /usr/local/samba/var/locks/nmbd.pid 2> /dev/null` 2> /dev/null || true
+ endscript
+}

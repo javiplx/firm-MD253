@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="Expires" content="-1" />
+  <link rel="stylesheet" href="set.css">
+  <script type="text/javascript" src="getlanguage.js"></script>
+  <script type="text/javascript" src="ajax.js"></script>
+  <script type="text/javascript" src="services.js"></script>
+  <style>a {text-decoration: none;} a:link,a:visited,a:active {color:#000000;font-weight:bold;} a:hover {color:#3c5d86;font-weight:bold;}</style>
+  <title>User Management</title>
+ </head>
+ <body style="background-image:none;background-color:transparent;">
+  <div class="topbar">
+   <ul id="topbartabs">
+    <script type="text/javascript">servicesLink(2);</script>
+   </ul>
+  </div>
+  <br><br>
+  <blockquote>
+   <table width="900px" border="0" cellspacing="2">
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(17))</script></td>
+    </tr>
+    <tr>
+     <td class="background" style="width:25%"><script type="text/javascript">document.write(showText(182))</script> :&nbsp;</td>
+     <td>
+      <span>
+       <input type="radio" id="status_enable" onClick="OnChgiTuneStatus(this.id)" />
+       <label for="Enable"><script type="text/javascript">document.write(showText(102))</script></label>&nbsp;
+       <input type="radio" id="status_disable" onClick="OnChgiTuneStatus(this.id)" />
+       <label for="Disable"><script type="text/javascript">document.write(showText(156))</script></label>
+      </span>
+      <span id="Old_Status"></span>
+     </td>
+    </tr>
+    <tr>
+     <td class="background" style="width:25%"><script type="text/javascript">document.write(showText(190))</script> :&nbsp;</td>
+     <td id=share_folder></td>
+    </tr>
+    <tr>
+     <td align="right" colspan="2">
+      <script type="text/javascript">document.write('<input type="button" id="iTuneChangeBtn" value="'+showText(37)+'" onclick="iTuneChange()" />');</script>
+      <script type="text/javascript">document.write('<input type="button" id="StopScanBtn" value="'+showText(193)+'" onclick="stop_scan()" />');</script>
+     </td>
+    </tr>
+   </table>
+   <br><br>
+   <div style="width:500px;height:400px;">
+    <span id="Value_1"></span>
+    <span id="now_path"></span><br><br>
+    <span id="DirList"></span><br><br>
+    <span>
+     <div class="spacer"></div>
+     <div id=ShowiTune style="height:50px;"></div>
+     <div id=under_scan style="height:50px;"></div>
+    </span>
+   </div>
+  </blockquote>
+ </body>
+</html>
+<script type="text/javascript">
+iTuneStatus();
+</script>

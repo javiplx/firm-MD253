@@ -1,0 +1,16 @@
+#system variables
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export TERM=vt100
+
+set -o ignoreeof
+alias rm='rm -i'
+alias ps='ps ax'
+
+COLOR1="\[\033[0;36m\]"
+COLOR2="\[\033[0;32m\]"
+COLOR3="\[\033[0;36m\]"
+COLOR4="\[\033[0;37m\]"
+
+[ "$USER" == "root" ] || [ "$USER" == "toor" ] && COLOR2="\[\033[1;31m\]"
+
+#PS1="$COLOR2($COLOR3$LOGNAME@\h$COLOR2:$COLOR1\W$COLOR2)$COLOR1\\$ $COLOR4"

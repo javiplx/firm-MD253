@@ -1,0 +1,37 @@
+service_create_single_partition(){
+dev=$1
+SLEEP=3
+dataSize=
+
+# clear out old partition info and all "hidden" sectors with zeros
+dd if=/dev/zero of=/dev/${dev} bs=8225280 count=3
+
+/sbin/fdisk "/dev/${dev}" <<EOF
+
+n
+p
+1
+1
+$dataSize
+p
+w
+EOF
+sleep $SLEEP
+
+dd if=/dev/zero of=/dev/${dev} bs=8225280 count=3
+
+/sbin/fdisk "/dev/${dev}" <<EOF
+
+n
+p
+1
+1
+$dataSize
+t
+83
+p
+w
+EOF
+sleep $SLEEP
+/bin/logger "$0 - Create \"/dev/${dev}\" new partition"
+}

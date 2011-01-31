@@ -1,0 +1,52 @@
+service_user_modify_ftp_action(){
+SHARE_PATH=/home
+replaceFile=/var/www/cgi-bin/replaceFile
+
+UserName=`echo ${QUERY_STRING} | cut '-d&' -f2`
+FolderName=`echo ${QUERY_STRING} | cut '-d&' -f3`
+Action=`echo ${QUERY_STRING} | cut '-d&' -f4`
+value=`echo ${QUERY_STRING} | cut '-d&' -f5`
+
+ConfigFile=${SHARE_PATH}/${FolderName}/.ftpaccess
+
+case ${value} in
+ YES)
+  value=NO
+  ;;
+ NO)
+  value=YES
+  ;;
+esac
+
+case ${Action} in
+ Access)
+  OLD_DenyUser=`/bin/awk /DenyUser/'{print $2}' ${ConfigFile}|/bin/sed 's/\ //g'`
+  OLD_DenyUser_Line=`/bin/cat ${ConfigFile}|/bin/grep "DenyUser"`
+  case ${value} in
+   YES)
+    NEW_DenyUser=`echo ${OLD_DenyUser}|/bin/sed 's/',${UserName},'/,/g'|/bin/sed 's/'^${UserName},'//g'`
+    $replaceFile "${ConfigFile}" "${OLD_DenyUser_Line}" "DenyUser ${NEW_DenyUser}"
+    ;;
+   NO)
+    $replaceFile "${ConfigFile}" "${OLD_DenyUser_Line}" "${OLD_DenyUser_Line}${UserName},"
+    ;;
+  esac
+  ;;
+ Login)
+  OLD_AllowUser=`/bin/awk /AllowUser/'{print $2}' ${ConfigFile}|/bin/sed 's/\ //g'`
+  OLD_AllowUser_Line=`/bin/cat ${ConfigFile}|/bin/grep "AllowUser"`
+  case ${value} in
+   YES)
+    $replaceFile "${ConfigFile}" "${OLD_AllowUser_Line}" "${OLD_AllowUser_Line}${UserName},"
+    ;;
+   NO)
+    NEW_AllowUser=`echo ${OLD_AllowUser}|/bin/sed 's/',${UserName},'/,/g'|/bin/sed 's/'^${UserName},'//g'`
+    $replaceFile "${ConfigFile}" "${OLD_AllowUser_Line}" "AllowUser ${NEW_AllowUser}"
+    ;;
+  esac
+  ;;
+esac
+service_ftp_stop
+sleep 2
+service_ftp_start
+}

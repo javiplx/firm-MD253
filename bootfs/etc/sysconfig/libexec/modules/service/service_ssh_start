@@ -1,0 +1,23 @@
+service_ssh_start(){
+SERVICE_PATH=/etc/sysconfig/config
+RSA_PATH=${SERVICE_PATH}/ssh
+RSA_FILE=${RSA_PATH}/ssh_rsa_host_key
+replaceFile=/var/www/cgi-bin/replaceFile
+PID_FILE=/var/run/dropbear.pid
+SERVICE_CONF=${SERVICE_PATH}/service
+STATUS=`/bin/awk -F= /ssh/'{print $2}' ${SERVICE_CONF}|/bin/sed 's/\ //g'`
+
+[ -d ${RSA_PATH} ] || mkdir -p ${RSA_PATH}
+[ -f ${RSA_FILE} ] || {
+ rm -f ${RSA_FILE}
+ /usr/sbin/dropbearkey -t rsa -f ${RSA_FILE} >/dev/null 2>&1
+ }
+PID=`/bin/pidof dropbear`
+[ "${STATUS}" == "Enable" ] && {
+ [ "$PID" == "" ] &&\
+  /usr/sbin/dropbear -r ${RSA_FILE} -P ${PID_FILE}
+  [ $? -eq 0 ] &&\
+   /bin/logger "$0 - SSH deamon Start Succeed" ||\
+   /bin/logger "$0 - SSH deamon Start Failed"
+ }
+}

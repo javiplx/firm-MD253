@@ -1,0 +1,34 @@
+service_user_modify_installer_action(){
+CONFIG_PATH=/etc/sysconfig/config
+SMB_SHARES_CONF=${CONFIG_PATH}/smb/shares
+
+SHARE_PATH=/home
+replaceFile=/bin/replaceFile
+
+FolderName=`echo ${QUERY_STRING} | cut '-d&' -f2`
+UserName=`echo ${QUERY_STRING} | cut '-d&' -f3`
+
+old_write_list=`/bin/awk -F= /write/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/bin/sed 's/\ //g'`
+$replaceFile "${SMB_SHARES_CONF}/${FolderName}.inc" "write list = ${old_write_list}" "write list = ${old_write_list}${UserName},"
+
+old_invalid_users=`/bin/awk -F= /invalid/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/bin/sed 's/\ //g'`
+new_invalid_users=`/bin/awk -F= /invalid/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/bin/sed 's/\ //g'|/bin/sed 's/',${UserName},'/,/g'|/bin/sed 's/'^${UserName},'//g'`
+$replaceFile "${SMB_SHARES_CONF}/${FolderName}.inc" "invalid users = ${old_invalid_users}" "invalid users = ${new_invalid_users}"
+
+ConfigFile=${SHARE_PATH}/${FolderName}/.ftpaccess
+
+OLD_DenyUser=`/bin/awk /DenyUser/'{print $2}' ${ConfigFile}|/bin/sed 's/\ //g'`
+OLD_DenyUser_Line=`/bin/cat ${ConfigFile}|/bin/grep "DenyUser"`
+NEW_DenyUser=`echo ${OLD_DenyUser}|/bin/sed 's/',${UserName},'/,/g'|/bin/sed 's/'^${UserName},'//g'`
+$replaceFile "${ConfigFile}" "${OLD_DenyUser_Line}" "DenyUser ${NEW_DenyUser}"
+
+OLD_AllowUser=`/bin/awk /AllowUser/'{print $2}' ${ConfigFile}|/bin/sed 's/\ //g'`
+OLD_AllowUser_Line=`/bin/cat ${ConfigFile}|/bin/grep "AllowUser"`
+$replaceFile "${ConfigFile}" "${OLD_AllowUser_Line}" "${OLD_AllowUser_Line}${UserName},"
+
+service_ftp_stop
+service_smb_stop
+sleep 2
+service_ftp_start
+service_smb_start
+}

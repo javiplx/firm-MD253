@@ -1,0 +1,17 @@
+network_stop(){
+service="DHCPD LLD2D"
+DHCPD_PID=`/bin/pidof udhcpc`
+LLD2D_PID=`/bin/pidof lld2d`
+
+for i in $service; do
+ eval value=\$${i}_PID
+ for pid in $value; do
+  /bin/kill -9 $pid
+ done
+done
+
+/bin/ifconfig lo down
+/bin/ifconfig eth0 0.0.0.0 up
+/bin/ifconfig eth0 down
+/bin/logger "$0 - NIC Stop"
+}

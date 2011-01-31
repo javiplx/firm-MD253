@@ -1,0 +1,34 @@
+service_user_del_modify(){
+CONFIG_PATH=/etc/sysconfig/config
+SMB_PATH=${CONFIG_PATH}/smb
+SMB_PASSWD_PROG=/usr/local/samba/sbin/smbpasswd
+replaceFile=/var/www/cgi-bin/replaceFile
+
+UserName=`echo ${user}|/bin/sed 's/\^/\ /g'`
+for user in $UserName; do
+ ${SMB_PASSWD_PROG} -x ${user}
+ deluser ${user}
+
+ MODE="shares"
+ for dir in $MODE; do
+  file=`ls ${SMB_PATH}/${dir}`
+  for i in ${file}; do
+   string=${i%.*}
+   FolderStatus=`/bin/cat ${SMB_PATH}/folders/${string}`
+
+   [ "${string}" == "PUBLIC" -o "${FolderStatus}" == "anonymous" ] || {
+    new_write_list=`/bin/awk -F= /write/'{print $2}' ${SMB_PATH}/${dir}/${i}|/bin/sed 's/\ //g'|/bin/sed 's/',${user},'/,/g'`
+    new_invalid_users=`/bin/awk -F= /invalid/'{print $2}' ${SMB_PATH}/${dir}/${i}|/bin/sed 's/\ //g'|/bin/sed 's/',${user},'/,/g'|/bin/sed 's/'^${user},'//g'`
+
+    echo "write list = ${new_write_list}" > ${SMB_PATH}/${dir}/${i}
+    echo "invalid users = ${new_invalid_users}" >> ${SMB_PATH}/${dir}/${i}
+   }
+
+   new_login_list=`/bin/awk /AllowUser/'{print $2}' /home/${string}/.ftpaccess|/bin/sed 's/\ //g'|/bin/sed 's/',${user},'/,/g'`
+   new_access_list=`/bin/awk /DenyUser/'{print $2}' /home/${string}/.ftpaccess|/bin/sed 's/\ //g'|/bin/sed 's/',${user},'/,/g'|/bin/sed 's/'^${user},'//g'`
+   service_ftp_modify_ftpaccess_data > /home/${string}/.ftpaccess
+
+  done
+ done
+done
+}

@@ -1,0 +1,16 @@
+service_lpd_start(){
+lpd_prog=/bin/lpd
+lpd_conf=/etc/sysconfig/config/smb/print.inc
+SHARE_PATH=/home
+
+/bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home$" >/dev/null 2>&1
+[ $? -eq 0 ] || return;
+
+cat /dev/null > ${lpd_conf}
+
+service_smb_modify_lpd_data > ${lpd_conf}
+[ -d "${SHARE_PATH}/.lpd" ] || mkdir -p ${SHARE_PATH}/.lpd
+
+PID=`/bin/pidof lpd`
+[ "${PID}" == "" ] && ${lpd_prog}
+}

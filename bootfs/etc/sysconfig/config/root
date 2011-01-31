@@ -1,0 +1,5 @@
+* */6 * * * /etc/sysconfig/system-script/cron-ntp > /dev/null 2>&1 &
+*/1 * * * * /etc/sysconfig/system-script/cron-discovery > /dev/null 2>&1 &
+01 * * * * cat /dev/null > /var/log/crond.log > /dev/null 2>&1 &
+01 * * * * /sbin/logrotate /etc/logrotate.conf > /dev/null 2>&1 &
+#* * * * * /etc/sysconfig/system-script/detectRebuild

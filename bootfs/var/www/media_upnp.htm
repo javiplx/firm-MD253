@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="Expires" content="-1" />
+  <link rel="stylesheet" href="set.css">
+  <script type="text/javascript" src="getlanguage.js"></script>
+  <script type="text/javascript" src="ajax.js"></script>
+  <script type="text/javascript" src="services.js"></script>
+  <title>User Management</title>
+ </head>
+ <body style="background-image:none;background-color:transparent;">
+  <div class="topbar">
+   <ul id="topbartabs">
+    <script type="text/javascript">servicesLink(3);</script>
+   </ul>
+  </div>
+  <br><br>
+  <blockquote>
+   <table width="900px" border="0" cellspacing="2">
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(18))</script> :&nbsp;</td>
+    </tr>
+    <tr>
+     <td class="background" style="width:25%"><script type="text/javascript">document.write(showText(182))</script> :&nbsp;</td>
+     <td>
+      <input type="radio" id="status_enable" onClick="OnChguPnPStatus(this.id)" />
+      <label for="Enable"><script type="text/javascript">document.write(showText(102))</script></label>&nbsp;
+      <input type="radio" id="status_disable" onClick="OnChguPnPStatus(this.id)" />
+      <label for="Disable"><script type="text/javascript">document.write(showText(156))</script></label>
+     </td>
+    </tr>
+<!--
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(103))</script> :&nbsp;</td>
+     <td><input type="text" id="UPnPPort" class="input_text" maxlength="5" />&nbsp;&nbsp;1024-65534</td>
+    </tr>
+-->
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(214))</script> :&nbsp;</td>
+     <td>
+      <span id="crontable"></span>
+      <span>&nbsp;<script type="text/javascript">document.write(showText(215))</script>&nbsp;</span>
+     </td>
+    </tr>
+    <tr>
+     <td align="right" colspan="2">
+      <script type="text/javascript">document.write('<input type="button" value="'+showText(37)+'" onclick="uPnPChange()" />');</script>
+      <script type="text/javascript">document.write('<input type="button" id="uPnPRescanBtn" value="'+showText(213)+'" onclick="uPnPRescan()" />');</script>
+     </td>
+    </tr>
+   </table>
+   <div id=wait_message style="height:50px;"></div>
+  </blockquote>
+ </body>
+</html>
+<script type="text/javascript">
+upnp_status();
+</script>

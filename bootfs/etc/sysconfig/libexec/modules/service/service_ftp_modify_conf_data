@@ -1,0 +1,11 @@
+service_ftp_modify_conf_data(){
+echo "<Anonymous ~nobody>"
+echo " User		nobody"
+echo " Group		nogroup"
+echo " UserAlias	anonymous nobody"
+echo " MaxClients	10"
+echo " <Limit WRITE>"
+echo "  ${new_Anon_Access_ReadWrite}"
+echo " </Limit>"
+echo "</Anonymous>"
+}

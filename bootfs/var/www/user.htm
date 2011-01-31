@@ -1,0 +1,109 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="Expires" content="-1" />
+  <link rel="stylesheet" href="set.css">
+  <title>User Management</title>
+  <script type="text/javascript" src="getlanguage.js"></script>
+  <script type="text/javascript" src="wz_jsgraphics.js"></script>
+  <script type="text/javascript" src="pie.js"></script>
+  <script type="text/javascript" src="ajax.js"></script>
+  <script type="text/javascript" src="user.js"></script>
+  <style>a {text-decoration: none;} a:link,a:visited,a:hover,a:active {color:#3c5d86;font-weight:bold;}</style>
+ </head>
+ <body style="background-image:none;background-color:transparent;">
+  <div class="topbar">
+   <ul id="topbartabs">
+    <script type="text/javascript">userLink(1);</script>
+   </ul>
+  </div>
+  <br><br>
+  <blockquote>
+   <table width="900px" border="0" cellspacing="2">
+    <tr>
+     <td class="emphasize" colspan="2"><script type="text/javascript">document.write(showText(67))</script></td>
+    </tr>
+    <tr>
+     <td style="width:25%" class="background"><script type="text/javascript">document.write(showText(68))</script> :&nbsp;</td>
+     <td>
+      <script type="text/javascript">document.write("<input type=text MAXLENGTH=20 id=CreateName title='"+showText(174)+"' alt='"+showText(174)+"' style='padding: 0px 0px 0px 3px;width: 150px;height: 22px;' />");</script>
+     </td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(36))</script> :&nbsp;</td>
+     <td>
+      <script type="text/javascript">document.write("<input type=password MAXLENGTH=20 id=CreatePasswd title='"+showText(174)+"' alt='"+showText(174)+"' style='padding: 0px 0px 0px 3px;width: 150px;height: 22px;' />");</script>
+     </td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(70))</script> :&nbsp;</td>
+     <td>
+      <script type="text/javascript">document.write("<input type=text MAXLENGTH=20 id=CreateQuota value=5 style='padding: 0px 0px 0px 3px;width: 150px;height: 22px;' />&nbsp;GB");</script>
+     </td>
+    </tr>
+    <tr>
+     <td align="right" colspan="2"><script type="text/javascript">document.write('<input type="button" value="'+showText(37)+'" id="Create" onclick="User(this.id)" />');</script></td>
+    </tr>
+   </table>
+   <br /><br />
+   <div id="Disk_Table">
+    <table class="Disk_Table_ALL" id="UserData">
+     <tr>
+      <td class="emphasize"><script type="text/javascript">document.write(showText(67))</script></td>
+     </tr>
+     <tr class="Disk_Table_Title">
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(68));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(177));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(58));</SCRIPT></td>
+      <td><SCRIPT LANGUAGE="JavaScript">document.write(showText(71));</SCRIPT></td>
+     </tr>
+    </table>
+   </div>
+   <br /><br /><br />
+   <table width="900px" border="0" cellspacing="2">
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(72))</script></td>
+    </tr>
+   </table>
+   <div id="pieCanvas" style="height:300px;position:relative;margin-top:-90px;margin-left:-50px;padding:0;left:40px;"></div>
+   <div id="wait_message" style="height:50px;"></div>
+   <div id="SIZE"></div>
+   <div id="Value"></div>
+<!-- Modify User popupwindow Function Start -->
+   <div id="ModifyUserWindow" style="position:absolute; width: 360px; height:170px; top:100px; left:300px;">
+    <div class="emphasize_torrent">
+     <span><SCRIPT LANGUAGE="JavaScript">document.write(showText(65)+'&nbsp;'+showText(77));</SCRIPT><br /><br /></span>
+    </div>
+    <div>
+     <table style="width: 100%;" border="0" cellspacing="2">
+      <tr>
+       <td style="width: 35%;padding: 0px 3px 0px 0px;" class="background"><SCRIPT LANGUAGE="JavaScript">document.write(showText(68));</SCRIPT></td>
+       <td style="text-align: left;padding: 0px 0px 0px 3px;"><input type=text style="width: 200px;" MAXLENGTH=30 id=ModifyName style='padding: 0px 0px 0px 3px;width: 150px;height: 22px;' /></td>
+      </tr>
+      <tr>
+       <td style="width: 35%;padding: 0px 3px 0px 0px;" class="background"><SCRIPT LANGUAGE="JavaScript">document.write(showText(36));</SCRIPT></td>
+       <td style="text-align: left;padding: 0px 0px 0px 3px;"><input type=password style="width: 200px;" MAXLENGTH=30 id=ModifyPasswd style='padding: 0px 0px 0px 3px;width: 150px;height: 22px;' /></td>
+      </tr>
+      <tr>
+       <td style="width: 35%;padding: 0px 3px 0px 0px;" class="background"><SCRIPT LANGUAGE="JavaScript">document.write(showText(70));</SCRIPT></td>
+       <td style="text-align: left;padding: 0px 0px 0px 3px;" id=QuotaData></td>
+      </tr>
+     </table>
+    </div>
+    <br>
+    <div class="row" style="text-align: center;">
+     <script type="text/javascript">
+      document.write('<input type="reset" id="Modify" value="'+showText(37)+'" onClick="ModifyUserAction()" />');
+      document.write('<input type="reset" value="'+showText(114)+'" onClick="ModifyUserCancel()" />');
+     </script>
+    </div>
+   </div>
+<!-- Modify User popupwindow Function End -->
+  </blockquote>
+ </body>
+</html>
+<script language="javascript">
+UserData();
+</script>

@@ -1,0 +1,24 @@
+service_btpd_modify_conf(){
+QUERY_STRING=$1
+
+CONFIG_PATH=/etc/sysconfig/config
+SERVICE_CONF=${CONFIG_PATH}/service
+BTPD_CONF=${CONFIG_PATH}/btpd.conf
+replaceFile=/var/www/cgi-bin/replaceFile
+
+port=`echo ${QUERY_STRING} | cut '-d&' -f3`
+outgoing=`echo ${QUERY_STRING} | cut '-d&' -f4`
+incoming=`echo ${QUERY_STRING} | cut '-d&' -f5`
+maxpeers=`echo ${QUERY_STRING} | cut '-d&' -f6`
+
+service_btpd_stop
+
+new_status=`echo ${QUERY_STRING} | cut '-d&' -f2`
+old_status=`/bin/awk -F= /btpd/'{print $2}' ${SERVICE_CONF}|/bin/sed 's/\ //g'`
+[ "$old_status" == "$new_status" ] ||\
+ $replaceFile "${SERVICE_CONF}" "btpd=$old_status" "btpd=$new_status"
+
+service_btpd_modify_conf_data > ${BTPD_CONF}
+/bin/logger "$0 - Modify btpd Config \"btpd.conf\""
+service_btpd_start
+}

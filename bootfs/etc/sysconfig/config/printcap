@@ -1,0 +1,2 @@
+# Auto Generated Printcap file by NasMonitor
+Printer1:sd=/home/lpd:sh:mx=0:mc=0:lp=/dev/usb/lp0

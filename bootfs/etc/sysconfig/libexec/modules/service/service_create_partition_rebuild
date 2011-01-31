@@ -1,0 +1,41 @@
+service_create_partition_rebuild(){
+active=`echo $1 | cut '-d:' -f1`
+dev=`echo $1 | cut '-d:' -f2`
+
+SLEEP=3
+# clear out old partition info and all "hidden" sectors with zeros
+ dd if=/dev/zero of=/dev/${dev} bs=8225280 count=3
+
+/sbin/fdisk "/dev/${dev}" <<EOF
+
+n
+p
+1
+1
+$dataSize
+p
+w
+EOF
+sleep $SLEEP
+
+dataSize=`/bin/fdisk -l /dev/${active}|/bin/awk /sectors/'{print $5}'`
+
+ # clear out old partition info and all "hidden" sectors with zeros
+ dd if=/dev/zero of=/dev/${dev} bs=8225280 count=3
+
+/sbin/fdisk "/dev/${dev}" <<EOF
+
+n
+p
+1
+1
+$dataSize
+t
+fd
+p
+w
+EOF
+
+sleep $SLEEP
+/bin/logger "$0 - Rebuild \"/dev/${dev}\" partition"
+}

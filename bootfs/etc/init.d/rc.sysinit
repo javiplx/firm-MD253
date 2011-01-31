@@ -1,0 +1,60 @@
+#!/bin/sh
+#dd if=/var/spool/system/squashfs.img of=/dev/ram1
+#/bin/mount /dev/ram1 /usr
+
+. /usr/libexec/modules/modules.conf
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+cron_ntp=/etc/sysconfig/system-script/cron-ntp
+export PATH
+
+service_mount_tmpfs
+service_mount_system
+service_syslogd_start
+
+/bin/buttons_daemon
+# mount HDD
+SMB_HDD_CONF=/etc/sysconfig/config/smb/hdd.inc
+SMB_SHARE_CONF=/etc/sysconfig/config/smb/shares.inc
+cat /dev/null > ${SMB_HDD_CONF}
+cat /dev/null > ${SMB_SHARE_CONF}
+service_mount_hdd
+
+SERVICE_CONF=/etc/sysconfig/config/service
+KERNEL_PATH=/usr/lib/modules/2.6.24.4/kernel
+EXEC=/etc/sysconfig/system-script/media_service
+. $SERVICE_CONF
+
+service_setcolor
+
+/bin/udevd --daemon
+[ $? -eq 0 ] &&\
+ /bin/logger "$0 - udevd deamon Start Succeed" ||\
+ /bin/logger "$0 - udevd deamon Start Failed"
+
+network_start >/dev/null 2>&1
+service_ntp_start >/dev/null 2>&1 &
+/usr/local/samba/sbin/nmbd >/dev/null 2>&1
+[ $? -eq 0 ] &&\
+ /bin/logger "$0 - nmbd deamon Start Succeed" ||\
+ /bin/logger "$0 - nmbd deamon Start Failed"
+
+SERVICE="crond smb ftp http btpd"
+for i in $SERVICE; do
+ status=`/bin/awk -F= /$i/'{print $2}' ${SERVICE_CONF}`
+ [ "$status" == "Enable" ] && service_${i}_start &
+done
+
+service_ssh_start &
+
+# Load USB kernel modules
+/sbin/insmod ${KERNEL_PATH}/usb-storage.ko >/dev/null 2>&1 &
+[ $? -eq 0 ] &&\
+ /bin/logger "$0 - Insert USB Kernel Module Succeed" ||\
+ /bin/logger "$0 - Insert USB Kernel Module Failed"
+/sbin/insmod ${KERNEL_PATH}/usblp.ko >/dev/null 2>&1 &
+
+${cron_ntp} >/dev/null 2>&1 &
+dlna_mDNSR_modify_conf &
+ 
+route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0
+/usr/local/TwonkyVision/twonkymedia.sh start

@@ -1,0 +1,14 @@
+network_modify_current_address_data(){
+echo "DEVICE=eth0"
+echo "BOOTPROTO=${BOOTPROTO}"
+echo "IPADDR=${IPADDR}"
+echo "NETWORK=${NETWORK}"
+echo "BROADCAST=${BROADCAST}"
+echo "NETMASK=${NETMASK}"
+echo "GATEWAY=${GATEWAY}"
+echo "HWADDR=${HWADDR}"
+echo "ONBOOT=yes"
+echo "MTU=${MTU}"
+echo "PDNS=${PDNS}"
+echo "SDNS=${SDNS}"
+}

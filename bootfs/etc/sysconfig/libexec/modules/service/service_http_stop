@@ -1,0 +1,8 @@
+service_http_stop(){
+/bin/killall httpd
+PID=`/bin/pidof httpd`
+for i in $PID; do
+ /bin/kill -9 $i >/dev/null 2>&1
+done
+/bin/logger "$0 - httpd deamon Stop"
+}

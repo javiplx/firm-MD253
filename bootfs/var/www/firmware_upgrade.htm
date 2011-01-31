@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="Expires" content="-1" />
+  <link rel="stylesheet" href="set.css">
+  <script type="text/javascript" src="getlanguage.js"></script>
+  <script type="text/javascript" src="ajax.js"></script>
+  <script type="text/javascript" src="toolbox.js"></script>
+  <title>NAS Status</title>
+ </head>
+ <body style="background-image:none;background-color:transparent;">
+  <div class="topbar">
+   <ul id="topbartabs">
+    <script type="text/javascript">toolboxLink(2);</script>
+   </ul>
+  </div>
+  <br><br>
+  <blockquote>
+   <table width="900px" border="0" cellspacing="2">
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(21))</script></td>
+    </tr>
+    <tr height="30px">
+     <td width="25%" class="background">Kernel Upgrade&nbsp;:&nbsp;</td>
+     <td id="Kernel_upgrade"></td>
+    </tr>
+    <tr height="30px">
+     <td width="25%" class="background">Bootfs Upgrade&nbsp;:&nbsp;</td>
+     <td id="Bootfs_upgrade"></td>
+    </tr>
+    <tr height="30px">
+     <td width="25%" class="background">FileSystem Upgrade&nbsp;:&nbsp;</td>
+     <td id="FileSystem_upgrade"></td>
+    </tr>
+   </table>
+  </blockquote>
+ </body>
+</html>
+<script type="text/javascript">
+var ppp = getParameter('path');
+
+var finish=0;
+getContent('','/cgi-bin/toolbox.cgi?Decompression&'+ppp,"function:Decompression");
+</script>

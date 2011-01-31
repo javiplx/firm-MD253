@@ -1,0 +1,19 @@
+#!/bin/sh
+
+. /usr/libexec/modules/modules.conf
+# udhcpc script edited by Tim Riker <Tim@Rikers.org>
+
+[ -z "$1" ] && echo "Error: should be called from udhcpc" && exit 1
+
+RESOLV_CONF="/etc/resolv.conf"
+[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+[ -n "$subnet" ] && NETMASK="netmask $subnet"
+
+case "$1" in
+ deconfig)
+  ;;
+ renew|bound)
+  echo "$ip" > /tmp/.dhcp.tmp
+  ;;
+esac
+exit 0

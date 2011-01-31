@@ -1,0 +1,14 @@
+root:x:0:
+bin:x:1:
+daemon:x:2:
+sys:x:3:
+ftp:x:50:
+tty:x:51:
+uucp:x:52:
+kmem:x:53:
+lp:x:54:
+disk:x:55:
+floppy:x:56:
+nogroup:x:98:
+admin:x:168:
+user:x:500:

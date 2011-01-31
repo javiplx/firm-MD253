@@ -1,0 +1,11 @@
+service_smb_modify_user_login(){
+CONFIG_PATH=/etc/sysconfig/config
+SMB_SHARES_CONF=${CONFIG_PATH}/smb/shares
+Users=`/bin/awk -F= /invalid/'{print $2}' ${SMB_SHARES_CONF}/${FolderName}.inc|/bin/sed 's/\ //g'|/bin/tr "," " "`
+
+for user in $Users; do
+ [ "$user" == "" ] && continue
+ [ "$user" == "$UserName" ] && continue
+ /bin/echo "$user,"
+done
+}

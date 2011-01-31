@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="Expires" content="-1" />
+  <link rel="stylesheet" href="set.css">
+  <script type="text/javascript" src="getlanguage.js"></script>
+  <script type="text/javascript" src="ajax.js"></script>
+  <script type="text/javascript" src="status.js"></script>
+  <title>NAS Status</title>
+ </head>
+ <body style="background-image:none;background-color:transparent;">
+  <div class="topbar">
+   <ul id="topbartabs">
+    <script type="text/javascript">statusLink(1);</script>
+   </ul>
+  </div>
+  <br><br>
+  <blockquote>
+   <table width="900px" border="0" cellspacing="2">
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(22))</script></td>
+    </tr>
+    <tr>
+     <td width="25%" class="background"><script type="text/javascript">document.write(showText(23))</script> :&nbsp;</td>
+     <td id="DeviceName"></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(24))</script> :&nbsp;</td>
+     <td id="GroupName"></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(25))</script> :&nbsp;</td>
+     <td id="Date"></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(26))</script> :&nbsp;</td>
+     <td id="FirmwareVersion"></td>
+    </tr>
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(27))</script></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(28))</script> :&nbsp;</td>
+     <td id="IPAddr"></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(29))</script> :&nbsp;</td>
+     <td id="MACAddr"></td>
+    </tr>
+    <tr>
+     <td class="emphasize"><script type="text/javascript">document.write(showText(30))</script></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(31))</script> :&nbsp;</td>
+     <td id="ShareStatus"></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(19))</script> :&nbsp;</td>
+     <td id="FTPStatus"></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(18))</script> :&nbsp;</td>
+     <td id="DLNAStatus"></td>
+    </tr>
+    <tr>
+     <td class="background"><script type="text/javascript">document.write(showText(17))</script> :&nbsp;</td>
+     <td id="iTunesStatus"></td>
+    </tr>
+   </table>
+   <div id="wait_message" style="height:50px;"></div>
+  </blockquote>
+ </body>
+</html>
+<script type="text/javascript">
+GetStatusInfo();
+</script>

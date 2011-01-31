@@ -1,0 +1,29 @@
+dlna_start_daemon(){
+SERVICE_PATH=/etc/sysconfig/config
+SERVICE_CONF=$SERVICE_PATH/service
+
+dlna_daapd_modify_conf
+
+. $SERVICE_CONF
+/bin/df|/bin/awk '{print $NF}'|/bin/grep "^/home$" >/dev/null 2>&1
+[ $? -ne 0 ] && return;
+
+service="daapd"
+for i in $service; do
+ eval status=\$$i
+ [ $status == "Enable" ] && {
+  /bin/pidof ${i} >/dev/null 2>&1
+  [ $? -ne 0 ] && {
+   case $i in
+    daapd)
+     /usr/bin/daapd -m -c $SERVICE_PATH/daapd.conf -d 9 -D scan -f > /tmp/data 2>&1 &
+     [ $? -eq 0 ] &&\
+      /bin/logger "$0 - daapd deamon Start Succeed" ||\
+      /bin/logger "$0 - daapd deamon Start Failed"
+     ;;
+   esac
+   }
+  }
+done
+
+}

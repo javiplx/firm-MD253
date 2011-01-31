@@ -1,0 +1,9 @@
+service_mount_tmpfs(){
+#/bin/mkdir /dev/shm/tmp
+#/bin/chmod 1777 /dev/shm/tmp
+#/bin/mount -t tmpfs /dev/shm/tmp /tmp
+DIR=".subsys .log .run .samba/locks .samba/cores .empty .ssh .lib .twonky .btpd"
+for i in $DIR; do
+ /bin/mkdir -p /tmp/"$i"
+done
+}

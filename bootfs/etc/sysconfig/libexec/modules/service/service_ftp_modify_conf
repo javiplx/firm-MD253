@@ -1,0 +1,28 @@
+service_ftp_modify_conf(){
+replaceFile=/var/www/cgi-bin/replaceFile
+CONFIG_PATH=/etc/sysconfig/config
+service=${CONFIG_PATH}/service
+FTP_CONF=${CONFIG_PATH}/proftpd/proftpd.conf
+ANONYMOUS_CONF=${CONFIG_PATH}/proftpd/anonymous.conf
+
+new_status=`echo ${QUERY_STRING} | cut '-d&' -f2`
+old_status=`grep 'ftp=' $service | cut '-d=' -f2`
+$replaceFile "$service" "ftp=$old_status" "ftp=$new_status"
+
+PasvPort_1=`echo ${QUERY_STRING} | cut '-d&' -f3`
+PasvPort_2=`echo ${QUERY_STRING} | cut '-d&' -f4`
+old_PasvPort=`/bin/grep 'PassivePorts' $FTP_CONF`
+$replaceFile "$FTP_CONF" "${old_PasvPort}" "PassivePorts			${PasvPort_1}	${PasvPort_2}"
+
+new_Allow_Anon_Enable=`echo ${QUERY_STRING} | cut '-d&' -f5`
+old_Allow_Anon_Enable=`/bin/grep 'anonymous.conf' $FTP_CONF`
+[ "$new_Allow_Anon_Enable" == "YES" ] &&\
+ $replaceFile "$FTP_CONF" "${old_Allow_Anon_Enable}" "Include				/etc/sysconfig/config/proftpd/anonymous.conf" ||\
+ $replaceFile "$FTP_CONF" "${old_Allow_Anon_Enable}" "#Include				/etc/sysconfig/config/proftpd/anonymous.conf"
+
+new_Anon_Access_ReadWrite=`echo ${QUERY_STRING} | cut '-d&' -f6`
+service_ftp_modify_conf_data > ${ANONYMOUS_CONF}
+
+service_ftp_stop
+service_ftp_start
+}

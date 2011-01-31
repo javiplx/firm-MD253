@@ -1,0 +1,7 @@
+#!/bin/sh
+echo "hdd1 red clear" > /proc/mp_leds
+echo "hdd2 red clear" > /proc/mp_leds
+echo "hdd1 blue clear" > /proc/mp_leds
+echo "hdd2 blue clear" > /proc/mp_leds
+echo "error_led clear" > /proc/mp_leds
+echo "sys_led clear" > /proc/mp_leds

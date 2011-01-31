@@ -1,0 +1,9 @@
+#!/bin/sh
+DIR="/etc/hotplug.d"
+for I in "${DIR}/$1/"*.hotplug "${DIR}/"default/*.hotplug ; do
+	if [ -f $I ]; then
+		test -x $I && $I $1 ;
+	fi
+done
+
+exit 1

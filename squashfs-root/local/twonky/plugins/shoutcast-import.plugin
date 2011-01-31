@@ -1,0 +1,4 @@
+#Shoutcast import plugin
+#(c) 2006 by TwonkyVision
+launch frequently:$radioreread
+exec: shoutcast-import $dbdir -genres $radiogenre -radio #radio
