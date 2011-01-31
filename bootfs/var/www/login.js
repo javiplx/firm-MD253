@@ -14,24 +14,15 @@ function keyDown(e){
  if (intKey == 13) LoginSubmit();
 }
 
-function Login(){
- getContent('','/cgi-bin/setup.cgi?webmaster',"function:showLogin");
-}
-
-function showLogin(msg){
-	msg = msg.split("\n");
-	window.document.getElementById('data').innerHTML = '<INPUT id=\"Users\" value=\"'+msg[0]+'\" type=hidden>';
- setTimeout(function(){document.getElementById("UserName").focus();},10);
-}
-
 function LoginSubmit(){
- var data = document.getElementById("Users").value;
- data = data.split(":");
-
  var UserName = document.getElementById("UserName").value;
  var UserPasswd = document.getElementById("UserPasswd").value;
+ getContent('','/cgi-bin/setup.cgi?webmaster&'+UserName+'&'+UserPasswd,"function:CheckLogin");
+}
 
- if((UserName==data[0])&&(UserPasswd==data[1])){
+function CheckLogin(msg){
+ msg = msg.split("\n");
+ if(msg[0]=="OK"){
   document.cookie = "CD32N:MD-253"
   location.replace ('status.htm');
  } else {

@@ -13,6 +13,7 @@ TZINFO=${CONFIG_PATH}/tzinfo
 NTP_CONF=${CONFIG_PATH}/ntp.conf
 NTP_SERVER=${CONFIG_PATH}/ntp_server
 NTP_ACTION=${CONFIG_PATH}/ntp.action
+WEBMASTER=${CONFIG_PATH}/webmaster.conf
 
 scsi_list=/etc/sysconfig/config/scsi.list
 
@@ -349,7 +350,11 @@ case ${func} in
    }
   ;;
  webmaster)
-  /bin/cat /etc/sysconfig/config/webmaster.conf
+  Login_user=`echo ${QUERY_STRING}|/bin/cut '-d&' -f2`
+  Login_passwd=`echo ${QUERY_STRING}|/bin/cut '-d&' -f3`
+  user=`/bin/cat ${WEBMASTER}|/bin/cut '-d:' -f1`
+  passwd=`/bin/cat ${WEBMASTER}|/bin/cut '-d:' -f2`
+  [ ${Login_user} == ${user} ] && [ ${Login_passwd} == ${passwd} ] && /bin/echo "OK"
   ;;
  *)
   echo "Hello Mapower ${QUERY_STRING} ${REQUEST_METHOD}"
