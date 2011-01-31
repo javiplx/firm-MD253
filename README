@@ -1,0 +1,10 @@
+
+bigboot image
+=============
+
+This custom firmware targets to build a boot image capable to handle the
+device on the low level, leaving the second image for the applications.
+
+So, the basic idea is that the rootfs from mtd3 is mounted not on /usr but
+on /usr/local, /opt or a different location
+
