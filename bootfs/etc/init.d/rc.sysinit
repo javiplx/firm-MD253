@@ -19,10 +19,7 @@ cat /dev/null > ${SMB_HDD_CONF}
 cat /dev/null > ${SMB_SHARE_CONF}
 service_mount_hdd
 
-SERVICE_CONF=/etc/sysconfig/config/service
 KERNEL_PATH=/usr/lib/modules/2.6.24.4/kernel
-EXEC=/etc/sysconfig/system-script/media_service
-. $SERVICE_CONF
 
 service_setcolor
 
@@ -33,18 +30,6 @@ service_setcolor
 
 network_start >/dev/null 2>&1
 service_ntp_start >/dev/null 2>&1 &
-/usr/local/samba/sbin/nmbd >/dev/null 2>&1
-[ $? -eq 0 ] &&\
- /usr/bin/logger "$0 - nmbd deamon Start Succeed" ||\
- /usr/bin/logger "$0 - nmbd deamon Start Failed"
-
-SERVICE="crond smb ftp http btpd"
-for i in $SERVICE; do
- status=`/usr/bin/awk -F= /$i/'{print $2}' ${SERVICE_CONF}`
- [ "$status" == "Enable" ] && service_${i}_start &
-done
-
-service_ssh_start &
 
 # Load USB kernel modules
 /sbin/insmod ${KERNEL_PATH}/usb-storage.ko >/dev/null 2>&1 &
@@ -54,7 +39,5 @@ service_ssh_start &
 /sbin/insmod ${KERNEL_PATH}/usblp.ko >/dev/null 2>&1 &
 
 ${cron_ntp} >/dev/null 2>&1 &
-dlna_mDNSR_modify_conf &
- 
-route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0
-/usr/local/TwonkyVision/twonkymedia.sh start
+
+/etc/init.d/rc.services
