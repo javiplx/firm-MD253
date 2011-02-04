@@ -4,6 +4,8 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 export PATH
 
+service_smb_check_config
+
 SMB_HDD_CONF=/etc/sysconfig/config/smb/hdd.inc
 SMB_SHARE_CONF=/etc/sysconfig/config/smb/shares.inc
 cat /dev/null > ${SMB_HDD_CONF}

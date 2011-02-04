@@ -1,0 +1,43 @@
+service_mount_system(){
+SambaConfig=/etc/sysconfig/config/smb/smb.conf
+
+/bin/cat ${SambaConfig}|/usr/bin/grep "wins support" >/dev/null 2>&1
+[ $? -eq 0 ] && {
+ /bin/cat ${SambaConfig}|/usr/bin/grep -v "wins support" > /tmp/.smb.conf
+ /bin/mv /tmp/.smb.conf ${SambaConfig}
+ }
+
+/bin/cat ${SambaConfig}|/usr/bin/grep "sync always" >/dev/null 2>&1
+[ $? -eq 0 ] && {
+ /bin/cat ${SambaConfig}|/usr/bin/grep -v "sync always" > /tmp/.smb.conf
+ /bin/mv /tmp/.smb.conf ${SambaConfig}
+ }
+
+/bin/cat ${SambaConfig}|/usr/bin/grep "strict sync" >/dev/null 2>&1
+[ $? -eq 0 ] && {
+ /bin/cat ${SambaConfig}|/usr/bin/grep -v "strict sync" > /tmp/.smb.conf
+ /bin/mv /tmp/.smb.conf ${SambaConfig}
+ }
+
+/bin/cat ${SambaConfig}|/usr/bin/grep "server string" >/dev/null 2>&1
+[ $? -eq 0 ] && {
+ /bin/cat ${SambaConfig}|/usr/bin/grep -v "^server string"|/usr/bin/grep -v "^comment" > /tmp/.smb.conf
+ /bin/mv /tmp/.smb.conf ${SambaConfig}
+ ServerName=`/usr/bin/awk -F= /netbios/'{print $2}' /mnt/smb/host.inc|/usr/bin/sed 's/\ //g'`
+ echo "server string = ${ServerName}" >> /mnt/smb/host.inc
+ echo "comment = ${ServerName}" >> /mnt/smb/host.inc
+ }
+
+/bin/cat ${SambaConfig}|/usr/bin/grep "^wins" >/dev/null 2>&1
+[ $? -eq 0 ] && {
+ /bin/cat ${SambaConfig}|/usr/bin/grep -v "^wins" > /tmp/.smb.conf
+ /bin/mv /tmp/.smb.conf ${SambaConfig}
+ }
+
+/bin/cat ${SambaConfig}|/usr/bin/grep ".twonky" >/dev/null 2>&1
+[ $? -eq 0 ] || {
+ OldData=`/bin/cat ${SambaConfig}|/usr/bin/grep "veto files"`
+ $replaceFile "${SambaConfig}" "${OldData}" "${OldData}.twonky/"
+ }
+
+}

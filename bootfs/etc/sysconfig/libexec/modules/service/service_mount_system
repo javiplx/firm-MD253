@@ -42,39 +42,6 @@ replaceFile=/usr/bin/replaceFile
  }
 /bin/cp -af /etc/sysconfig/config/version /mnt
 
-/bin/cat /mnt/smb/smb.conf|/usr/bin/grep "wins support" >/dev/null 2>&1
-[ $? -eq 0 ] && {
- /bin/cat /mnt/smb/smb.conf|/usr/bin/grep -v "wins support" > /tmp/.smb.conf
- /bin/mv /tmp/.smb.conf /mnt/smb/smb.conf
- }
-
-/bin/cat /mnt/smb/smb.conf|/usr/bin/grep "sync always" >/dev/null 2>&1
-[ $? -eq 0 ] && {
- /bin/cat /mnt/smb/smb.conf|/usr/bin/grep -v "sync always" > /tmp/.smb.conf
- /bin/mv /tmp/.smb.conf /mnt/smb/smb.conf
- }
-
-/bin/cat /mnt/smb/smb.conf|/usr/bin/grep "strict sync" >/dev/null 2>&1
-[ $? -eq 0 ] && {
- /bin/cat /mnt/smb/smb.conf|/usr/bin/grep -v "strict sync" > /tmp/.smb.conf
- /bin/mv /tmp/.smb.conf /mnt/smb/smb.conf
- }
-
-/bin/cat /mnt/smb/smb.conf|/usr/bin/grep "server string" >/dev/null 2>&1
-[ $? -eq 0 ] && {
- /bin/cat /mnt/smb/smb.conf|/usr/bin/grep -v "^server string"|/usr/bin/grep -v "^comment" > /tmp/.smb.conf
- /bin/mv /tmp/.smb.conf /mnt/smb/smb.conf
- ServerName=`/usr/bin/awk -F= /netbios/'{print $2}' /mnt/smb/host.inc|/usr/bin/sed 's/\ //g'`
- echo "server string = ${ServerName}" >> /mnt/smb/host.inc
- echo "comment = ${ServerName}" >> /mnt/smb/host.inc
- }
-
-/bin/cat /mnt/smb/smb.conf|/usr/bin/grep "^wins" >/dev/null 2>&1
-[ $? -eq 0 ] && {
- /bin/cat /mnt/smb/smb.conf|/usr/bin/grep -v "^wins" > /tmp/.smb.conf
- /bin/mv /tmp/.smb.conf /mnt/smb/smb.conf
- }
-
 /bin/umount /mnt
 /bin/mount -t jffs2 /dev/mtdblock4 /etc/sysconfig/config
 /bin/rm -f /etc/sysconfig/config/touch
@@ -95,12 +62,5 @@ done
 crontable=/etc/sysconfig/config/root
 /bin/cat ${crontable}|/usr/bin/grep "detectRebuild" >/dev/null 2>&1
 [ $? -eq 0 ] || echo "#* * * * * /etc/sysconfig/system-script/detectRebuild" >> ${crontable}
-
-SambaConfig=/etc/sysconfig/config/smb/smb.conf
-/bin/cat ${SambaConfig}|/usr/bin/grep ".twonky" >/dev/null 2>&1
-[ $? -eq 0 ] || {
- OldData=`/bin/cat ${SambaConfig}|/usr/bin/grep "veto files"`
- $replaceFile "${SambaConfig}" "${OldData}" "${OldData}.twonky/"
- }
 
 }
