@@ -13,10 +13,6 @@ service_syslogd_start
 
 /usr/bin/buttons_daemon
 # mount HDD
-SMB_HDD_CONF=/etc/sysconfig/config/smb/hdd.inc
-SMB_SHARE_CONF=/etc/sysconfig/config/smb/shares.inc
-cat /dev/null > ${SMB_HDD_CONF}
-cat /dev/null > ${SMB_SHARE_CONF}
 service_mount_hdd
 
 KERNEL_PATH=/usr/lib/modules/2.6.24.4/kernel

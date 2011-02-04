@@ -4,6 +4,14 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 export PATH
 
+SMB_HDD_CONF=/etc/sysconfig/config/smb/hdd.inc
+SMB_SHARE_CONF=/etc/sysconfig/config/smb/shares.inc
+cat /dev/null > ${SMB_HDD_CONF}
+cat /dev/null > ${SMB_SHARE_CONF}
+[ -f /tmp/modify_smb_conf ] &&\
+ rm -f /tmp/modify_smb_conf &&\
+ service_smb_modify_conf
+
 SERVICE_CONF=/etc/sysconfig/config/service
 EXEC=/etc/sysconfig/system-script/media_service
 . $SERVICE_CONF

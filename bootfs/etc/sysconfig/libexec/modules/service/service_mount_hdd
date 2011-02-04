@@ -102,7 +102,7 @@ done
     }
    }
   }
-  service_smb_modify_conf
+  touch /tmp/modify_smb_conf
  }
 
 for disk in hdd1 hdd2; do
